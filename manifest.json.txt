@@ -1,0 +1,21 @@
+{
+  "name": "XVII. Bábszínházi Találkozó",
+  "short_name": "Találkozó '26",
+  "description": "Magyarországi Bábszínházak 17. Találkozója - Kecskemét",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f0ece3",
+  "theme_color": "#1a5c58",
+  "icons":[
+    {
+      "src": "https://ciroka.hu/wp-content/uploads/2021/04/cropped-favicon-192x192.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "https://ciroka.hu/wp-content/uploads/2021/04/cropped-favicon-512x512.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}

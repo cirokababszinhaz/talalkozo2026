@@ -1,0 +1,1751 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1a5c58">
+<link rel="manifest" href="manifest.json">
+<title>Magyarországi Bábszínházak XVII. Találkozója</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  /* VILÁGOS MÓD (Alapértelmezett) */
+  :root { 
+    --bg: #f0ece3; --surface: #e8e2d5; --card: #ffffff; 
+    --teal: #1a5c58; --teal-dark: #113d3a; --teal-light: #237070; 
+    --gold: #c4913a; --gold-light: #d4a84a; 
+    --text: #111111; --muted: #4a443d; 
+    --border: rgba(26,92,88,0.15); --red: #c0392b; --orange: #e67e22; 
+  }
+
+  /* SÖTÉT MÓD (Automatikusan aktiválódik) */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121212; --surface: #1e1e1e; --card: #242424; 
+      --text: #e0e0e0; --muted: #a0a0a0; 
+      --border: rgba(255,255,255,0.1); 
+      --teal: #4db6ac; --teal-dark: #004d40; 
+      --gold: #ffca28; --gold-light: #ffe082;
+    }
+    .event-card { background: var(--card); }
+    .search-input-box input { background: var(--surface); color: var(--text); }
+    .map-container, .info-box-bottom { background: var(--surface); }
+    .alert-card { background: rgba(192,57,43,0.15); border-color: rgba(192,57,43,0.4); }
+    .modal-box { background: var(--card); }
+    .tab-btn { color: var(--muted); }
+    .tab-btn.active { color: var(--gold-light); border-bottom-color: var(--gold-light); }
+    .tab-btn.active .day-date { color: var(--gold-light); }
+    .expand-icon { color: var(--teal); border-color: var(--teal); }
+    .event-card.open .expand-icon { background: var(--teal); color: #000; }
+    .fb-event-btn { background: rgba(77, 182, 172, 0.1); color: var(--teal); border-color: rgba(77, 182, 172, 0.3); }
+    .fb-event-btn:hover { background: var(--teal); color: #000; }
+    .badge-venue { color: #80cbc4; border-color: rgba(128, 203, 196, 0.3); }
+    .search-wrap { background: #000; }
+  }
+
+  body { background: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; font-weight: 500; min-height: 100vh; overflow-x: hidden; transition: background .3s, color .3s; }
+  a { color: var(--teal); text-decoration: none; font-weight: 600; }
+  a:hover { text-decoration: underline; }
+
+  .site-header { background: var(--teal); padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; }
+  .site-header .logo { font-weight: 700; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-light); }
+  .site-header .logo span { color: #fff; display: block; font-size: 10px; letter-spacing: 5px; font-weight: 500; }
+
+  .hero { background: var(--teal); text-align: center; padding: 40px 20px 50px; position: relative; overflow: hidden; }
+  .hero-eyebrow { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold-light); font-weight: 600; margin-bottom: 14px; }
+  h1 { font-family: 'Playfair Display', serif; font-size: clamp(30px,7vw,54px); line-height: 1.1; color: #fff; }
+  h1 em { color: var(--gold-light); font-style: italic; }
+  .hero-date { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.7); margin-top: 14px; font-weight: 500; }
+  
+  .hero-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 24px; }
+  .hero-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: transparent; border: 2px solid rgba(255,255,255,0.35); border-radius: 4px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; color: #fff; text-decoration: none; transition: .2s; }
+  .hero-btn:hover { border-color: var(--gold-light); color: var(--gold-light); text-decoration: none; }
+
+  #topAlertBar { background: var(--red); color: #fff; text-align: center; padding: 12px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; cursor: pointer; display: none; transition: background .2s; }
+  #topAlertBar:hover { background: #a93226; }
+
+  /* KERESŐ ÉS KEDVENCEK */
+  .search-wrap { background: var(--teal-dark); padding: 12px 20px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+  .search-input-box { position: relative; width: 100%; max-width: 400px; flex: 1; min-width: 200px; }
+  .search-input-box input { width: 100%; padding: 12px 16px 12px 40px; border-radius: 20px; border: none; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 500; outline: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
+  .search-input-box svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+  .fav-filter-btn { padding: 10px 16px; border-radius: 20px; border: 2px solid var(--gold-light); background: transparent; color: var(--gold-light); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: .2s; }
+  .fav-filter-btn.active { background: var(--gold-light); color: #000; }
+
+  .legend-bar { background: var(--teal-dark); display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; padding: 12px 20px; border-top: 1px solid rgba(255,255,255,0.1); }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.7); font-weight: 600; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  .tabs-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; background: var(--surface); border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+  .tabs-wrap::-webkit-scrollbar { display: none; }
+  .tabs { display: flex; min-width: max-content; padding: 0 12px; }
+  .tab-btn { background: none; border: none; border-bottom: 3px solid transparent; color: var(--muted); padding: 16px 18px 13px; font-family: 'Montserrat', sans-serif; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; cursor: pointer; transition: .2s; white-space: nowrap; line-height: 1.4; text-align: center; }
+  .tab-btn .day-date { display: block; font-weight: 500; font-size: 10px; letter-spacing: 1px; margin-top: 2px; }
+  .tab-btn.active { color: var(--teal); border-bottom-color: var(--gold); }
+  .tab-btn.active .day-date { color: var(--teal); }
+
+  .content { padding: 32px 16px 40px; max-width: 680px; margin: 0 auto; }
+  .day-panel { display: none; }
+  .day-panel.active { display: block; animation: fadein .25s ease; }
+  @keyframes fadein { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+  .search-day-title { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--teal); border-bottom: 2px solid var(--gold-light); padding-bottom: 5px; margin: 30px 0 15px; display: none; }
+
+  .slot-time { font-size: 11px; letter-spacing: 3px; color: var(--teal); font-weight: 700; text-transform: uppercase; padding: 22px 0 8px; }
+
+  .event-card { background: var(--card); border: 1px solid var(--border); border-left: 5px solid var(--border); border-radius: 4px; margin-bottom: 10px; overflow: hidden; transition: box-shadow .2s; }
+  .event-card.type-show  { border-left-color: var(--teal); }
+  .event-card.type-forum { border-left-color: var(--gold); }
+  .event-card.type-social { border-left-color: #b0a898; background: var(--surface); }
+
+  .card-header { padding: 14px 16px 12px 18px; cursor: default; }
+  .card-header.clickable { cursor: pointer; }
+  
+  .event-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--teal-dark); line-height: 1.3; margin-bottom: 4px; }
+  .event-card.type-social .event-title { font-family: 'Montserrat', sans-serif; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; color: var(--muted); }
+  .event-company { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+
+  /* MOST ZAJLIK BADGE */
+  .live-badge { display: none; background: var(--red); color: #fff; font-size: 9px; padding: 3px 6px; border-radius: 3px; font-weight: 700; letter-spacing: 1px; font-family: 'Montserrat', sans-serif; animation: blink 1.5s infinite; vertical-align: middle; margin-left: 8px; position: relative; top: -2px; }
+  .is-live .live-badge { display: inline-block; }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .card-header-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+  .header-actions { display: flex; align-items: center; gap: 8px; }
+  
+  /* CSILLAG GOMB */
+  .star-btn { font-size: 24px; cursor: pointer; color: var(--border); transition: .2s; user-select: none; line-height: 1; }
+  .star-btn.active { color: var(--gold-light); }
+  .star-btn:hover { transform: scale(1.15); }
+
+  .expand-icon { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; transition: transform .25s; color: var(--teal); }
+  .event-card.open .expand-icon { background: var(--teal); color: #fff; transform: rotate(180deg); border-color: var(--teal); }
+
+  .mini-pulse-alert { display: none; width: 22px; height: 22px; background: var(--red); color: white; border-radius: 50%; font-weight: bold; font-size: 14px; text-align: center; line-height: 22px; animation: pulse 1.5s infinite; cursor: pointer; }
+  .has-alert .mini-pulse-alert { display: block; }
+
+  .event-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding: 0 16px 12px 18px; }
+  .event-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+  .badge { font-size: 10px; padding: 4px 10px; border-radius: 3px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+  .badge-venue { background: rgba(26,92,88,0.1); color: var(--teal-dark); border: 1px solid rgba(26,92,88,0.3); transition: .2s; }
+  .badge-venue:hover { background: var(--teal); color: #fff; cursor: pointer; }
+  .badge-public { background: rgba(230,126,34,0.15); color: #c0392b; border: 1px solid rgba(230,126,34,0.4); }
+
+  .fb-event-btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; background: rgba(26,92,88,0.07); border: 1px solid rgba(26,92,88,0.3); border-radius: 3px; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; color: var(--teal-dark); transition: .2s; white-space: nowrap; flex-shrink: 0; }
+  .fb-event-btn:hover { background: var(--teal); color: #fff; text-decoration: none; }
+
+  .card-details { max-height: 0; overflow: hidden; transition: max-height .4s ease; background: rgba(26,92,88,0.03); }
+  .event-card.open .card-details { max-height: 4000px; border-top: 1px solid var(--border); }
+  
+  .card-details-inner { padding: 18px 20px; }
+  .details-section { margin-bottom: 16px; }
+  .details-section:last-child { margin-bottom: 0; }
+  .details-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; color: var(--teal-dark); margin-bottom: 6px; border-bottom: 2px solid var(--border); padding-bottom: 4px; display: inline-block; }
+  .details-text { font-size: 14px; color: var(--text); line-height: 1.6; font-weight: 500; }
+  .details-text em { color: var(--muted); font-style: italic; font-size: 13px; }
+
+  .section-divider { height: 2px; background: var(--border); margin: 32px 0 10px; }
+
+  /* INFO BOX ALUL + TÉRKÉP */
+  .info-box-bottom { background: var(--surface); border-top: 2px solid var(--border); padding: 40px 20px; max-width: 680px; margin: 0 auto; border-radius: 6px 6px 0 0; }
+  .info-box-bottom h3 { font-family: 'Playfair Display', serif; color: var(--teal-dark); font-size: 22px; margin-bottom: 20px; }
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px; }
+  .info-item { font-size: 14px; line-height: 1.5; color: var(--text); font-weight: 600;}
+  .info-item strong { display: block; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--teal); margin-bottom: 2px; font-weight: 700;}
+
+  /* TÉRKÉP */
+  .map-container { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 20px; }
+  .map-title { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-light); font-weight: 700; margin-bottom: 15px; }
+  .map-locations { font-size: 13px; line-height: 1.6; font-weight: 600; color: var(--teal-dark); margin-bottom: 15px; }
+  .map-locations strong { color: var(--red); }
+
+  /* ALERT POPUP */
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(17,61,58,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
+  .overlay.visible { display: flex; animation: fadein .2s ease; }
+  .modal-box { background: var(--card); border-radius: 6px; max-width: 480px; width: 100%; border-top: 6px solid var(--red); box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; display: flex; flex-direction: column; max-height: 80vh; }
+  .modal-header { background: var(--red); color: #fff; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
+  .modal-title { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; font-weight: 700; }
+  .modal-body { padding: 20px; overflow-y: auto; }
+  .modal-close { display: block; width: 100%; padding: 14px; background: var(--teal); color: #fff; border: none; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; font-weight: 700; cursor: pointer; transition: .2s; }
+  
+  .alert-card { padding: 16px; border: 2px solid rgba(192,57,43,0.3); background: rgba(192,57,43,0.05); border-radius: 4px; margin-bottom: 12px; }
+  .alert-card:last-child { margin-bottom: 0; }
+  .alert-time { font-size: 11px; color: var(--muted); margin-bottom: 6px; font-weight: 700; }
+  .alert-msg { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--text); line-height: 1.4; font-weight: 600; }
+
+  /* EASTER EGG */
+  footer { position: relative; background: var(--teal-dark); text-align: center; padding: 30px 20px 80px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4); font-weight: 600; }
+  footer a { color: var(--gold-light); text-decoration: none; }
+  .easter-trigger { cursor: pointer; color: var(--gold-light); transition: .2s; position: relative; z-index: 20; display: inline-block; padding: 10px; }
+  .easter-trigger:hover { color: #fff; }
+  .easter-content { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(30px) rotate(0deg); opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 10; pointer-events: none; text-align: center; }
+  .easter-photo { width: 160px; border-radius: 4px; border: 5px solid #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.5); display: block; margin: 0 auto; }
+  .easter-text { background: #fff; color: var(--teal-dark); font-size: 10px; font-weight: 700; letter-spacing: 1px; padding: 6px 12px; border-radius: 20px; margin-top: -15px; position: relative; z-index: 11; box-shadow: 0 4px 10px rgba(0,0,0,0.3); white-space: nowrap; }
+  .easter-trigger:hover + .easter-content, .easter-trigger:active + .easter-content { opacity: 1; transform: translateX(-50%) translateY(0) rotate(-3deg); }
+
+</style>
+</head>
+<body>
+
+<div id="topAlertBar" onclick="openAlertsModal()">🔔 Értesítések (0)</div>
+
+<div class="overlay" id="alertsModal">
+  <div class="modal-box">
+    <div class="modal-header"><span class="modal-title" id="modalTitle">Fontos Értesítés</span></div>
+    <div class="modal-body" id="modalBody"></div>
+    <button class="modal-close" onclick="closeModal()">Bezárom</button>
+  </div>
+</div>
+
+<header class="site-header">
+  <div class="logo">Ciróka Bábszínház<span>Kecskemét</span></div>
+  <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.6);font-weight:700;">2026</div>
+</header>
+
+<div class="hero">
+  <div class="hero-eyebrow">Magyarországi Bábszínházak</div>
+  <h1>XVII. <em>Találkozó</em></h1>
+  <div class="hero-date">2026. június 13–18. &nbsp;·&nbsp; Kecskemét</div>
+  
+  <div class="hero-buttons">
+    <a class="hero-btn" href="https://www.facebook.com/magyarorszagibabszinhazaktalalkozoja/" target="_blank">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+      A Találkozó FB-oldala
+    </a>
+    <a class="hero-btn" href="https://ciroka.hu" target="_blank">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      ciroka.hu
+    </a>
+  </div>
+</div>
+
+<div class="search-wrap">
+  <div class="search-input-box">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    <input type="text" id="searchInput" placeholder="Keresés alkotóra, címre, színházra..." onkeyup="doSearch()">
+  </div>
+  <button class="fav-filter-btn" id="favFilterBtn" onclick="toggleFavoritesView()">★ Kedvenceim</button>
+</div>
+
+<div class="legend-bar">
+  <div class="legend-item"><div class="legend-dot" style="background:#1a5c58"></div>Előadás</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#c4913a"></div>Szakmai fórum</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#b0a898"></div>Közösségi program</div>
+  <div class="legend-item"><div class="legend-dot" style="background:transparent; border:3px solid var(--orange);"></div>Nyilvános előadás</div>
+</div>
+
+<div class="tabs-wrap" id="tabsWrap">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showDay(0,this)" data-day-name="Szombat (jún. 13.)">Szombat<span class="day-date">jún. 13.</span></button>
+    <button class="tab-btn" onclick="showDay(1,this)" data-day-name="Vasárnap (jún. 14.)">Vasárnap<span class="day-date">jún. 14.</span></button>
+    <button class="tab-btn" onclick="showDay(2,this)" data-day-name="Hétfő (jún. 15.)">Hétfő<span class="day-date">jún. 15.</span></button>
+    <button class="tab-btn" onclick="showDay(3,this)" data-day-name="Kedd (jún. 16.)">Kedd<span class="day-date">jún. 16.</span></button>
+    <button class="tab-btn" onclick="showDay(4,this)" data-day-name="Szerda (jún. 17.)">Szerda<span class="day-date">jún. 17.</span></button>
+    <button class="tab-btn" onclick="showDay(5,this)" data-day-name="Csütörtök (jún. 18.)">Csütörtök<span class="day-date">jún. 18.</span></button>
+  </div>
+</div>
+
+<svg style="display:none">
+  <symbol id="fb-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></symbol>
+  <symbol id="chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></symbol>
+</svg>
+
+<div class="content">
+
+<!-- ════════════════════════════════════
+     SZOMBAT – jún. 13.
+════════════════════════════════════ -->
+<div class="day-panel" id="day-0">
+
+  <div class="slot-time">10:30</div>
+  <div class="event-card type-social">
+    <div class="card-header"><div class="event-title">🎉 Megnyitó</div></div>
+    <div class="event-footer"><div class="event-meta"><span class="badge badge-venue">Ciróka Bábszínház</span></div></div>
+  </div>
+
+  <div class="slot-time">11:00</div>
+  <div class="event-card type-show" id="show-eye-catching">
+    <div class="card-header clickable" onclick="toggleCard('show-eye-catching')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Eye catching<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">KL Színház</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Koncepció, előadó: Markó-Valentyik Anna (Junior Prima-díjas)<br>
+          Bábtervező: Boráros Szilárd<br>
+          Zene: Borlai Gergő (Máté Péter-díjas)<br><br>
+          Játssza: Markó-Valentyik Anna (Junior Príma-díjas)
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály / Web</div>
+        <div class="details-text">14+ | <a href="http://www.kabocababszinhaz.hu" target="_blank">www.kabocababszinhaz.hu</a></div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <div class="slot-time">11:30</div>
+  <div class="event-card type-social"><div class="card-header"><div class="event-title">🥂 Állófogadás</div></div></div>
+
+  <div class="slot-time">13:00</div>
+  <div class="event-card type-social">
+    <div class="card-header"><div class="event-title">📖 Lázár Ervin – Csukás István emlékév</div><div class="event-company">Kiállításmegnyitó</div></div>
+  </div>
+
+  <div class="slot-time">14:30</div>
+  <div class="event-card type-show" id="show-lathatatlan">
+    <div class="card-header clickable" onclick="toggleCard('show-lathatatlan')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">A láthatatlan jóbarát<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">Békéscsabai Napsugár Bábszínház</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Szerző: Bartal Kiss Rita, Rofusz Kinga, Kiss Erzsi<br>
+          Zene: Kiss Erzsi<br>
+          Tervező: Rofusz Kinga<br>
+          Rendező: Bartal Kiss Rita<br><br>
+          Szereplők: Soós Emőke, Czumbil Emőke, Gyarmati Éva, Berndt Richárd
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály / Web</div>
+        <div class="details-text">4+ | <a href="http://www.napsugarbabszinahaz.hu" target="_blank">www.napsugarbabszinahaz.hu</a></div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Kelemen L. Kamaraszínház</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <div class="slot-time">16:30</div>
+  <div class="event-card type-social">
+    <div class="card-header"><div class="event-title">🖼️ MKE – MATE látványtervező hallgatók</div><div class="event-company">Kiállításmegnyitó</div></div>
+  </div>
+
+  <div class="slot-time">18:00</div>
+  <div class="event-card type-show" id="show-atanaz">
+    <div class="card-header clickable" onclick="toggleCard('show-atanaz')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Atanáz, a lámpaláz<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">Ciróka Bábszínház</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Író, rendező: Varsányi Péter<br>
+          Dramaturg: Patonay Anita<br>
+          Tervező: Lázár Helga<br>
+          Zeneszerző: Szászi Petra és Bartokos Botond<br>
+          Koreográfus: Dányi Viktória<br>
+          Szcenikus: Grosschmid Erik<br><br>
+          Szereplők: Dupák Fanni, Horgas Ráhel, Kedves Csaba, Lendváczky Zoltán, Szekeres Máté
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály / Web</div>
+        <div class="details-text">6+ | <a href="http://www.ciroka.hu" target="_blank">www.ciroka.hu</a></div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+  <div class="slot-time">19:00</div>
+  <div class="event-card type-social"><div class="card-header"><div class="event-title">🍽️ Vacsora</div></div></div>
+  
+  <div class="slot-time">20:30</div>
+  <div class="event-card type-forum"><div class="card-header"><div class="event-title">💬 Szakmai megbeszélés</div></div></div>
+
+  <div class="slot-time">23:00</div>
+  <div class="event-card type-show" id="show-honvagy">
+    <div class="card-header clickable" onclick="toggleCard('show-honvagy')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Örökölt honvágy<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">SZFE - Russa Karina</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Szerző: Russa Karina<br>
+          Alkotók: Russa Karina<br><br>
+          Szereplők: Russa Karina
+        </div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ciróka kisterem</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     VASÁRNAP – jún. 14.
+════════════════════════════════════ -->
+<div class="day-panel" id="day-1">
+
+  <div class="slot-time">9:00 – 10:30</div>
+  <div class="event-card type-forum">
+    <div class="card-header"><div class="event-title">Szakmai fórum</div><div class="event-company">UNIMA / Bábművész Szövetség / Igazgatók – zártkörű megbeszélés</div></div>
+  </div>
+
+  <div class="slot-time">11:00</div>
+  <div class="event-card type-show" id="show-cseresznyefa">
+    <div class="card-header clickable" onclick="toggleCard('show-cseresznyefa')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Én és a cseresznyefa<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">Harlekin Bábszínház</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Adaptáció, dramaturg: Hámor Anna Csillag<br>
+          Látványtervező: Fülöpp Réka<br>
+          Tervezőasszisztens: Osgyányi Zsófi<br>
+          Zeneszerző: Frank Tamás<br>
+          Asszisztens, ügyelő: Soó Gyöngyvér<br>
+          Rendező: Siflis Anna<br><br>
+          Szereplők: Mészáros Pancsa, Szabados Böbe, Bencze Mónika, Bankó Bence, Zádori Szilárd
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály / Web</div>
+        <div class="details-text">8+ | <a href="http://www.harlekin.hu" target="_blank">www.harlekin.hu</a></div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Kelemen L. Kamaraszínház</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <div class="slot-time">12:00</div>
+  <div class="event-card type-social"><div class="card-header"><div class="event-title">🍴 Ebédszünet</div></div></div>
+
+  <div class="slot-time">14:00</div>
+  <div class="event-card type-show" id="show-piroska">
+    <div class="card-header clickable" onclick="toggleCard('show-piroska')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Piroska és a farkas<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">Griff Bábszínház</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Szerző: Rab Viki-Szabó Attila<br>
+          Író-dramaturg: Szabó Attila<br>
+          Látvány: Rofusz Kinga<br>
+          Zeneszerző: Rab Viki<br>
+          Koreográfus: Markó-Valentyik Anna<br>
+          Korrepetítor: Kovács Kata<br>
+          Rendező: Bartal Kiss Rita (Blattner Géza-díjas)<br><br>
+          Szereplők: Dénes Emőke, Stekbauer-Hanzi Réka, Matola Norbert
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály / Web</div>
+        <div class="details-text">4+ | <a href="http://www.griffbabszinhaz.hu" target="_blank">www.griffbabszinhaz.hu</a></div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <div class="slot-time">16:00</div>
+  <div class="event-card type-show" id="show-kosziv">
+    <div class="card-header clickable" onclick="toggleCard('show-kosziv')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">A kőszív<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">Bóbita Bábszínház</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Írta és rendezte: Markó Róbert<br>
+          Tervező: Boráros Szilárd<br>
+          Zeneszerző: Cseri Hanna<br><br>
+          Szereplők: Papp Melinda, Szalai Barbara, Arató Máté, Matta Lóránt, Rácz Attila
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály / Web</div>
+        <div class="details-text">5+ | <a href="http://www.bobita.hu" target="_blank">www.bobita.hu</a></div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Kelemen L. Kamaraszínház</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <div class="slot-time">18:00</div>
+  <div class="event-card type-show" id="show-juhasz">
+    <div class="card-header clickable" onclick="toggleCard('show-juhasz')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Az igazmondó juhász<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">Ziránó Színház</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Szerző: Veres András<br>
+          Tervező: Rumi Zsófi<br>
+          Zeneszerző: Kiss Dávid<br>
+          Rendező: Veres András<br>
+          Készítette: Sipos Katalin, Balogh Mihály, Szigeti Árpád<br><br>
+          Szereplők: Pfeiffer Zsófia, Varga Péter Róbert
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály / Web</div>
+        <div class="details-text">5+ | <a href="http://www.ziranoszinhaz.hu" target="_blank">www.ziranoszinhaz.hu</a></div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+  <div class="slot-time">19:00</div>
+  <div class="event-card type-social"><div class="card-header"><div class="event-title">🍽️ Vacsora</div></div></div>
+  
+  <div class="slot-time">20:30</div>
+  <div class="event-card type-forum"><div class="card-header"><div class="event-title">💬 Szakmai megbeszélés</div></div></div>
+
+  <div class="slot-time">23:00</div>
+  <div class="event-card type-show" id="show-frida">
+    <div class="card-header clickable" onclick="toggleCard('show-frida')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Itt vagyok, hát élek, Frida<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">SZFE - Barabás Bíborka</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Szerző, rendező: Barabás Bíborka<br>
+          Maszk, báb: Ágfay Míra<br>
+          Zene: Hegedűs Dániel<br>
+          Díszlet: Mayer Gábor<br>
+          Jelmez: Csoboth Viktória<br>
+          Rendező: Barabás Bíborka<br><br>
+          Játssza: Barabás Bíborka
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály</div>
+        <div class="details-text">14+</div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ciróka kisterem</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     HÉTFŐ – jún. 15.
+════════════════════════════════════ -->
+<div class="day-panel" id="day-2">
+
+  <div class="slot-time">9:00 – 10:30</div>
+  <div class="event-card type-forum">
+    <div class="card-header"><div class="event-title">Szakmai fórum</div><div class="event-company">UNIMA / Bábművész Szövetség / Igazgatók – zártkörű megbeszélés</div></div>
+  </div>
+
+  <div class="slot-time">11:00 és 17:30</div>
+  <div class="event-card type-show" id="show-tragedia-hetfo-d">
+    <div class="card-header clickable" onclick="toggleCard('show-tragedia-hetfo-d')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Az ember tragédiája<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">Kabóca Bábszínház</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Író: Madách Imre, Nádasdy Ádám<br>
+          Zeneszerző: Móser Ádám<br>
+          Tervező: Boráros Szilárd<br>
+          Rendezőasszisztens: Sipos Berta Őszike<br>
+          Rendező: Kocsis Pál (Jászai Mari-díjas)<br><br>
+          Játsszák: Czéh Dániel, Gidófalvi Imola, Horváth Márk, Markó-Valentyik Anna (Junior Prima-díjas), Szakács Nadin e.h., Zöldi Ákos Tamás e.h.<br><br>
+          <em>Az előadásban elhangzik Kiss Judit Ágnes Éva monológja című verse.</em>
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály / Web</div>
+        <div class="details-text">14+ | <a href="http://www.kabocababszinhaz.hu" target="_blank">www.kabocababszinhaz.hu</a></div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ruszt J. Stúdiószínház</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <div class="slot-time">11:00 és 17:30</div>
+  <div class="event-card type-show" id="show-doboz-hetfo">
+    <div class="card-header clickable" onclick="toggleCard('show-doboz-hetfo')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">A doboz<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">Illaberek Bábszínház</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Alkotók: Nyirkó Krisztina, Darvas Benedek és Nizsai Dániel<br><br>
+          Szereplők: Nyirkó Krisztina és Nizsai Dániel
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály</div>
+        <div class="details-text">1+</div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ciróka kisterem</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <div class="slot-time">12:00</div>
+  <div class="event-card type-social"><div class="card-header"><div class="event-title">🍴 Ebédszünet</div></div></div>
+
+  <div class="slot-time">14:00</div>
+  <div class="event-card type-show" id="show-graffalo">
+    <div class="card-header clickable" onclick="toggleCard('show-graffalo')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Graffaló, avagy az Óriásfaló kisegér<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">Csodamalom Bábszínház</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Julia Donaldson és Axel Scheffler meséi nyomán bábszínpadra írta: Szilner Olivér<br>
+          Zeneszerző: Romhányi Áron<br>
+          Látvány: Osgyányi Zsófia<br>
+          Koreográfus: Bábinszki Ágnes<br>
+          Rendező: Szilner Olivér<br><br>
+          Szereplők: Cservenka Ferenc, Sipos Áron, Bablena Vanda, Mónus Szonja, Romhányi Réka
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály / Web</div>
+        <div class="details-text">4+ | <a href="http://www.csodamalom.hu" target="_blank">www.csodamalom.hu</a></div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <div class="slot-time">15:30</div>
+  <div class="event-card type-show" id="show-bambi">
+    <div class="card-header clickable" onclick="toggleCard('show-bambi')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Bambi<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">Vaskakas Bábszínház</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Felix Salten meséje alapján írta: Nagy Orsolya<br>
+          Dramaturg: Nagy Orsolya<br>
+          Látvány: Kárpáti Panna<br>
+          Zene: Tarr Bernadett<br>
+          Rendező-koreográfus: Kovács Domokos<br><br>
+          Szereplők: Bársonyosi Dávid, Bánky Sára, Vitányi-Juhász István, Ragán Edit, Dunai Julia, Sebestény Bernát, Darvas Emőke, Urszinyi Ádám, Rab Viki, Szukenyik Tamás
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály / Web</div>
+        <div class="details-text">5+ | <a href="http://www.vaskakas.hu" target="_blank">www.vaskakas.hu</a></div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta">
+        <span class="badge badge-venue">Hírös Agóra</span>
+        <span class="badge badge-public">Nyilvános előadás</span>
+      </div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+  <div class="slot-time">19:00</div>
+  <div class="event-card type-social"><div class="card-header"><div class="event-title">🍽️ Vacsora</div></div></div>
+  
+  <div class="slot-time">20:30</div>
+  <div class="event-card type-forum"><div class="card-header"><div class="event-title">💬 Szakmai megbeszélés</div></div></div>
+
+  <div class="slot-time">23:00</div>
+  <div class="event-card type-show" id="show-liselotte">
+    <div class="card-header clickable" onclick="toggleCard('show-liselotte')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Liselotte és a május<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">SZFE - Kiss Dorina</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Szerző: Pozsgai Zsolt<br>
+          Tervező: Horváth Márk<br>
+          Koreográfus: Puha Bernadett<br>
+          Dramaturg, rendező: Kiss Dorina<br><br>
+          Szereplők: Gyöngyössy Csenge, Lajhó Máté
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály</div>
+        <div class="details-text">14+</div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     KEDD – jún. 16.
+════════════════════════════════════ -->
+<div class="day-panel" id="day-3">
+
+  <div class="slot-time">9:00 – 10:30</div>
+  <div class="event-card type-forum">
+    <div class="card-header"><div class="event-title">Szakmai fórum</div><div class="event-company">UNIMA / Bábművész Szövetség / Igazgatók – zártkörű megbeszélés</div></div>
+  </div>
+
+  <div class="slot-time">10:30</div>
+  <div class="event-card type-show" id="show-lud">
+    <div class="card-header clickable" onclick="toggleCard('show-lud')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Ha már lúd…<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">Dante Casino / Füge Produkció</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Szerző: Marta Gusniowska<br>
+          Rendező: Kenéz Ágoston<br>
+          Dramaturg: Szauer Lilla<br>
+          Látványtervező: Veronika Keresztesova<br>
+          Dalszerző: Cseri Hanna<br>
+          A rendező munkatársa: Bali V. Gergely<br>
+          Asszisztens gyakornok: László Júlia<br><br>
+          Szereplők: Podlovics Laura, Vizi Dávid, Messaoudi Emina, Georgita Máté Dezső, Hrisztov Toma
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály / Web</div>
+        <div class="details-text">6+ | <a href="http://www.juranyihaz.hu/hu/eloadas/hamarlud" target="_blank">www.juranyihaz.hu</a></div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ifjúsági Otthon udvara</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <div class="slot-time">12:00</div>
+  <div class="event-card type-social"><div class="card-header"><div class="event-title">🍴 Ebédszünet</div></div></div>
+
+  <div class="slot-time">14:00</div>
+  <div class="event-card type-show" id="show-golya">
+    <div class="card-header clickable" onclick="toggleCard('show-golya')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Fekete gólya, fehér gólya, szürke gólya<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">ESZME és a MU Színház közös produkciója</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Szerző: Nagy Orsolya, Kovács Domokos, Nagy Petra<br>
+          Rendező-dramaturg: Nagy Orsolya<br>
+          Koreográfus: Kovács Domokos<br>
+          Zeneszerző: Bogárdi Aliz, Jankó Mátyás<br>
+          Tervező: Maróthy Anna Zorka, Lengyel Viola<br>
+          Textilmunkák: Bárány Judit<br>
+          Fénytervező: Váradi András<br>
+          Rendezőasszisztens: Szirtes Lili Lujza<br><br>
+          Szereplők: Kovács Domokos, Nagy Petra
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály</div>
+        <div class="details-text">6+</div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Kelemen L. Kamaraszínház</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <div class="slot-time">15:30</div>
+  <div class="event-card type-show" id="show-lepke">
+    <div class="card-header clickable" onclick="toggleCard('show-lepke')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">A lepkegyűjtő<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">SZFE - Simon András</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          John Fowles regénye alapján a szövegkönyvet írta: Reiter Zita és Simon András<br>
+          Alkotók: Antal Csaba, Vass Gergely, Reiter Zita, Simon András<br><br>
+          Szereplők: Reiter Zita, Simon András
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály</div>
+        <div class="details-text">16+</div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ruszt J. Stúdiószínház</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <div class="slot-time">18:00</div>
+  <div class="event-card type-show" id="show-sarkany">
+    <div class="card-header clickable" onclick="toggleCard('show-sarkany')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Sárkánykirály<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">Vojtina Bábszínház</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Szerző: Nagy Orsolya<br>
+          Rendezőasszisztens: Treitl-Vári Bettina<br>
+          Világítástervező: Nánási Barnabás<br>
+          A díszletet és a bábokat készítették: Oláh Richárd, Kissné Kati, Nádasiné Szegedi Éva<br>
+          Szcenikai tanácsadó: Grosschmid Erik<br>
+          Látványtervező: Kárpáti Panna<br>
+          Zeneszerző: Tarr Bernadett<br>
+          Dramaturg: Nagy Orsolya<br>
+          Rendező-koreográfus: Kovács Domokos<br>
+          Fény: Nánási Barnabás, Ágh András<br>
+          Hang: Gara Ákos, Szemán Bence<br><br>
+          Szereplők: Baditz Dávid, Csiky Csongor Ábel e.h., Hell Krisztina, Mercs Máté Péter, Nagy Mónika, Telenkó-Oláh Tímea
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály / Web</div>
+        <div class="details-text">12+ | <a href="http://www.vojtinababszinhaz.hu" target="_blank">www.vojtinababszinhaz.hu</a></div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta">
+        <span class="badge badge-venue">Hírös Agóra</span>
+        <span class="badge badge-public">Nyilvános előadás</span>
+      </div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+  <div class="slot-time">19:00</div>
+  <div class="event-card type-social"><div class="card-header"><div class="event-title">🍽️ Vacsora</div></div></div>
+  
+  <div class="slot-time">20:30</div>
+  <div class="event-card type-forum"><div class="card-header"><div class="event-title">💬 Szakmai megbeszélés</div></div></div>
+
+  <div class="slot-time">23:00</div>
+  <div class="event-card type-show" id="show-anyad">
+    <div class="card-header clickable" onclick="toggleCard('show-anyad')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Kár, hogy anyádat nem hoztuk el<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">Budapest Bábszínház</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Koreográfus: Widder Kristóf<br>
+          Jelmez- és bábtervező: Juhos-Kiss Csenge<br>
+          Bábszínházi adaptáció: Hársing Hilda<br>
+          Dramaturg: Gimesi Dóra<br>
+          Zenei szerkesztő: Deák-Volom Dávid<br>
+          Díszlet- és bábtervező: Fülöpp Réka<br>
+          Fénytervező: Szondi György<br>
+          Rendező: Gardenö Klaudia<br><br>
+          Szereplők: Bartha Bendegúz, Krucsó Rita, L. Nagy Attila, Podlovics Laura, Spiegl Anna, Tatai Zsolt<br>
+          Zenészek: Deák-Volom Dávid, Böröcz Ákos, Curteanu Ion
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály / Web</div>
+        <div class="details-text">18+ | <a href="http://www.budapestbabszinhaz.hu" target="_blank">www.budapestbabszinhaz.hu</a></div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SZERDA – jún. 17.
+════════════════════════════════════ -->
+<div class="day-panel" id="day-4">
+
+  <div class="slot-time">10:00</div>
+  <div class="event-card type-show" id="show-halasz">
+    <div class="card-header clickable" onclick="toggleCard('show-halasz')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">A szegény halász, meg a túlsokra vágyó felesége<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">Magamura Alkotóműhely</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Szerző: Markó Róbert<br>
+          Tervező: Boráros Szilárd<br>
+          Zeneszerző: Takács Dániel<br>
+          Rendező: Boráros Milada<br><br>
+          Szereplők: Horváth Márk, Markó-Valentyik Anna (Junior Príma-díjas)
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály / Web</div>
+        <div class="details-text">4+ | <a href="http://www.klszinhaz.hu" target="_blank">www.klszinhaz.hu</a></div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <div class="slot-time">12:00</div>
+  <div class="event-card type-social"><div class="card-header"><div class="event-title">🍴 Ebédszünet</div></div></div>
+
+  <div class="slot-time">14:00</div>
+  <div class="event-card type-show" id="show-hapci">
+    <div class="card-header clickable" onclick="toggleCard('show-hapci')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Hapci király<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">Marosvásárhelyi Művészeti Egyetem</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Szerző: Lázár Ervin<br>
+          Bábszínpadra írta: Nagy Orsolya<br>
+          Rendező: Csató Kata<br>
+          Zeneszerző: Ádám Rita és Darvas Benedek<br>
+          Tervező: Mátravölgyi Ákos<br><br>
+          Szereplők: Berekméri Réka, Csörögi Gábor, Farkas Dóra, Józsa Anna, Nagy Máté, Nyitrai Hédi, Stoian Antónia
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály / Web</div>
+        <div class="details-text">4+ | <a href="http://www.studioszinhaz.ro" target="_blank">www.studioszinhaz.ro</a></div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Kelemen L. Kamaraszínház</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <div class="slot-time">15:30</div>
+  <div class="event-card type-show" id="show-lenka-sze">
+    <div class="card-header clickable" onclick="toggleCard('show-lenka-sze')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Lenka és a Szemüveges lány<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">JuBo Társulat</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Szerző: Kolozsi Angéla (Szegedi Katalin Lenka illetve Palkó című művének felhasználásával)<br>
+          Zeneszerző: Podlovics Laura<br>
+          Bábtervező, bábkészítő: Szegedi Katalin rajzai alapján: Palya Gábor<br>
+          Fénytervező: Szondi György<br>
+          Hangfelvételek: Mészáros Gábor, Nagy Gábor<br>
+          Rendező: Kovács Judit<br><br>
+          Szereplők: Karádi Borbála, Kovács Judit
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály</div>
+        <div class="details-text">7+</div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ciróka kisterem</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <div class="slot-time">15:30</div>
+  <div class="event-card type-show" id="show-tryangle-sze">
+    <div class="card-header clickable" onclick="toggleCard('show-tryangle-sze')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Tryangle<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">ESZME</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Szerző: Kovács Domokos, L. Nagy Attila<br>
+          Dramaturg: Nagy Orsolya<br>
+          Tervező: Kárpáti Panna<br>
+          Zeneszerző: Vranik Krisztián, Jankó Mátyás<br>
+          Fénytervező: Váradi András, Selmeczi Mercédesz<br>
+          Konzulens: Fejes Kitty<br>
+          Rendező: Kovács Domokos<br><br>
+          Szereplők: Kovács Domokos, L. Nagy Attila
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály</div>
+        <div class="details-text">14+</div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ruszt J. Stúdiószínház</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <div class="slot-time">17:30</div>
+  <div class="event-card type-show" id="show-patkanyfogo">
+    <div class="card-header clickable" onclick="toggleCard('show-patkanyfogo')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">A Patkányfogó Projekt<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">Kövér Béla Bábszínház</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Írta és rendezte: Varsányi Péter<br>
+          Látványtervező: Jeli Sára Luca<br>
+          Hang és videó: Labus Gida<br>
+          Dramaturg: Hajós Zsuzsa<br>
+          Rendezőasszisztens: Nikodémusz Hajnalka<br>
+          Készítették: Tóth Andrea, Tóth Eszter, Kiss Attila Etele, Kalácska Gábor, Kisgyörgy Balázs, Tímári Blanka<br>
+          Hang, fény: Bujdosó Zoltán, Patkós Péter<br><br>
+          Hangban közreműködnek: Szegedi Rókusi Általános Iskola énekkara<br><br>
+          Szereplők: Balasi Jolán, Presits Tamás, Schneider Jankó, Nikodémusz Hajnalka
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály</div>
+        <div class="details-text">14+</div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+  <div class="slot-time">19:00</div>
+  <div class="event-card type-social"><div class="card-header"><div class="event-title">🍽️ Vacsora</div></div></div>
+  
+  <div class="slot-time">20:30</div>
+  <div class="event-card type-forum"><div class="card-header"><div class="event-title">💬 Szakmai megbeszélés</div></div></div>
+</div>
+
+<!-- ════════════════════════════════════
+     CSÜTÖRTÖK – jún. 18.
+════════════════════════════════════ -->
+<div class="day-panel" id="day-5">
+
+  <div class="slot-time">10:00</div>
+  <div class="event-card type-show" id="show-capitalism">
+    <div class="card-header clickable" onclick="toggleCard('show-capitalism')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Capitalism for children<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">Trafó - SzínMűHely Alapítvány</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Írta és rendezte: Fodor Orsolya, Varsányi Péter<br>
+          Zeneszerző: Szászi Petra, Bartokos Botond<br>
+          Rendezőasszisztens: Szirtes Lujza<br>
+          Látványtervező, kivitelező: Pajor Patrícia<br>
+          Vágó: Farkas Áron<br>
+          Operatőr: Farkas Áron, Sipos Bence<br>
+          Világítástervező, technikus: Lengyel Ákos Papa<br>
+          Produkciós vezető: Mayer Dániel<br>
+          Színházi konzulens: Czirák Ádám<br>
+          Színházi nevelési konzulens: Patonay Anita<br>
+          Gazdasági konzulens: Király Júlia, Simor Máté<br>
+          Dramaturg gyakornok: Bozsaky Boglárka<br><br>
+          Szereplők: Fodor Orsolya, Varsányi Péter
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály / Web</div>
+        <div class="details-text">16+ | <a href="http://www.szegedibabszinhaz.hu" target="_blank">www.szegedibabszinhaz.hu</a></div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Kelemen L. Kamaraszínház</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <div class="slot-time">14:00</div>
+  <div class="event-card type-show" id="show-csodaszarvas">
+    <div class="card-header clickable" onclick="toggleCard('show-csodaszarvas')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Csodaszarvas<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">Fabók Mancsi Bábszínháza - Cimborák Bábszínház</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Arany János műve és népgyűjtések nyomán: Fabók Mariann<br>
+          Bábok: Mészáros Gábor, Plés Péter<br>
+          Zene: Navratil Andrea, Fejér Simon Pál, Keresztes- Nagy Árpád<br>
+          Rendező: Fabók Mariann<br><br>
+          Szereplők: Bíró Eszter, Daróczi Klarissza, Dávid Péter, Nagy Lázár József
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály / Web</div>
+        <div class="details-text">6+ | <a href="http://www.fabokmancsi.hu" target="_blank">www.fabokmancsi.hu</a></div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <div class="slot-time">15:30</div>
+  <div class="event-card type-show" id="show-lenka-csut">
+    <div class="card-header clickable" onclick="toggleCard('show-lenka-csut')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Lenka és a Szemüveges lány<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">JuBo Társulat</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Szerző: Kolozsi Angéla (Szegedi Katalin Lenka illetve Palkó című művének felhasználásával)<br>
+          Zeneszerző: Podlovics Laura<br>
+          Bábtervező, bábkészítő: Szegedi Katalin rajzai alapján: Palya Gábor<br>
+          Fénytervező: Szondi György<br>
+          Hangfelvételek: Mészáros Gábor, Nagy Gábor<br>
+          Rendező: Kovács Judit<br><br>
+          Szereplők: Karádi Borbála, Kovács Judit
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály</div>
+        <div class="details-text">7+</div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ciróka kisterem</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <div class="slot-time">15:30</div>
+  <div class="event-card type-show" id="show-tryangle-csut">
+    <div class="card-header clickable" onclick="toggleCard('show-tryangle-csut')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Tryangle<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">ESZME</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Szerző: Kovács Domokos, L. Nagy Attila<br>
+          Dramaturg: Nagy Orsolya<br>
+          Tervező: Kárpáti Panna<br>
+          Zeneszerző: Vranik Krisztián, Jankó Mátyás<br>
+          Fénytervező: Váradi András, Selmeczi Mercédesz<br>
+          Konzulens: Fejes Kitty<br>
+          Rendező: Kovács Domokos<br><br>
+          Szereplők: Kovács Domokos, L. Nagy Attila
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály</div>
+        <div class="details-text">14+</div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ruszt J. Stúdiószínház</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <div class="slot-time">18:00</div>
+  <div class="event-card type-show" id="show-vampir">
+    <div class="card-header clickable" onclick="toggleCard('show-vampir')">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Én, a vámpír<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">Mesebolt Bábszínház</div>
+        </div>
+        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Rendező-színpadi adaptáció: Fábián Péter<br>
+          Tervező: Boráros Szilárd<br>
+          Zeneszerző: Horváth Szabolcs<br>
+          Zenei közreműködő: Kiss Dávid<br><br>
+          Szereplők: Kolozsi Angéla, Gyurkovics Zsófia, Varga Bori, Kovács Bálint, Lukács Gábor, Kőmíves Csongor
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály / Web</div>
+        <div class="details-text">14+ | <a href="http://www.meseboltbabszinhaz.hu" target="_blank">www.meseboltbabszinhaz.hu</a></div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Kelemen L. Kamaraszínház</span></div>
+      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+</div>
+
+</div><!-- /content -->
+
+<!-- KÖZÉRDEKŰ INFORMÁCIÓK ÉS TÉRKÉP DOBOZ -->
+<div class="info-box-bottom">
+  <h3>Közérdekű Információk</h3>
+  <div class="info-grid">
+    <div class="info-item"><strong>Kiszely Ágnes igazgató</strong><a href="tel:+36309075265">+36 30 907 5265</a></div>
+    <div class="info-item"><strong>Kuthy Ágnes művészeti vezető</strong><a href="tel:+36308310713">+36 30 831 0713</a></div>
+    <div class="info-item"><strong>Bodor Éva fesztiválszervező</strong><a href="tel:+36204195584">+36 20 419 5584</a></div>
+    <div class="info-item"><strong>Váriné Dósa Eszter művészeti titkár</strong><a href="tel:+36309075318">+36 30 907 5318</a></div>
+    <div class="info-item"><strong>Borsosné Oláh Nóra (szerződések/számlázás)</strong><a href="tel:+36707996647">+36 70 799 6647</a></div>
+    <div class="info-item"><strong>Harkai György kommunikáció</strong><a href="tel:+36304359149">+36 30 435 9149</a></div>
+    <div class="info-item"><strong>Műszaki Ügyelet (Bujdosó Zsolt)</strong><a href="tel:+36706200139">+36 70 620 0139</a></div>
+    <div class="info-item"><strong>Faműhely (Dudás Péter)</strong><a href="tel:+36305944476">+36 30 594 4476</a></div>
+    <div class="info-item"><strong>Varróműhely (Emőd Kriszta)</strong><a href="tel:+36209446533">+36 20 944 6533</a></div>
+  </div>
+
+  <div class="map-container">
+    <div class="map-title">📍 Helyszínek</div>
+    <div class="map-locations">
+      <strong>Ciróka Bábszínház</strong> · Budai u. 15.<br>
+      <strong>Hírös Agóra</strong> · Deák Ferenc tér 1.<br>
+      <strong>Kelemen L. Kamaraszínház</strong> · Rákóczi út 15.<br>
+      <strong>Ruszt J. Stúdiószínház</strong> · Katona József tér 5.<br>
+      <strong>Ifjúsági Otthon</strong> · Kossuth tér 4.
+    </div>
+    <!-- Beágyazott Google Térkép -->
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2726.3146462725835!2d19.688174515598687!3d46.90159497914442!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4743da0f0c97693d%3A0xc3b8384f509e5b22!2sCir%C3%B3ka%20B%C3%A1bsz%C3%ADnh%C3%A1z!5e0!3m2!1shu!2shu!4v1689254391234!5m2!1shu!2shu" width="100%" height="250" style="border:0; border-radius:4px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  </div>
+</div>
+
+<footer>
+  <a href="https://ciroka.hu" target="_blank">ciroka.hu</a>
+  &nbsp;·&nbsp; Magyarországi Bábszínházak XVII. Találkozója &nbsp;·&nbsp; 
+  <span class="easter-trigger">2026</span>
+  
+  <div class="easter-content">
+    <div class="easter-text">A weboldalt elkövette: Harkai György</div>
+    <img src="https://ciroka.hu/wp-content/uploads/2025/08/Harkai_Gyorgy_marketing-munkatars-2048x2048.jpg" class="easter-photo" alt="Harkai György">
+  </div>
+</footer>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB7BkU92oIK3H_01uX9hr8GatQyE_NXMyA",
+    authDomain: "ciroka-18b93.firebaseapp.com",
+    databaseURL: "https://ciroka-18b93-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "ciroka-18b93",
+    storageBucket: "ciroka-18b93.firebasestorage.app",
+    messagingSenderId: "149700522771",
+    appId: "1:149700522771:web:75596da42e3f116aa3a0e6"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getDatabase(app);
+  window.globalAlerts =[];
+
+  onValue(ref(db, "alertsList"), (snap) => {
+    document.querySelectorAll('.event-card').forEach(card => card.classList.remove('has-alert'));
+
+    if (!snap.exists()) {
+      document.getElementById("topAlertBar").style.display = "none";
+      window.globalAlerts =[];
+      return;
+    }
+
+    const data = snap.val();
+    window.globalAlerts = Object.keys(data).map(key => ({ id: key, ...data[key] })).sort((a,b) => b.timeRaw - a.timeRaw);
+    
+    const topBar = document.getElementById("topAlertBar");
+    topBar.textContent = `🔔 Értesítések (${window.globalAlerts.length})`;
+    topBar.style.display = "block";
+
+    window.globalAlerts.forEach(alert => {
+      if (alert.targetId && alert.targetId !== "all") {
+        const targetCard = document.getElementById(alert.targetId);
+        if (targetCard) targetCard.classList.add("has-alert");
+      }
+    });
+
+    const newestAlert = window.globalAlerts[0];
+    const lastSeenTime = sessionStorage.getItem("lastSeenAlertTime");
+    
+    if (!lastSeenTime || parseInt(lastSeenTime) < newestAlert.timeRaw) {
+      showPopup(newestAlert);
+      sessionStorage.setItem("lastSeenAlertTime", newestAlert.timeRaw.toString());
+    }
+  });
+
+  window.showPopup = function(alert, isReminder = false) {
+    document.getElementById("modalTitle").textContent = isReminder ? "Emlékeztető!" : "Új Értesítés!";
+    document.getElementById("modalBody").innerHTML = `
+      <div class="alert-card">
+        <div class="alert-time">${alert.timestamp}</div>
+        <div class="alert-msg">${alert.message}</div>
+      </div>
+    `;
+    document.getElementById("alertsModal").classList.add("visible");
+    if(!isReminder) window.currentPopupAlert = alert;
+    if ("vibrate" in navigator) navigator.vibrate([200, 100, 200]);
+  }
+
+  window.openAlertsModal = function(targetId = null) {
+    let filteredAlerts = window.globalAlerts;
+    if (targetId) {
+      filteredAlerts = window.globalAlerts.filter(a => a.targetId === targetId);
+      document.getElementById("modalTitle").textContent = "Értesítés a programhoz";
+    } else {
+      document.getElementById("modalTitle").textContent = "Összes Értesítés";
+    }
+    let html = "";
+    if(filteredAlerts.length === 0) {
+      html = "<p style='font-size:13px;'>Nincs aktív értesítés.</p>";
+    } else {
+      filteredAlerts.forEach(alert => {
+        html += `<div class="alert-card"><div class="alert-time">${alert.timestamp}</div><div class="alert-msg">${alert.message}</div></div>`;
+      });
+    }
+    document.getElementById("modalBody").innerHTML = html;
+    document.getElementById("alertsModal").classList.add("visible");
+  }
+
+  window.closeModal = function() {
+    document.getElementById("alertsModal").classList.remove("visible");
+    if (window.currentPopupAlert) {
+      const savedAlert = window.currentPopupAlert;
+      window.currentPopupAlert = null; 
+      setTimeout(() => {
+        const stillExists = window.globalAlerts.find(a => a.id === savedAlert.id);
+        if (stillExists) showPopup(stillExists, true);
+      }, 3 * 60 * 1000);
+    }
+  };
+</script>
+
+<script>
+  let activeTabBeforeSearch = 0;
+  let isFavoritesMode = false;
+
+  // INITIALIZÁLÁS (Csillagok, Helyszín gombok, Auto-Nap, Offline mód)
+  window.addEventListener('DOMContentLoaded', () => {
+    
+    // 1. PWA Service Worker (Offline betöltéshez)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW hiba', err));
+    }
+
+    // 2. Csillagok (Kedvencek) és Pulzáló gombok scriptes injektálása
+    document.querySelectorAll('.event-card').forEach(card => {
+      const headerActions = card.querySelector('.header-actions');
+      if (headerActions && card.id) {
+        // Csillag
+        const star = document.createElement('span');
+        star.className = 'star-btn';
+        star.innerHTML = '☆';
+        star.onclick = (e) => toggleStar(e, card.id, star);
+        if(localStorage.getItem('fav_' + card.id)) star.classList.add('active');
+        headerActions.prepend(star);
+
+        // Pulzáló esemény elfogó
+        const pulse = card.querySelector('.mini-pulse-alert');
+        if (pulse) {
+          pulse.onclick = function(e) {
+            e.stopPropagation();
+            openAlertsModal(card.id);
+          };
+        }
+      }
+
+      // Helyszínek kattinthatóvá tétele (Szűrő)
+      card.querySelectorAll('.badge-venue').forEach(badge => {
+        badge.onclick = (e) => {
+          e.stopPropagation();
+          document.getElementById('searchInput').value = badge.innerText.trim();
+          doSearch();
+        };
+      });
+    });
+
+    // 3. Automatikus napválasztás (Június 13-18 között)
+    const today = new Date();
+    if (today.getFullYear() === 2026 && today.getMonth() === 5 && today.getDate() >= 13 && today.getDate() <= 18) {
+       const dIndex = today.getDate() - 13;
+       showDay(dIndex, document.querySelectorAll('.tab-btn')[dIndex]);
+    } else {
+       // Ha nem a fesztivál idején nyitják meg, a 0. nap (Szombat) legyen nyitva
+       showDay(0, document.querySelectorAll('.tab-btn')[0]);
+    }
+
+    // 4. "Most zajlik" ellenőrző indítása (percenként)
+    checkLiveEvents();
+    setInterval(checkLiveEvents, 60000);
+  });
+
+  // MOST ZAJLIK FUNKCIÓ
+  function checkLiveEvents() {
+    const now = new Date();
+    // TEST: const now = new Date('2026-06-13T11:15:00'); // Ezzel tesztelheted, bekapcsolja a szombati 11:00-es előadásokat
+    
+    if (now.getFullYear() !== 2026 || now.getMonth() !== 5) return;
+
+    document.querySelectorAll('.day-panel').forEach((panel, dayIndex) => {
+      const eventDate = 13 + dayIndex;
+      if (now.getDate() !== eventDate) return;
+
+      panel.querySelectorAll('.event-card').forEach(card => {
+        let prev = card.previousElementSibling;
+        while(prev && !prev.classList.contains('slot-time')) prev = prev.previousElementSibling;
+        
+        if (prev) {
+          const timeText = prev.innerText;
+          const times = timeText.match(/\d{1,2}:\d{2}/g);
+          if (!times) return;
+
+          let isLive = false;
+          if (timeText.includes('és')) {
+            times.forEach(t => { if(isWithinHour(t, now)) isLive = true; });
+          } else if (times.length >= 2) {
+            isLive = isWithinRange(times[0], times[1], now);
+          } else if (times.length === 1) {
+            isLive = isWithinHour(times[0], now);
+          }
+
+          if (isLive) card.classList.add('is-live');
+          else card.classList.remove('is-live');
+        }
+      });
+    });
+  }
+
+  // Segédfüggvény: egy adott órában (pl. 11:00 - 12:00 között) van-e az idő
+  function isWithinHour(startStr, now) {
+    const [sh, sm] = startStr.split(':').map(Number);
+    const startObj = new Date(now); startObj.setHours(sh, sm, 0, 0);
+    const endObj = new Date(now); endObj.setHours(sh + 1, sm, 0, 0); // Alapból 1 órát számolunk az előadásra
+    return now >= startObj && now <= endObj;
+  }
+
+  // Segédfüggvény: egy tól-ig sávban van-e az idő
+  function isWithinRange(startStr, endStr, now) {
+    const [sh, sm] = startStr.split(':').map(Number);
+    const startObj = new Date(now); startObj.setHours(sh, sm, 0, 0);
+    const [eh, em] = endStr.split(':').map(Number);
+    const endObj = new Date(now); endObj.setHours(eh, em, 0, 0);
+    if(eh < sh) endObj.setDate(endObj.getDate() + 1); // Éjszakába nyúló
+    return now >= startObj && now <= endObj;
+  }
+
+  // KEDVENCEK (CSILLAGOZÁS) LOGIKÁJA
+  window.toggleStar = function(event, cardId, starElement) {
+    event.stopPropagation();
+    if (localStorage.getItem('fav_' + cardId)) {
+      localStorage.removeItem('fav_' + cardId);
+      starElement.classList.remove('active');
+    } else {
+      localStorage.setItem('fav_' + cardId, 'true');
+      starElement.classList.add('active');
+    }
+    // Ha épp a kedvencek szűrő aktív, azonnal frissítjük a listát
+    if (isFavoritesMode) runFilter();
+  };
+
+  window.toggleFavoritesView = function() {
+    isFavoritesMode = !isFavoritesMode;
+    const btn = document.getElementById('favFilterBtn');
+    if (isFavoritesMode) {
+      btn.classList.add('active');
+      btn.innerHTML = '★ Csak a kedvenceim';
+    } else {
+      btn.classList.remove('active');
+      btn.innerHTML = '★ Kedvenceim';
+    }
+    runFilter();
+  };
+
+  // KÁRTYA NYITÁSA/CSUKÁSA
+  function toggleCard(id) {
+    document.getElementById(id).classList.toggle('open');
+  }
+
+  // NAPOK VÁLTÁSA
+  function showDay(index, btn) {
+    document.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('day-' + index).classList.add('active');
+    if(btn) btn.classList.add('active');
+    activeTabBeforeSearch = index;
+    // Töröljük a keresőt, ha manuálisan napot vált
+    document.getElementById('searchInput').value = "";
+    isFavoritesMode = false;
+    document.getElementById('favFilterBtn').classList.remove('active');
+    document.getElementById('favFilterBtn').innerHTML = '★ Kedvenceim';
+    runFilter();
+  }
+
+  // KERESŐ ÉS SZŰRŐ MOTOR
+  window.doSearch = function() { runFilter(); };
+
+  function runFilter() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const dayPanels = document.querySelectorAll('.day-panel');
+    const tabsWrap = document.getElementById('tabsWrap');
+
+    // Ha nincs se keresés, se kedvencek mód bekapcsolva: Visszaáll az alapállapot
+    if (query.trim() === "" && !isFavoritesMode) {
+      tabsWrap.style.display = 'block';
+      dayPanels.forEach(panel => {
+        panel.style.display = '';
+        const dayTitle = panel.querySelector('.search-day-title');
+        if(dayTitle) dayTitle.style.display = 'none';
+        
+        panel.querySelectorAll('.event-card').forEach(card => card.style.display = 'block');
+        panel.querySelectorAll('.slot-time').forEach(time => time.style.display = 'block');
+      });
+      // Vissza az eredeti fülre
+      document.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('day-' + activeTabBeforeSearch).classList.add('active');
+      return;
+    }
+
+    // Ha van szűrés (keresés vagy kedvencek): Fülek eltüntetése, találatok listázása napok szerint
+    tabsWrap.style.display = 'none';
+    
+    dayPanels.forEach((panel, index) => {
+      panel.classList.add('active');
+      let hasMatchInDay = false;
+
+      let dayTitle = panel.querySelector('.search-day-title');
+      if(!dayTitle) {
+        dayTitle = document.createElement('h3');
+        dayTitle.className = 'search-day-title';
+        const btnText = document.querySelectorAll('.tab-btn')[index].getAttribute('data-day-name');
+        dayTitle.innerText = btnText;
+        panel.prepend(dayTitle);
+      }
+      
+      const cards = panel.querySelectorAll('.event-card');
+      panel.querySelectorAll('.slot-time').forEach(time => time.style.display = 'none');
+
+      cards.forEach(card => {
+        const text = card.innerText.toLowerCase();
+        const isMatchSearch = query === "" || text.includes(query);
+        const isMatchFav = !isFavoritesMode || localStorage.getItem('fav_' + card.id) === 'true';
+
+        if(isMatchSearch && isMatchFav) {
+          card.style.display = 'block';
+          // Időpont megjelenítése
+          let prev = card.previousElementSibling;
+          while(prev && !prev.classList.contains('slot-time')) prev = prev.previousElementSibling;
+          if(prev && prev.classList.contains('slot-time')) prev.style.display = 'block';
+          
+          hasMatchInDay = true;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      if(hasMatchInDay) {
+        panel.style.display = 'block';
+        dayTitle.style.display = 'block';
+      } else {
+        panel.style.display = 'none';
+        dayTitle.style.display = 'none';
+      }
+    });
+  }
+</script>
+</body>
+</html>
