@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#1a5c58">
-<link rel="manifest" href="manifest.json">
 <title>Magyarországi Bábszínházak XVII. Találkozója</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -18,96 +17,80 @@
     --border: rgba(26,92,88,0.15); --red: #c0392b; --orange: #e67e22; 
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #121212; --surface: #1e1e1e; --card: #242424; 
-      --text: #e0e0e0; --muted: #a0a0a0; 
-      --border: rgba(255,255,255,0.1); 
-      --teal: #4db6ac; --teal-dark: #004d40; 
-      --gold: #ffca28; --gold-light: #ffe082;
-    }
-    .event-card { background: var(--card); }
-    .search-input-box input { background: var(--surface); color: var(--text); }
-    .map-container, .info-box-bottom { background: var(--surface); }
-    .alert-card { background: rgba(192,57,43,0.15); border-color: rgba(192,57,43,0.4); }
-    .modal-box { background: var(--card); }
-    .tab-btn { color: var(--muted); }
-    .tab-btn.active { color: var(--gold-light); border-bottom-color: var(--gold-light); }
-    .tab-btn.active .day-date { color: var(--gold-light); }
-    .expand-icon { color: var(--teal); border-color: var(--teal); }
-    .event-card.open .expand-icon { background: var(--teal); color: #000; }
-    .fb-event-btn, .route-btn, .gb-btn { background: rgba(77, 182, 172, 0.1); color: var(--teal); border-color: rgba(77, 182, 172, 0.3); }
-    .fb-event-btn:hover, .route-btn:hover, .gb-btn:hover { background: var(--teal); color: #000; }
-    .badge-venue { color: #80cbc4; border-color: rgba(128, 203, 196, 0.3); }
-    .search-wrap { background: #000; }
-    .gb-message { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
-    .gb-form { background: var(--surface); }
-    .gb-form input, .gb-form textarea { background: var(--card); color: var(--text); border-color: var(--border); }
-  }
-
-  body { background: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; font-weight: 500; min-height: 100vh; overflow-x: hidden; transition: background .3s, color .3s; }
+  body { background: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; font-weight: 500; min-height: 100vh; overflow-x: hidden; transition: transform 0.5s ease; }
   a { color: var(--teal); text-decoration: none; font-weight: 600; }
   a:hover { text-decoration: underline; }
 
-  .site-header { background: var(--teal); padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; }
-  .site-header .logo { font-weight: 700; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-light); }
-  .site-header .logo span { color: #fff; display: block; font-size: 10px; letter-spacing: 5px; font-weight: 500; }
+  /* HEADER */
+  .site-header { background: var(--teal-dark); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--teal); position: relative; z-index: 50; }
+  .header-logo { width: 40px; }
+  .header-logo img { height: 32px; display: block; object-fit: contain; }
   
-  .secret-admin-link { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; transition: .2s; cursor: pointer; }
+  .header-title-box { position: absolute; left: 50%; transform: translateX(-50%); text-align: center; cursor: pointer; user-select: none; }
+  .header-title { color: var(--gold-light); font-family: 'Playfair Display', serif; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; line-height: 1.2; width: 100%; white-space: nowrap;}
+  
+  .header-right { min-width: 40px; text-align: right; }
+  .secret-admin-link { color: rgba(255,255,255,0.15); text-decoration: none; font-size: 11px; letter-spacing: 2px; font-weight: 700; transition: .2s; cursor: pointer; }
   .secret-admin-link:hover { color: #fff; text-decoration: none; }
+  @media (max-width: 480px) { .header-title { font-size: 10px; } .header-logo img { height: 26px; } }
 
   .hero { background: var(--teal); text-align: center; padding: 40px 20px 50px; position: relative; overflow: hidden; }
-  .hero-eyebrow { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold-light); font-weight: 600; margin-bottom: 14px; }
-  h1 { font-family: 'Playfair Display', serif; font-size: clamp(30px,7vw,54px); line-height: 1.1; color: #fff; }
+  h1 { font-family: 'Playfair Display', serif; font-size: clamp(26px,6vw,48px); line-height: 1.2; color: #fff; margin-bottom: 10px; }
   h1 em { color: var(--gold-light); font-style: italic; }
-  .hero-date { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.7); margin-top: 14px; font-weight: 500; }
   
   .hero-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 24px; }
   .hero-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: transparent; border: 2px solid rgba(255,255,255,0.35); border-radius: 4px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; color: #fff; text-decoration: none; transition: .2s; cursor: pointer; }
   .hero-btn:hover { border-color: var(--gold-light); color: var(--gold-light); text-decoration: none; }
 
-  #topAlertBar { background: var(--red); color: #fff; text-align: center; padding: 12px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; cursor: pointer; display: none; transition: background .2s; }
-  #topAlertBar:hover { background: #a93226; }
+  #topAlertBar { background: var(--red); color: #fff; text-align: center; padding: 12px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; cursor: pointer; display: none; transition: background .2s; position: sticky; top:0; z-index: 1000;}
 
-  .search-wrap { background: var(--teal-dark); padding: 12px 20px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-  .search-input-box { position: relative; width: 100%; max-width: 400px; flex: 1; min-width: 200px; }
-  .search-input-box input { width: 100%; padding: 12px 16px 12px 40px; border-radius: 20px; border: none; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 500; outline: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
+  /* SEARCH & BUTTONS */
+  .search-wrap { background: var(--teal-dark); padding: 12px 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .search-input-box { position: relative; width: 100%; max-width: 400px; }
+  .search-input-box input { width: 100%; padding: 12px 16px 12px 40px; border-radius: 20px; border: none; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; outline: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
   .search-input-box svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); }
-  .fav-filter-btn { padding: 10px 16px; border-radius: 20px; border: 2px solid var(--gold-light); background: transparent; color: var(--gold-light); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: .2s; }
-  .fav-filter-btn.active { background: var(--gold-light); color: #000; }
+  
+  .pan-img { position: fixed; right: -200px; top: 15%; width: 150px; z-index: 3001; transition: 0.3s; transform-origin: bottom right; pointer-events: none;}
+  .pan-img.hit { right: 50%; top: 180px; transform: translateX(50%); animation: whack 0.6s forwards; }
+  @keyframes whack { 0% { transform: translateX(50%) rotate(45deg); } 50% { transform: translateX(50%) rotate(-30deg); } 100% { transform: translateX(50%) rotate(0deg); } }
 
+  .quick-filters { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .q-btn { padding: 8px 16px; border-radius: 20px; border: 2px solid var(--gold-light); background: transparent; color: var(--gold-light); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: .2s; }
+  .q-btn:hover, .q-btn.active { background: var(--gold-light); color: #000; }
+
+  /* LEGEND (SZŰRŐ) */
   .legend-bar { background: var(--teal-dark); display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; padding: 12px 20px; border-top: 1px solid rgba(255,255,255,0.1); }
-  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.8); font-weight: 600; cursor: pointer; transition: .2s; user-select: none; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.8); font-weight: 700; cursor: pointer; transition: .2s; user-select: none; }
   .legend-item:hover { color: #fff; }
   .legend-item.inactive { opacity: 0.3; }
   .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 
+  /* TABS */
   .tabs-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; background: var(--surface); border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
   .tabs-wrap::-webkit-scrollbar { display: none; }
-  .tabs { display: flex; min-width: max-content; padding: 0 12px; }
-  @media (min-width: 650px) { .tabs { justify-content: center; width: 100%; } }
-
+  .tabs { display: flex; min-width: max-content; padding: 0 12px; justify-content: center; }
+  @media (max-width: 600px) { .tabs { justify-content: flex-start; } }
   .tab-btn { background: none; border: none; border-bottom: 3px solid transparent; color: var(--muted); padding: 16px 18px 13px; font-family: 'Montserrat', sans-serif; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; cursor: pointer; transition: .2s; white-space: nowrap; line-height: 1.4; text-align: center; }
   .tab-btn .day-date { display: block; font-weight: 500; font-size: 10px; letter-spacing: 1px; margin-top: 2px; }
   .tab-btn.active { color: var(--teal); border-bottom-color: var(--gold); }
   .tab-btn.active .day-date { color: var(--teal); }
 
-  .content { padding: 32px 16px 40px; max-width: 680px; margin: 0 auto; }
+  /* TARTALOM ÉS KÁRTYÁK */
+  .content { padding: 32px 16px 40px; max-width: 680px; margin: 0 auto; position: relative; }
   .day-panel { display: none; }
   .day-panel.active { display: block; animation: fadein .25s ease; }
   @keyframes fadein { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
 
   .search-day-title { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--teal); border-bottom: 2px solid var(--gold-light); padding-bottom: 5px; margin: 30px 0 15px; display: none; }
 
-  .slot-time { font-size: 11px; letter-spacing: 3px; color: var(--teal); font-weight: 700; text-transform: uppercase; padding: 22px 0 8px; }
+  .slot-time { font-size: 11px; letter-spacing: 3px; color: var(--teal); font-weight: 700; text-transform: uppercase; padding: 22px 0 8px; scroll-margin-top: 80px;}
 
-  .event-card { background: var(--card); border: 1px solid var(--border); border-left: 5px solid var(--border); border-radius: 4px; margin-bottom: 10px; overflow: hidden; transition: box-shadow .2s; }
+  .event-card { background: var(--card); border: 1px solid var(--border); border-left: 5px solid var(--border); border-radius: 4px; margin-bottom: 10px; overflow: hidden; transition: box-shadow .2s, transform 0.2s; position: relative; }
   .event-card.type-show  { border-left-color: var(--teal); }
   .event-card.type-forum { border-left-color: var(--gold); }
   .event-card.type-social { border-left-color: #b0a898; background: var(--surface); }
 
-  .card-header { padding: 14px 16px 12px 18px; cursor: default; }
-  .card-header.clickable { cursor: pointer; }
+  .card-header { padding: 14px 16px 12px 18px; cursor: pointer; user-select: none; }
   
   .event-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--teal-dark); line-height: 1.3; margin-bottom: 4px; }
   .event-card.type-social .event-title { font-family: 'Montserrat', sans-serif; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; color: var(--muted); }
@@ -118,13 +101,9 @@
   @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
   .card-header-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
-  .header-actions { display: flex; align-items: center; gap: 8px; }
+  .header-actions { display: flex; align-items: center; gap: 10px; }
   
-  .star-btn { font-size: 24px; cursor: pointer; color: var(--border); transition: .2s; user-select: none; line-height: 1; }
-  .star-btn.active { color: var(--gold-light); }
-  .star-btn:hover { transform: scale(1.15); }
-
-  .expand-icon { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; transition: transform .25s; color: var(--teal); }
+  .expand-icon { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; transition: transform .25s; color: var(--teal); pointer-events: none;}
   .event-card.open .expand-icon { background: var(--teal); color: #fff; transform: rotate(180deg); border-color: var(--teal); }
 
   .mini-pulse-alert { display: none; width: 22px; height: 22px; background: var(--red); color: white; border-radius: 50%; font-weight: bold; font-size: 14px; text-align: center; line-height: 22px; animation: pulse 1.5s infinite; cursor: pointer; }
@@ -138,12 +117,8 @@
   .badge-venue:hover { background: var(--teal); color: #fff; cursor: pointer; }
   .badge-public { background: rgba(230,126,34,0.15); color: #c0392b; border: 1px solid rgba(230,126,34,0.4); }
 
-  .fb-event-btn, .route-btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; background: rgba(26,92,88,0.07); border: 1px solid rgba(26,92,88,0.3); border-radius: 3px; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; color: var(--teal-dark); transition: .2s; white-space: nowrap; flex-shrink: 0; }
-  .fb-event-btn:hover, .route-btn:hover { background: var(--teal); color: #fff; text-decoration: none; }
-
   .card-details { max-height: 0; overflow: hidden; transition: max-height .4s ease; background: rgba(26,92,88,0.03); }
   .event-card.open .card-details { max-height: 4000px; border-top: 1px solid var(--border); }
-  
   .card-details-inner { padding: 18px 20px; }
   .details-section { margin-bottom: 16px; }
   .details-section:last-child { margin-bottom: 0; }
@@ -151,24 +126,34 @@
   .details-text { font-size: 14px; color: var(--text); line-height: 1.6; font-weight: 500; }
   .details-text em { color: var(--muted); font-style: italic; font-size: 13px; }
 
+  .podcast-promo { display: block; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-top: 8px; font-weight: 600; }
+  .podcast-promo a { color: var(--teal); text-decoration: none; border-bottom: 1px solid var(--teal); }
+
   .section-divider { height: 2px; background: var(--border); margin: 32px 0 10px; }
 
-  /* INFO BOX & MAP */
+  /* KÖZÉRDEKŰ INFÓK (RÉGI NÉZET) ÉS PDF */
   .info-box-bottom { background: var(--surface); border-top: 2px solid var(--border); padding: 40px 20px; max-width: 680px; margin: 0 auto; border-radius: 6px 6px 0 0; }
   .info-box-bottom h3 { font-family: 'Playfair Display', serif; color: var(--teal-dark); font-size: 22px; margin-bottom: 20px; }
-  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px; }
-  .info-item { font-size: 14px; line-height: 1.5; color: var(--text); font-weight: 600;}
-  .info-item strong { display: block; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--teal); margin-bottom: 2px; font-weight: 700;}
+  
+  .pdf-btn { display: block; width: 100%; text-align: center; background: var(--teal); color: #fff; padding: 14px; border-radius: 4px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; font-size: 12px; margin-bottom: 30px; transition: .2s; }
+  .pdf-btn:hover { background: var(--teal-dark); color: #fff; text-decoration: none; }
+
+  .info-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 40px; }
+  .info-item { font-size: 13px; color: #000; font-weight: 600; display: flex; flex-direction: column;}
+  .info-item strong { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--teal); margin-bottom: 2px; font-weight: 700;}
+  .info-item a { color: #000; text-decoration: none; }
 
   .map-container { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 20px; }
   .map-title { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-light); font-weight: 700; margin-bottom: 15px; }
-  
   .venue-item { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;}
   .venue-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-  .venue-item-title { font-size: 13px; font-weight: 700; color: var(--teal-dark); margin-bottom: 2px; }
+  .venue-item-title { font-size: 13px; font-weight: 700; color: var(--teal-dark); margin-bottom: 2px; transition: .2s; }
+  .venue-item-title:hover { color: var(--gold); }
   .venue-item-address { font-size: 11px; color: var(--muted); font-weight: 600; }
+  .route-btn { display: inline-flex; align-items: center; padding: 6px 12px; background: rgba(26,92,88,0.07); border: 1px solid rgba(26,92,88,0.3); border-radius: 3px; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; color: var(--teal-dark); transition: .2s; white-space: nowrap; flex-shrink: 0; text-decoration: none;}
+  .route-btn:hover { background: var(--teal); color: #fff; }
 
-  /* GUESTBOOK (Emlékkönyv) UI */
+  /* GUESTBOOK SZÖVEGES EMLÉKKÖNYV */
   .gb-message { background: rgba(26,92,88,0.05); border: 1px solid rgba(26,92,88,0.15); padding: 14px; border-radius: 6px; margin-bottom: 12px; text-align: left; }
   .gb-header { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px dashed rgba(26,92,88,0.2); padding-bottom: 6px; }
   .gb-name { font-weight: 700; font-size: 12px; color: var(--teal-dark); }
@@ -176,120 +161,158 @@
   .gb-text { font-size: 13px; color: var(--text); line-height: 1.5; font-weight: 500; }
   .gb-form { background: var(--surface); padding: 16px; border-top: 2px solid var(--border); }
   .gb-form input, .gb-form textarea { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 4px; font-family: inherit; font-size: 13px; outline: none; }
-  .gb-form textarea { resize: vertical; min-height: 70px; }
   .gb-submit { background: var(--teal); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: .2s;}
-  .gb-submit:hover { background: var(--teal-dark); }
-
-  /* OVERLAYS / MODALS */
-  .overlay { display: none; position: fixed; inset: 0; background: rgba(17,61,58,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
+  
+  /* MODALS */
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(17,61,58,0.8); z-index: 2000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
   .overlay.visible { display: flex; animation: fadein .2s ease; }
   .modal-box { background: var(--card); border-radius: 6px; max-width: 480px; width: 100%; border-top: 6px solid var(--red); box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; display: flex; flex-direction: column; max-height: 85vh; }
   .modal-header { background: var(--red); color: #fff; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
   .modal-title { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; font-weight: 700; }
   .modal-body { padding: 20px; overflow-y: auto; }
-  .modal-close { display: block; width: 100%; padding: 14px; background: var(--teal); color: #fff; border: none; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; font-weight: 700; cursor: pointer; transition: .2s; border-radius: 0; }
-  
+  .modal-close { display: block; width: 100%; padding: 14px; background: var(--teal); color: #fff; border: none; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; font-weight: 700; cursor: pointer; border-radius: 0; }
   .alert-card { padding: 16px; border: 2px solid rgba(192,57,43,0.3); background: rgba(192,57,43,0.05); border-radius: 4px; margin-bottom: 12px; }
   .alert-card:last-child { margin-bottom: 0; }
-  .alert-time { font-size: 11px; color: var(--muted); margin-bottom: 6px; font-weight: 700; }
-  .alert-msg { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--text); line-height: 1.4; font-weight: 600; }
-
-  /* EASTER EGG */
-  footer { position: relative; background: var(--teal-dark); text-align: center; padding: 30px 20px 80px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4); font-weight: 600; z-index: 1;}
   
+  .quote-box { background: rgba(196,145,58,0.1); border: 2px solid var(--gold-light); padding: 30px; border-radius: 8px; text-align: center; }
+  .quote-text { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--teal-dark); font-style: italic; line-height: 1.4; margin-bottom: 15px; }
+  .quote-author { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); font-weight: 700; }
+
+  /* EASTER EGGS CSS */
+  .vitez-laszlo { position: fixed; bottom: -300px; right: 20px; width: 150px; z-index: 3000; transition: bottom 0.5s ease-out; }
+  .vitez-laszlo.show { bottom: 0; }
+  .vitez-bubble { position: absolute; top: -50px; right: 80px; background: #fff; border: 2px solid #000; padding: 10px; border-radius: 10px; font-weight: bold; font-size: 14px; width: 160px; text-align: center; opacity: 0; transition: 0.3s; }
+  .vitez-laszlo.show .vitez-bubble { opacity: 1; transition-delay: 0.5s; }
+
+  .marionette-mode .event-card { animation: sway 3s infinite ease-in-out; transform-origin: top center; overflow: visible !important; }
+  .marionette-mode .event-card::before, .marionette-mode .event-card::after { content:''; position:absolute; top:-100vh; width:1px; background:rgba(0,0,0,0.3); height:100vh; z-index: 100;}
+  .marionette-mode .event-card::before { left: 20%; }
+  .marionette-mode .event-card::after { right: 20%; }
+  @keyframes sway { 0%, 100% { transform: rotate(-1.5deg); } 50% { transform: rotate(1.5deg); } }
+
+  .confetti { position: fixed; width: 10px; height: 10px; background: #f00; z-index: 9999; animation: fall linear forwards; }
+  @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
+  .toast-msg { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: #fff; padding: 12px 24px; border-radius: 30px; font-weight: bold; font-size: 14px; z-index: 4000; opacity: 0; transition: 0.3s; pointer-events: none; }
+  .toast-msg.show { opacity: 1; }
+
+  /* EASTER EGG LÁBLÉC REJTÉS (Javított) */
+  footer { position: relative; background: var(--teal-dark); text-align: center; padding: 30px 20px 80px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4); font-weight: 600; z-index: 1;}
+  footer a { color: var(--gold-light); text-decoration: none; }
   .easter-trigger { cursor: pointer; color: var(--gold-light); transition: .2s; position: relative; z-index: 50; display: inline-block; padding: 10px; }
   .year-text { position: relative; z-index: 52; background: var(--teal-dark); padding: 0 5px; border-radius: 2px; }
   .easter-trigger:hover .year-text { color: #fff; }
-
   .easter-content { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(20px); opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 51; pointer-events: none; text-align: center; }
   .easter-photo { width: 160px; border-radius: 4px; border: 5px solid #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.5); display: block; margin: 0 auto; }
   .easter-text { background: #fff; color: var(--teal-dark); font-size: 10px; font-weight: 700; letter-spacing: 1px; padding: 6px 12px; border-radius: 20px; margin-bottom: -15px; position: relative; z-index: 53; box-shadow: 0 4px 10px rgba(0,0,0,0.3); white-space: nowrap; }
-  
   .easter-trigger:hover .easter-content, .easter-trigger:active .easter-content { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 </style>
 </head>
 <body>
 
-<div id="topAlertBar" onclick="openAlertsModal()">🔔 Értesítések (0)</div>
+<!-- Vitéz László Easter Egg Element -->
+<div id="vitezLaszlo" class="vitez-laszlo">
+  <div class="vitez-bubble">Szervusztok, Pajtikák!</div>
+  <img src="https://www.hungarikum.hu/sites/default/files/vit%C3%A9zl3.jpg" alt="Vitéz László" style="width:100%; border-radius: 10px;">
+</div>
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Frying_pan.png/220px-Frying_pan.png" class="pan-img" id="vitezPan" alt="Serpenyő">
+
+<div id="toastMsg" class="toast-msg"></div>
+
+<div id="topAlertBar" onclick="window.openAlertsModal()">🔔 Értesítések (0)</div>
 
 <div class="overlay" id="alertsModal">
   <div class="modal-box">
     <div class="modal-header"><span class="modal-title" id="modalTitle">Fontos Értesítés</span></div>
     <div class="modal-body" id="modalBody"></div>
-    <button class="modal-close" onclick="closeAlertsModal()">Bezárom</button>
+    <button class="modal-close" onclick="window.closeAlertsModal()">Bezárom</button>
   </div>
 </div>
 
-<!-- VIRTUALIS EMLÉKKÖNYV MODAL -->
 <div class="overlay" id="guestbookModal">
   <div class="modal-box" style="border-top-color: var(--teal);">
     <div class="modal-header" style="background: var(--teal);">
       <span class="modal-title">📖 Virtuális Emlékkönyv</span>
     </div>
     <div class="modal-body" style="padding: 0; display: flex; flex-direction: column; max-height: 70vh;">
-      <div id="guestbookList" style="padding: 20px; overflow-y: auto; flex: 1;">
-         <!-- Itt fognak megjelenni az üzenetek -->
-      </div>
+      <div id="guestbookList" style="padding: 20px; overflow-y: auto; flex: 1;"></div>
       <div class="gb-form">
          <div style="font-size: 11px; font-weight: 700; color: var(--teal-dark); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">Üzenet a szervezőknek</div>
          <input type="text" id="gbName" placeholder="Neved vagy beceneved" maxlength="30">
          <textarea id="gbText" placeholder="Írd ide a gondolataidat a fesztiválról..." maxlength="300"></textarea>
-         <button class="gb-submit" onclick="submitGuestbook()">Beküldöm</button>
+         <button class="gb-submit" onclick="window.submitGuestbook()">Beküldöm</button>
       </div>
     </div>
     <button class="modal-close" style="background: var(--teal-dark);" onclick="document.getElementById('guestbookModal').classList.remove('visible')">Bezárom</button>
   </div>
 </div>
 
+<div class="overlay" id="quoteModal">
+  <div class="modal-box" style="border-top-color: var(--gold);">
+    <div class="modal-header" style="background: var(--gold);">
+      <span class="modal-title">🎭 Színházi Bölcsesség</span>
+    </div>
+    <div class="modal-body">
+      <div class="quote-box">
+        <div class="quote-text" id="quoteText">...</div>
+        <div class="quote-author">– Ismeretlen bábos –</div>
+      </div>
+    </div>
+    <button class="modal-close" style="background: var(--teal-dark);" onclick="document.getElementById('quoteModal').classList.remove('visible')">Köszönöm, Mester!</button>
+  </div>
+</div>
+
 <header class="site-header">
-  <div class="logo">Ciróka Bábszínház<span>Kecskemét</span></div>
-  <div><a href="vezerlo-2026.html" class="secret-admin-link">2026</a></div>
+  <div class="header-logo">
+    <a href="https://ciroka.hu" target="_blank">
+      <img src="https://ciroka.hu/wp-content/uploads/2024/05/Ciroka-logo-website-header-01.svg" alt="Ciróka Bábszínház" onerror="this.src='https://via.placeholder.com/100x30/113d3a/d4a84a?text=CIRÓKA'">
+    </a>
+  </div>
+  <div class="header-title-box" id="marionetteBtn">
+    <div class="header-title">Magyarországi Bábszínházak<br>XVII. Találkozója</div>
+  </div>
+  <div class="header-right">
+    <a href="vezerlo-2026.html" class="secret-admin-link">2026</a>
+  </div>
 </header>
 
 <div class="hero">
-  <div class="hero-eyebrow">Magyarországi Bábszínházak</div>
-  <h1>XVII. <em>Találkozó</em></h1>
+  <h1>Magyarországi Bábszínházak<br><em>XVII. Találkozója</em></h1>
   <div class="hero-date">2026. június 13–18. &nbsp;·&nbsp; Kecskemét</div>
   
   <div class="hero-buttons">
-    <a class="hero-btn" href="https://www.facebook.com/magyarorszagibabszinhazaktalalkozoja/" target="_blank">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
-      A Találkozó FB-oldala
-    </a>
-    <a class="hero-btn" href="https://ciroka.hu" target="_blank">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-      ciroka.hu
-    </a>
-    <a class="hero-btn" href="javascript:void(0)" onclick="openGuestbook()" style="border-color: var(--teal-light); background: rgba(255,255,255,0.1);">
-      📖 Emlékkönyv
-    </a>
+    <a class="hero-btn" href="https://www.facebook.com/magyarorszagibabszinhazaktalalkozoja/" target="_blank">A Találkozó FB-oldala</a>
+    <a class="hero-btn" href="https://ciroka.hu" target="_blank">ciroka.hu</a>
   </div>
 </div>
 
 <div class="search-wrap">
   <div class="search-input-box">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-    <input type="text" id="searchInput" placeholder="Keresés..." onkeyup="doSearch()">
+    <input type="text" id="searchInput" placeholder="Keresés..." onkeyup="window.doSearch()">
   </div>
-  <button class="fav-filter-btn" id="favFilterBtn" onclick="toggleFavoritesView()">★ Kedvenceim</button>
+  <div class="quick-filters">
+    <button class="q-btn fav" id="favFilterBtn" onclick="window.toggleFavoritesView()">★ Kedvenceim</button>
+    <button class="q-btn" onclick="window.openGuestbook()">📖 Emlékkönyv</button>
+    <button class="q-btn" onclick="window.generateQuote()" style="border-color:var(--gold-light); color:var(--gold-light);">🎭 Napi motiváció</button>
+  </div>
 </div>
 
 <div class="legend-bar">
-  <div class="legend-item" id="leg-type-show" onclick="toggleTypeFilter('type-show')"><div class="legend-dot" style="background:#1a5c58"></div>Előadás</div>
-  <div class="legend-item" id="leg-type-forum" onclick="toggleTypeFilter('type-forum')"><div class="legend-dot" style="background:#c4913a"></div>Szakmai fórum</div>
-  <div class="legend-item" id="leg-type-social" onclick="toggleTypeFilter('type-social')"><div class="legend-dot" style="background:#b0a898"></div>Közösségi program</div>
-  <div class="legend-item" id="leg-public" onclick="toggleTypeFilter('public')"><div class="legend-dot" style="background:transparent; border:3px solid var(--orange);"></div>Nyilvános előadás</div>
+  <div class="legend-item" id="leg-type-show" onclick="window.toggleTypeFilter('type-show')"><div class="legend-dot" style="background:#1a5c58"></div>Előadás</div>
+  <div class="legend-item" id="leg-type-forum" onclick="window.toggleTypeFilter('type-forum')"><div class="legend-dot" style="background:#c4913a"></div>Szakmai fórum</div>
+  <div class="legend-item" id="leg-type-social" onclick="window.toggleTypeFilter('type-social')"><div class="legend-dot" style="background:#b0a898"></div>Közösségi program</div>
+  <div class="legend-item" id="leg-public" onclick="window.toggleTypeFilter('public')"><div class="legend-dot" style="background:transparent; border:3px solid var(--orange);"></div>Nyilvános előadás</div>
 </div>
 
 <div class="tabs-wrap" id="tabsWrap">
   <div class="tabs">
-    <button class="tab-btn active" onclick="showDay(0,this)" data-day-name="Szombat (jún. 13.)">Szombat<span class="day-date">jún. 13.</span></button>
-    <button class="tab-btn" onclick="showDay(1,this)" data-day-name="Vasárnap (jún. 14.)">Vasárnap<span class="day-date">jún. 14.</span></button>
-    <button class="tab-btn" onclick="showDay(2,this)" data-day-name="Hétfő (jún. 15.)">Hétfő<span class="day-date">jún. 15.</span></button>
-    <button class="tab-btn" onclick="showDay(3,this)" data-day-name="Kedd (jún. 16.)">Kedd<span class="day-date">jún. 16.</span></button>
-    <button class="tab-btn" onclick="showDay(4,this)" data-day-name="Szerda (jún. 17.)">Szerda<span class="day-date">jún. 17.</span></button>
-    <button class="tab-btn" onclick="showDay(5,this)" data-day-name="Csütörtök (jún. 18.)">Csütörtök<span class="day-date">jún. 18.</span></button>
+    <button class="tab-btn active" onclick="window.showDay(0,this)" data-day-name="Szombat (jún. 13.)">Szombat<span class="day-date">jún. 13.</span></button>
+    <button class="tab-btn" onclick="window.showDay(1,this)" data-day-name="Vasárnap (jún. 14.)">Vasárnap<span class="day-date">jún. 14.</span></button>
+    <button class="tab-btn" onclick="window.showDay(2,this)" data-day-name="Hétfő (jún. 15.)">Hétfő<span class="day-date">jún. 15.</span></button>
+    <button class="tab-btn" onclick="window.showDay(3,this)" data-day-name="Kedd (jún. 16.)">Kedd<span class="day-date">jún. 16.</span></button>
+    <button class="tab-btn" onclick="window.showDay(4,this)" data-day-name="Szerda (jún. 17.)">Szerda<span class="day-date">jún. 17.</span></button>
+    <button class="tab-btn" onclick="window.showDay(5,this)" data-day-name="Csütörtök (jún. 18.)">Csütörtök<span class="day-date">jún. 18.</span></button>
   </div>
 </div>
 
@@ -298,7 +321,22 @@
   <symbol id="chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></symbol>
 </svg>
 
-<div class="content">
+<div class="content" id="mainContent">
+
+<!-- TITKOS BÜFÉ KÁRTYA (Easter Egg) -->
+<div id="secretBufeCard" style="display:none; margin-bottom:10px;">
+  <div class="event-card type-social" style="border-left-color: var(--gold-light);">
+    <div class="card-header" style="pointer-events:none;">
+      <div class="event-title">🍻 A Találkozó</div>
+      <div class="event-company">Mindenki</div>
+    </div>
+    <div class="card-details-inner" style="padding-top:0;">
+      <div class="details-text" style="font-size:14px; font-weight:600;">
+        Zajlik a fesztivál, de egy jó italt azért megérdemelsz. Irány a legközelebbi hörpintő állomás egy jó beszélgetés mellé! Ne késs le a következő szakmai programról!
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ════════════════════════════════════
      SZOMBAT – jún. 13.
@@ -307,19 +345,22 @@
 
   <div class="slot-time">10:30</div>
   <div class="event-card type-social">
-    <div class="card-header"><div class="event-title">🎉 Megnyitó</div></div>
-    <div class="event-footer"><div class="event-meta"><span class="badge badge-venue">Ciróka Bábszínház</span></div></div>
+    <div class="card-header" onclick="window.toggleCard(this)"><div class="event-title">🎉 Megnyitó</div></div>
+    <div class="event-footer"><div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka Bábszínház</span></div></div>
   </div>
 
   <div class="slot-time">11:00</div>
   <div class="event-card type-show" id="show-eye-catching">
-    <div class="card-header clickable" onclick="toggleCard('show-eye-catching')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">Eye catching<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">KL Színház</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -338,28 +379,31 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka nagyterem</span></div>
       <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
   <div class="slot-time">11:30</div>
-  <div class="event-card type-social"><div class="card-header"><div class="event-title">🥂 Állófogadás</div></div></div>
+  <div class="event-card type-social"><div class="card-header" onclick="window.toggleCard(this)"><div class="event-title">🥂 Állófogadás</div></div></div>
 
   <div class="slot-time">13:00</div>
   <div class="event-card type-social">
-    <div class="card-header"><div class="event-title">📖 Lázár Ervin – Csukás István emlékév</div><div class="event-company">Kiállításmegnyitó</div></div>
+    <div class="card-header" onclick="window.toggleCard(this)"><div class="event-title">📖 Lázár Ervin – Csukás István emlékév</div><div class="event-company">Kiállításmegnyitó</div></div>
   </div>
 
   <div class="slot-time">14:30</div>
   <div class="event-card type-show" id="show-lathatatlan">
-    <div class="card-header clickable" onclick="toggleCard('show-lathatatlan')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">A láthatatlan jóbarát<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">Békéscsabai Napsugár Bábszínház</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -379,25 +423,28 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Kelemen L. Kamaraszínház</span></div>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Kelemen L. Kamaraszínház</span></div>
       <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
   <div class="slot-time">16:30</div>
   <div class="event-card type-social">
-    <div class="card-header"><div class="event-title">🖼️ MKE – MATE látványtervező hallgatók</div><div class="event-company">Kiállításmegnyitó</div></div>
+    <div class="card-header" onclick="window.toggleCard(this)"><div class="event-title">🖼️ MKE – MATE látványtervező hallgatók</div><div class="event-company">Kiállításmegnyitó</div></div>
   </div>
 
   <div class="slot-time">18:00</div>
   <div class="event-card type-show" id="show-atanaz">
-    <div class="card-header clickable" onclick="toggleCard('show-atanaz')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">Atanáz, a lámpaláz<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">Ciróka Bábszínház</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -419,27 +466,35 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka nagyterem</span></div>
       <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
   <div class="section-divider"></div>
   <div class="slot-time">19:00</div>
-  <div class="event-card type-social"><div class="card-header"><div class="event-title">🍽️ Vacsora</div></div></div>
+  <div class="event-card type-social">
+    <div class="card-header" onclick="window.toggleCard(this)">
+      <div class="event-title">🍽️ Vacsora</div>
+      <div class="podcast-promo">Szünetben hallgasd: <a href="#" target="_blank">🎧 BábszínPod</a></div>
+    </div>
+  </div>
   
   <div class="slot-time">20:30</div>
-  <div class="event-card type-forum"><div class="card-header"><div class="event-title">💬 Szakmai megbeszélés</div></div></div>
+  <div class="event-card type-forum"><div class="card-header" onclick="window.toggleCard(this)"><div class="event-title">💬 Szakmai megbeszélés</div></div></div>
 
   <div class="slot-time">23:00</div>
   <div class="event-card type-show" id="show-honvagy">
-    <div class="card-header clickable" onclick="toggleCard('show-honvagy')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">Örökölt honvágy<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">SZFE - Russa Karina</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -453,7 +508,7 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Ciróka kisterem</span></div>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka kisterem</span></div>
       <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
@@ -471,13 +526,16 @@
 
   <div class="slot-time">11:00</div>
   <div class="event-card type-show" id="show-cseresznyefa">
-    <div class="card-header clickable" onclick="toggleCard('show-cseresznyefa')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">Én és a cseresznyefa<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">Harlekin Bábszínház</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -499,23 +557,30 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Kelemen L. Kamaraszínház</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Kelemen L. Kamaraszínház</span></div>
     </div>
   </div>
 
   <div class="slot-time">12:00</div>
-  <div class="event-card type-social"><div class="card-header"><div class="event-title">🍴 Ebédszünet</div></div></div>
+  <div class="event-card type-social">
+    <div class="card-header" onclick="window.toggleCard(this)">
+      <div class="event-title">🍴 Ebédszünet</div>
+      <div class="podcast-promo">Szünetben hallgasd: <a href="#" target="_blank">🎧 BábszínPod</a></div>
+    </div>
+  </div>
 
   <div class="slot-time">14:00</div>
   <div class="event-card type-show" id="show-piroska">
-    <div class="card-header clickable" onclick="toggleCard('show-piroska')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">Piroska és a farkas<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">Griff Bábszínház</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -538,20 +603,22 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka nagyterem</span></div>
     </div>
   </div>
 
   <div class="slot-time">16:00</div>
   <div class="event-card type-show" id="show-kosziv">
-    <div class="card-header clickable" onclick="toggleCard('show-kosziv')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">A kőszív<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">Bóbita Bábszínház</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -570,20 +637,22 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Kelemen L. Kamaraszínház</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Kelemen L. Kamaraszínház</span></div>
     </div>
   </div>
 
   <div class="slot-time">18:00</div>
   <div class="event-card type-show" id="show-juhasz">
-    <div class="card-header clickable" onclick="toggleCard('show-juhasz')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">Az igazmondó juhász<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">Ziránó Színház</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -604,27 +673,34 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka nagyterem</span></div>
     </div>
   </div>
 
   <div class="section-divider"></div>
   <div class="slot-time">19:00</div>
-  <div class="event-card type-social"><div class="card-header"><div class="event-title">🍽️ Vacsora</div></div></div>
+  <div class="event-card type-social">
+    <div class="card-header" onclick="window.toggleCard(this)">
+      <div class="event-title">🍽️ Vacsora</div>
+      <div class="podcast-promo">Szünetben hallgasd: <a href="#" target="_blank">🎧 BábszínPod</a></div>
+    </div>
+  </div>
   
   <div class="slot-time">20:30</div>
   <div class="event-card type-forum"><div class="card-header"><div class="event-title">💬 Szakmai megbeszélés</div></div></div>
 
   <div class="slot-time">23:00</div>
   <div class="event-card type-show" id="show-frida">
-    <div class="card-header clickable" onclick="toggleCard('show-frida')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">Itt vagyok, hát élek, Frida<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">SZFE - Barabás Bíborka</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -646,8 +722,7 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Ciróka kisterem</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka kisterem</span></div>
     </div>
   </div>
 </div>
@@ -664,13 +739,16 @@
 
   <div class="slot-time">11:00 és 17:30</div>
   <div class="event-card type-show" id="show-tragedia-hetfo-d">
-    <div class="card-header clickable" onclick="toggleCard('show-tragedia-hetfo-d')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">Az ember tragédiája<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">Kabóca Bábszínház</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -692,20 +770,22 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Ruszt J. Stúdiószínház</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ruszt J. Stúdiószínház</span></div>
     </div>
   </div>
 
   <div class="slot-time">11:00 és 17:30</div>
   <div class="event-card type-show" id="show-doboz-hetfo">
-    <div class="card-header clickable" onclick="toggleCard('show-doboz-hetfo')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">A doboz<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">Illaberek Bábszínház</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -722,23 +802,30 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Ciróka kisterem</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka kisterem</span></div>
     </div>
   </div>
 
   <div class="slot-time">12:00</div>
-  <div class="event-card type-social"><div class="card-header"><div class="event-title">🍴 Ebédszünet</div></div></div>
+  <div class="event-card type-social">
+    <div class="card-header" onclick="window.toggleCard(this)">
+      <div class="event-title">🍴 Ebédszünet</div>
+      <div class="podcast-promo">Szünetben hallgasd: <a href="#" target="_blank">🎧 BábszínPod</a></div>
+    </div>
+  </div>
 
   <div class="slot-time">14:00</div>
   <div class="event-card type-show" id="show-graffalo">
-    <div class="card-header clickable" onclick="toggleCard('show-graffalo')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">Graffaló, avagy az Óriásfaló kisegér<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">Csodamalom Bábszínház</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -759,20 +846,22 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka nagyterem</span></div>
     </div>
   </div>
 
   <div class="slot-time">15:30</div>
   <div class="event-card type-show" id="show-bambi">
-    <div class="card-header clickable" onclick="toggleCard('show-bambi')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">Bambi<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">Vaskakas Bábszínház</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -794,29 +883,36 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta">
-        <span class="badge badge-venue">Hírös Agóra</span>
+        <span class="badge badge-venue" onclick="window.filterVenue(this, event)">Hírös Agóra</span>
         <span class="badge badge-public">Nyilvános előadás</span>
       </div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
   <div class="section-divider"></div>
   <div class="slot-time">19:00</div>
-  <div class="event-card type-social"><div class="card-header"><div class="event-title">🍽️ Vacsora</div></div></div>
+  <div class="event-card type-social">
+    <div class="card-header" onclick="window.toggleCard(this)">
+      <div class="event-title">🍽️ Vacsora</div>
+      <div class="podcast-promo">Szünetben hallgasd: <a href="#" target="_blank">🎧 BábszínPod</a></div>
+    </div>
+  </div>
   
   <div class="slot-time">20:30</div>
   <div class="event-card type-forum"><div class="card-header"><div class="event-title">💬 Szakmai megbeszélés</div></div></div>
 
   <div class="slot-time">23:00</div>
   <div class="event-card type-show" id="show-liselotte">
-    <div class="card-header clickable" onclick="toggleCard('show-liselotte')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">Liselotte és a május<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">SZFE - Kiss Dorina</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -836,8 +932,7 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka nagyterem</span></div>
     </div>
   </div>
 </div>
@@ -854,13 +949,16 @@
 
   <div class="slot-time">10:30</div>
   <div class="event-card type-show" id="show-lud">
-    <div class="card-header clickable" onclick="toggleCard('show-lud')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">Ha már lúd…<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">Dante Casino / Füge Produkció</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -883,23 +981,30 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Ifjúsági Otthon udvara</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ifjúsági Otthon udvara</span></div>
     </div>
   </div>
 
   <div class="slot-time">12:00</div>
-  <div class="event-card type-social"><div class="card-header"><div class="event-title">🍴 Ebédszünet</div></div></div>
+  <div class="event-card type-social">
+    <div class="card-header" onclick="window.toggleCard(this)">
+      <div class="event-title">🍴 Ebédszünet</div>
+      <div class="podcast-promo">Szünetben hallgasd: <a href="#" target="_blank">🎧 BábszínPod</a></div>
+    </div>
+  </div>
 
   <div class="slot-time">14:00</div>
   <div class="event-card type-show" id="show-golya">
-    <div class="card-header clickable" onclick="toggleCard('show-golya')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">Fekete gólya, fehér gólya, szürke gólya<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">ESZME és a MU Színház közös produkciója</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -923,20 +1028,22 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Kelemen L. Kamaraszínház</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Kelemen L. Kamaraszínház</span></div>
     </div>
   </div>
 
   <div class="slot-time">15:30</div>
   <div class="event-card type-show" id="show-lepke">
-    <div class="card-header clickable" onclick="toggleCard('show-lepke')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">A lepkegyűjtő<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">SZFE - Simon András</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -954,20 +1061,22 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Ruszt J. Stúdiószínház</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ruszt J. Stúdiószínház</span></div>
     </div>
   </div>
 
   <div class="slot-time">18:00</div>
   <div class="event-card type-show" id="show-sarkany">
-    <div class="card-header clickable" onclick="toggleCard('show-sarkany')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">Sárkánykirály<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">Vojtina Bábszínház</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -995,20 +1104,23 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta">
-        <span class="badge badge-venue">Hírös Agóra</span>
+        <span class="badge badge-venue" onclick="window.filterVenue(this, event)">Hírös Agóra</span>
         <span class="badge badge-public">Nyilvános előadás</span>
       </div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
   <div class="section-divider"></div>
   <div class="slot-time">19:00</div>
-  <div class="event-card type-social"><div class="card-header"><div class="event-title">🍽️ Vacsora</div></div></div>
+  <div class="event-card type-social">
+    <div class="card-header" onclick="window.toggleCard(this)">
+      <div class="event-title">🍽️ Vacsora</div>
+      <div class="podcast-promo">Szünetben hallgasd: <a href="#" target="_blank">🎧 BábszínPod</a></div>
+    </div>
+  </div>
   
   <div class="slot-time">20:30</div>
   <div class="event-card type-forum"><div class="card-header"><div class="event-title">💬 Szakmai megbeszélés</div></div></div>
-
 </div>
 
 <!-- ════════════════════════════════════
@@ -1018,13 +1130,16 @@
 
   <div class="slot-time">10:00</div>
   <div class="event-card type-show" id="show-halasz">
-    <div class="card-header clickable" onclick="toggleCard('show-halasz')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">A szegény halász, meg a túlsokra vágyó felesége<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">Magamura Alkotóműhely</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -1044,23 +1159,30 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka nagyterem</span></div>
     </div>
   </div>
 
   <div class="slot-time">12:00</div>
-  <div class="event-card type-social"><div class="card-header"><div class="event-title">🍴 Ebédszünet</div></div></div>
+  <div class="event-card type-social">
+    <div class="card-header" onclick="window.toggleCard(this)">
+      <div class="event-title">🍴 Ebédszünet</div>
+      <div class="podcast-promo">Szünetben hallgasd: <a href="#" target="_blank">🎧 BábszínPod</a></div>
+    </div>
+  </div>
 
   <div class="slot-time">14:00</div>
   <div class="event-card type-show" id="show-hapci">
-    <div class="card-header clickable" onclick="toggleCard('show-hapci')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">Hapci király<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">Marosvásárhelyi Művészeti Egyetem</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -1081,20 +1203,22 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Kelemen L. Kamaraszínház</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Kelemen L. Kamaraszínház</span></div>
     </div>
   </div>
 
   <div class="slot-time">15:30</div>
   <div class="event-card type-show" id="show-lenka-sze">
-    <div class="card-header clickable" onclick="toggleCard('show-lenka-sze')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">Lenka és a Szemüveges lány<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">JuBo Társulat</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -1116,20 +1240,22 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Ciróka kisterem</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka kisterem</span></div>
     </div>
   </div>
 
   <div class="slot-time">15:30</div>
   <div class="event-card type-show" id="show-tryangle-sze">
-    <div class="card-header clickable" onclick="toggleCard('show-tryangle-sze')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">Tryangle<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">ESZME</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -1152,20 +1278,22 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Ruszt J. Stúdiószínház</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ruszt J. Stúdiószínház</span></div>
     </div>
   </div>
 
   <div class="slot-time">17:30</div>
   <div class="event-card type-show" id="show-patkanyfogo">
-    <div class="card-header clickable" onclick="toggleCard('show-patkanyfogo')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">A Patkányfogó Projekt<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">Kövér Béla Bábszínház</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -1189,14 +1317,18 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka nagyterem</span></div>
     </div>
   </div>
 
   <div class="section-divider"></div>
   <div class="slot-time">19:00</div>
-  <div class="event-card type-social"><div class="card-header"><div class="event-title">🍽️ Vacsora</div></div></div>
+  <div class="event-card type-social">
+    <div class="card-header" onclick="window.toggleCard(this)">
+      <div class="event-title">🍽️ Vacsora</div>
+      <div class="podcast-promo">Szünetben hallgasd: <a href="#" target="_blank">🎧 BábszínPod</a></div>
+    </div>
+  </div>
   
   <div class="slot-time">20:30</div>
   <div class="event-card type-forum"><div class="card-header"><div class="event-title">💬 Szakmai megbeszélés</div></div></div>
@@ -1209,13 +1341,16 @@
 
   <div class="slot-time">10:00</div>
   <div class="event-card type-show" id="show-capitalism">
-    <div class="card-header clickable" onclick="toggleCard('show-capitalism')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">Capitalism for children<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">Trafó - SzínMűHely Alapítvány</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -1243,20 +1378,22 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Kelemen L. Kamaraszínház</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Kelemen L. Kamaraszínház</span></div>
     </div>
   </div>
 
   <div class="slot-time">14:00</div>
   <div class="event-card type-show" id="show-csodaszarvas">
-    <div class="card-header clickable" onclick="toggleCard('show-csodaszarvas')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">Csodaszarvas<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">Fabók Mancsi Bábszínháza - Cimborák Bábszínház</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -1276,20 +1413,22 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka nagyterem</span></div>
     </div>
   </div>
 
   <div class="slot-time">15:30</div>
   <div class="event-card type-show" id="show-lenka-csut">
-    <div class="card-header clickable" onclick="toggleCard('show-lenka-csut')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">Lenka és a Szemüveges lány<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">JuBo Társulat</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -1311,20 +1450,22 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Ciróka kisterem</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka kisterem</span></div>
     </div>
   </div>
 
   <div class="slot-time">15:30</div>
   <div class="event-card type-show" id="show-tryangle-csut">
-    <div class="card-header clickable" onclick="toggleCard('show-tryangle-csut')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">Tryangle<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">ESZME</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -1347,20 +1488,22 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Ruszt J. Stúdiószínház</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ruszt J. Stúdiószínház</span></div>
     </div>
   </div>
 
   <div class="slot-time">18:00</div>
   <div class="event-card type-show" id="show-vampir">
-    <div class="card-header clickable" onclick="toggleCard('show-vampir')">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div>
           <div class="event-title">Én, a vámpír<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">Mesebolt Bábszínház</div>
         </div>
-        <div class="header-actions"><div class="mini-pulse-alert">!</div><div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div></div>
+        <div class="header-actions">
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
@@ -1380,8 +1523,7 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Kelemen L. Kamaraszínház</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Kelemen L. Kamaraszínház</span></div>
     </div>
   </div>
 
@@ -1389,68 +1531,86 @@
 
 </div><!-- /content -->
 
+<!-- TITKOS BÜFÉ KÁRTYA (Easter Egg) -->
+<div id="secretBufeCard" style="display:none; max-width:680px; margin: 0 auto 40px auto; padding: 0 16px;">
+  <div class="event-card type-social" style="border-left-color: var(--gold-light);">
+    <div class="card-header" style="pointer-events:none;">
+      <div class="event-title">🍻 A Találkozó</div>
+      <div class="event-company">Mindenki</div>
+    </div>
+    <div class="card-details-inner" style="padding-top:0;">
+      <div class="details-text" style="font-size:14px; font-weight:600;">
+        Zajlik a fesztivál, de egy jó italt azért megérdemelsz. Irány a legközelebbi hörpintő állomás egy jó beszélgetés mellé! Ne késs le a következő szakmai programról!
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- KÖZÉRDEKŰ INFORMÁCIÓK ÉS TÉRKÉP DOBOZ -->
 <div class="info-box-bottom">
   <h3>Közérdekű Információk</h3>
+  
+  <!-- PDF LETÖLTÉS GOMB -->
+  <a href="https://drive.google.com/file/d/1eDwb5_U7Fy0et1VN9GWzLfthKv9j35Nm/view?usp=sharing" target="_blank" class="pdf-btn">
+    Töltsd le a programot egyben (PDF)
+  </a>
+
   <div class="info-grid">
-    <div class="info-item"><strong>Kiszely Ágnes igazgató</strong><br><a href="tel:+36309075265">+36 30 907 5265</a></div>
-    <div class="info-item"><strong>Kuthy Ágnes művészeti vezető</strong><br><a href="tel:+36308310713">+36 30 831 0713</a></div>
-    <div class="info-item"><strong>Bodor Éva fesztiválszervező</strong><br><a href="tel:+36204195584">+36 20 419 5584</a></div>
-    <div class="info-item"><strong>Váriné Dósa Eszter művészeti titkár</strong><br><a href="tel:+36309075318">+36 30 907 5318</a></div>
-    <div class="info-item"><strong>Borsosné Oláh Nóra (szerződések)</strong><br><a href="tel:+36707996647">+36 70 799 6647</a></div>
-    <div class="info-item"><strong>Harkai György kommunikáció</strong><br><a href="tel:+36304359149">+36 30 435 9149</a></div>
-    <div class="info-item"><strong>Műszaki Ügyelet (Bujdosó Zsolt)</strong><br><a href="tel:+36706200139">+36 70 620 0139</a></div>
-    <div class="info-item"><strong>Faműhely (Dudás Péter)</strong><br><a href="tel:+36305944476">+36 30 594 4476</a></div>
-    <div class="info-item"><strong>Varróműhely (Emőd Kriszta)</strong><br><a href="tel:+36209446533">+36 20 944 6533</a></div>
+    <div class="info-item"><strong>Kiszely Ágnes igazgató</strong><a href="tel:+36309075265" style="color:#000;">+36 30 907 5265</a></div>
+    <div class="info-item"><strong>Kuthy Ágnes művészeti vezető</strong><a href="tel:+36308310713" style="color:#000;">+36 30 831 0713</a></div>
+    <div class="info-item"><strong>Bodor Éva fesztiválszervező</strong><a href="tel:+36204195584" style="color:#000;">+36 20 419 5584</a></div>
+    <div class="info-item"><strong>Váriné Dósa Eszter művészeti titkár</strong><a href="tel:+36309075318" style="color:#000;">+36 30 907 5318</a></div>
+    <div class="info-item"><strong>Borsosné Oláh Nóra (szerződések)</strong><a href="tel:+36707996647" style="color:#000;">+36 70 799 6647</a></div>
+    <div class="info-item"><strong>Harkai György kommunikáció</strong><a href="tel:+36304359149" style="color:#000;">+36 30 435 9149</a></div>
+    <div class="info-item"><strong>Műszaki Ügyelet (Bujdosó Zsolt)</strong><a href="tel:+36706200139" style="color:#000;">+36 70 620 0139</a></div>
+    <div class="info-item"><strong>Faműhely (Dudás Péter)</strong><a href="tel:+36305944476" style="color:#000;">+36 30 594 4476</a></div>
+    <div class="info-item"><strong>Varróműhely (Emőd Kriszta)</strong><a href="tel:+36209446533" style="color:#000;">+36 20 944 6533</a></div>
   </div>
 
   <div class="map-container">
     <div class="map-title">📍 Helyszínek</div>
     
-    <div style="margin-bottom: 20px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:10px; border-bottom:1px solid var(--border); margin-bottom:10px;">
-        <div>
-          <div style="font-size: 13px; font-weight: 700; color: var(--teal-dark);">Ciróka Bábszínház</div>
-          <div style="font-size: 11px; color: var(--muted); font-weight: 600;">Budai u. 15.</div>
-        </div>
-        <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=Ciróka+Bábszínház,+Kecskemét" target="_blank">📍 Útvonal</a>
+    <div class="venue-item">
+      <div>
+        <a href="https://www.google.com/maps/dir/?api=1&destination=Ciróka+Bábszínház,+Kecskemét" target="_blank" class="venue-item-title">Ciróka Bábszínház</a>
+        <div class="venue-item-address">Budai u. 15.</div>
       </div>
-
-      <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:10px; border-bottom:1px solid var(--border); margin-bottom:10px;">
-        <div>
-          <div style="font-size: 13px; font-weight: 700; color: var(--teal-dark);">Hírös Agóra</div>
-          <div style="font-size: 11px; color: var(--muted); font-weight: 600;">Deák Ferenc tér 1.</div>
-        </div>
-        <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=Hírös+Agóra+Kulturális+Központ,+Kecskemét" target="_blank">📍 Útvonal</a>
-      </div>
-
-      <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:10px; border-bottom:1px solid var(--border); margin-bottom:10px;">
-        <div>
-          <div style="font-size: 13px; font-weight: 700; color: var(--teal-dark);">Kelemen L. Kamaraszínház</div>
-          <div style="font-size: 11px; color: var(--muted); font-weight: 600;">Rákóczi út 15.</div>
-        </div>
-        <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=Kelemen+László+Kamaraszínház,+Kecskemét" target="_blank">📍 Útvonal</a>
-      </div>
-
-      <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:10px; border-bottom:1px solid var(--border); margin-bottom:10px;">
-        <div>
-          <div style="font-size: 13px; font-weight: 700; color: var(--teal-dark);">Ruszt J. Stúdiószínház</div>
-          <div style="font-size: 11px; color: var(--muted); font-weight: 600;">Katona József tér 5.</div>
-        </div>
-        <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=Katona+József+tér+5,+Kecskemét" target="_blank">📍 Útvonal</a>
-      </div>
-
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <div>
-          <div style="font-size: 13px; font-weight: 700; color: var(--teal-dark);">Ifjúsági Otthon</div>
-          <div style="font-size: 11px; color: var(--muted); font-weight: 600;">Kossuth tér 4.</div>
-        </div>
-        <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=Ifjúsági+Otthon,+Kecskemét" target="_blank">📍 Útvonal</a>
-      </div>
+      <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=Ciróka+Bábszínház,+Kecskemét" target="_blank">📍 Útvonal</a>
     </div>
 
-    <!-- Beágyazott Google Térkép -->
-    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2726.3146462725835!2d19.688174515598687!3d46.90159497914442!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4743da0f0c97693d%3A0xc3b8384f509e5b22!2sCir%C3%B3ka%20B%C3%A1bsz%C3%ADnh%C3%A1z!5e0!3m2!1shu!2shu!4v1689254391234!5m2!1shu!2shu" width="100%" height="250" style="border:0; border-radius:4px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    <div class="venue-item">
+      <div>
+        <a href="https://www.google.com/maps/dir/?api=1&destination=Hírös+Agóra+Kulturális+Központ,+Kecskemét" target="_blank" class="venue-item-title">Hírös Agóra</a>
+        <div class="venue-item-address">Deák Ferenc tér 1.</div>
+      </div>
+      <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=Hírös+Agóra+Kulturális+Központ,+Kecskemét" target="_blank">📍 Útvonal</a>
+    </div>
+
+    <div class="venue-item">
+      <div>
+        <a href="https://www.google.com/maps/dir/?api=1&destination=Kelemen+László+Kamaraszínház,+Kecskemét" target="_blank" class="venue-item-title">Kelemen L. Kamaraszínház</a>
+        <div class="venue-item-address">Rákóczi út 15.</div>
+      </div>
+      <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=Kelemen+László+Kamaraszínház,+Kecskemét" target="_blank">📍 Útvonal</a>
+    </div>
+
+    <div class="venue-item">
+      <div>
+        <a href="https://www.google.com/maps/dir/?api=1&destination=Katona+József+tér+5,+Kecskemét" target="_blank" class="venue-item-title">Ruszt J. Stúdiószínház</a>
+        <div class="venue-item-address">Katona József tér 5.</div>
+      </div>
+      <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=Katona+József+tér+5,+Kecskemét" target="_blank">📍 Útvonal</a>
+    </div>
+
+    <div class="venue-item" style="border-bottom:none; padding-bottom:0;">
+      <div>
+        <a href="https://www.google.com/maps/dir/?api=1&destination=Ifjúsági+Otthon,+Kecskemét" target="_blank" class="venue-item-title">Ifjúsági Otthon</a>
+        <div class="venue-item-address">Kossuth tér 4.</div>
+      </div>
+      <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=Ifjúsági+Otthon,+Kecskemét" target="_blank">📍 Útvonal</a>
+    </div>
+    
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2726.3146462725835!2d19.688174515598687!3d46.90159497914442!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4743da0f0c97693d%3A0xc3b8384f509e5b22!2sCir%C3%B3ka%20B%C3%A1bsz%C3%ADnh%C3%A1z!5e0!3m2!1shu!2shu!4v1689254391234!5m2!1shu!2shu" width="100%" height="250" style="border:0; border-radius:4px; margin-top:20px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
   </div>
 </div>
 
@@ -1464,6 +1624,10 @@
       <div class="easter-text">A weboldalt elkövette: Harkai György</div>
       <img src="https://ciroka.hu/wp-content/uploads/2025/08/Harkai_Gyorgy_marketing-munkatars-2048x2048.jpg" class="easter-photo" alt="Harkai György">
     </div>
+  </div>
+  
+  <div class="podcast-promo" style="margin-top:20px;">
+    <a href="#" target="_blank" style="color:rgba(255,255,255,0.6); font-size:12px;"><span style="font-size:16px; vertical-align:middle;">🎧</span> BábszínPod</a>
   </div>
 </footer>
 
@@ -1511,14 +1675,14 @@
       dot.onclick = function(event) {
         event.stopPropagation();
         const cardId = this.closest('.event-card').id;
-        openAlertsModal(cardId);
+        window.openAlertsModal(cardId);
       };
     });
 
     const newestAlert = window.globalAlerts[0];
     const lastSeenTime = sessionStorage.getItem("lastSeenAlertTime");
     if (!lastSeenTime || parseInt(lastSeenTime) < newestAlert.timeRaw) {
-      showPopup(newestAlert);
+      window.showPopup(newestAlert);
       sessionStorage.setItem("lastSeenAlertTime", newestAlert.timeRaw.toString());
     }
   });
@@ -1529,8 +1693,8 @@
     if(el) {
       const titleEl = el.querySelector('.event-title');
       if(titleEl) {
-        const titleText = titleEl.childNodes[0].nodeValue.trim();
-        return `<div style="font-size:12px; color:var(--teal); font-weight:700; margin-bottom:6px; text-transform:uppercase;">Előadás: ${titleText}</div>`;
+        let titleText = titleEl.innerText.replace('MOST ZAJLIK', '').trim();
+        return `<div style="font-size:12px; color:var(--teal); font-weight:700; margin-bottom:6px; text-transform:uppercase;">Érintett program: ${titleText}</div>`;
       }
     }
     return "";
@@ -1539,7 +1703,6 @@
   window.showPopup = function(alert, isReminder = false) {
     document.getElementById("modalTitle").textContent = isReminder ? "Emlékeztető!" : "Új Értesítés!";
     const showInfo = getShowTitleHTML(alert.targetId);
-
     document.getElementById("modalBody").innerHTML = `
       <div class="alert-card">
         ${showInfo}
@@ -1580,12 +1743,12 @@
       window.currentPopupAlert = null; 
       setTimeout(() => {
         const stillExists = window.globalAlerts.find(a => a.id === savedAlert.id);
-        if (stillExists) showPopup(stillExists, true);
+        if (stillExists) window.showPopup(stillExists, true);
       }, 3 * 60 * 1000);
     }
   };
 
-  // VIRTUALIS EMLÉKKÖNYV
+  // EMLÉKKÖNYV
   const gbRef = ref(db, "guestbook");
   onValue(gbRef, (snap) => {
     const list = document.getElementById("guestbookList");
@@ -1595,23 +1758,21 @@
        return;
     }
     const data = snap.val();
-    const gbArr = Object.keys(data).map(k => ({id: k, ...data[k]})).sort((a,b) => b.time - a.time);
+    const gbArr = Object.keys(data).map(k => ({id: k, ...data[k]})).sort((a,b) => b.timeRaw - a.timeRaw);
     gbArr.forEach(msg => {
        list.innerHTML += `
          <div class="gb-message">
            <div class="gb-header">
-             <span class="gb-name">${escapeHTML(msg.name)}</span>
+             <span class="gb-name">${window.escapeHTML(msg.name)}</span>
              <span class="gb-date">${msg.dateStr}</span>
            </div>
-           <div class="gb-text">${escapeHTML(msg.text)}</div>
+           <div class="gb-text">${window.escapeHTML(msg.text)}</div>
          </div>
        `;
     });
   });
 
-  window.openGuestbook = function() {
-    document.getElementById('guestbookModal').classList.add('visible');
-  }
+  window.openGuestbook = function() { document.getElementById('guestbookModal').classList.add('visible'); }
 
   window.submitGuestbook = function() {
     const name = document.getElementById('gbName').value.trim();
@@ -1621,45 +1782,37 @@
     const now = new Date();
     const dateStr = now.toLocaleDateString('hu-HU', {month:'short', day:'numeric'}) + " " + now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
     
-    push(gbRef, { name: name, text: text, time: Date.now(), dateStr: dateStr })
-    .then(() => {
+    push(gbRef, { name: name, text: text, timeRaw: Date.now(), dateStr: dateStr }).then(() => {
        document.getElementById('gbText').value = "";
     });
   }
 
-  function escapeHTML(str) {
-    return str.replace(/[&<>'"]/g, tag => ({
-      '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
-    }[tag]));
+  window.escapeHTML = function(str) {
+    return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag]));
   }
-
 </script>
 
 <script>
   let activeTabBeforeSearch = 0;
-  let isFavoritesMode = false;
   let currentTypeFilter = null;
+  let audioContextAllowed = false; 
 
   window.addEventListener('DOMContentLoaded', () => {
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW hiba', err));
 
+    // Kártyák és Vastaps
     document.querySelectorAll('.event-card').forEach(card => {
-      const headerActions = card.querySelector('.header-actions');
-      if (headerActions && card.id) {
-        const star = document.createElement('span');
-        star.className = 'star-btn';
-        star.innerHTML = '☆';
-        star.onclick = (e) => window.toggleStar(e, card.id, star);
-        if(localStorage.getItem('fav_' + card.id)) star.classList.add('active');
-        headerActions.prepend(star);
+      const titleEl = card.querySelector('.event-title');
+      if (titleEl) {
+        let pressTimer;
+        titleEl.addEventListener('touchstart', startPress, {passive: true});
+        titleEl.addEventListener('mousedown', startPress);
+        titleEl.addEventListener('touchend', cancelPress);
+        titleEl.addEventListener('mouseup', cancelPress);
+        titleEl.addEventListener('mouseleave', cancelPress);
+        function startPress(e) { pressTimer = setTimeout(() => { window.showToast("Vastaps a társulatnak! 👏"); window.fireConfetti(); }, 3000); }
+        function cancelPress() { clearTimeout(pressTimer); }
       }
-      card.querySelectorAll('.badge-venue').forEach(badge => {
-        badge.onclick = (e) => {
-          e.stopPropagation();
-          document.getElementById('searchInput').value = badge.innerText.trim();
-          window.doSearch();
-        };
-      });
     });
 
     const today = new Date();
@@ -1672,7 +1825,26 @@
 
     checkLiveEvents();
     setInterval(checkLiveEvents, 60000);
+    
+    // Marionett kikapcsolás bárhol
+    document.body.addEventListener('dblclick', () => {
+      if(document.body.classList.contains('marionette-mode')) {
+        document.body.classList.remove('marionette-mode');
+        window.showToast("Marionett mód kikapcsolva!");
+      }
+    });
+
+    document.body.addEventListener('click', () => { audioContextAllowed = true; }, { once: true });
   });
+
+  window.scrollToCurrent = function() {
+    const liveCard = document.querySelector('.day-panel.active .is-live');
+    if(liveCard) {
+      let timeHeader = liveCard.previousElementSibling;
+      while(timeHeader && !timeHeader.classList.contains('slot-time')) timeHeader = timeHeader.previousElementSibling;
+      if(timeHeader) timeHeader.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
 
   function checkLiveEvents() {
     const now = new Date();
@@ -1699,12 +1871,29 @@
           } else if (times.length === 1) {
             isLive = isWithinHour(times[0], now);
           }
-
           if (isLive) card.classList.add('is-live');
           else card.classList.remove('is-live');
+
+          // ÜGYELŐ CSENGŐ (10 perc)
+          times.forEach(t => {
+            const [h, m] = t.split(':').map(Number);
+            const startObj = new Date(now); startObj.setHours(h, m, 0, 0);
+            const diffMin = (startObj - now) / 60000;
+            
+            const cardId = card.id || t;
+            const playedKey = 'gong_' + cardId + '_' + now.getDate();
+
+            if (diffMin > 0 && diffMin <= 10 && !localStorage.getItem(playedKey) && audioContextAllowed) {
+              window.playGong();
+              window.showToast("Első figyelmeztetés! Kérem a művészeket a színpadra!");
+              localStorage.setItem(playedKey, 'true');
+            }
+          });
         }
       });
     });
+
+    if (document.querySelector('.day-panel.active .is-live')) document.getElementById('jumpBtn').classList.add('show');
   }
 
   function isWithinHour(startStr, now) {
@@ -1715,38 +1904,13 @@
   }
 
   function isWithinRange(startStr, endStr, now) {
-    const[sh, sm] = startStr.split(':').map(Number);
+    const [sh, sm] = startStr.split(':').map(Number);
     const startObj = new Date(now); startObj.setHours(sh, sm, 0, 0);
-    const[eh, em] = endStr.split(':').map(Number);
+    const [eh, em] = endStr.split(':').map(Number);
     const endObj = new Date(now); endObj.setHours(eh, em, 0, 0);
     if(eh < sh) endObj.setDate(endObj.getDate() + 1); 
     return now >= startObj && now <= endObj;
   }
-
-  window.toggleStar = function(event, cardId, starElement) {
-    event.stopPropagation();
-    if (localStorage.getItem('fav_' + cardId)) {
-      localStorage.removeItem('fav_' + cardId);
-      starElement.classList.remove('active');
-    } else {
-      localStorage.setItem('fav_' + cardId, 'true');
-      starElement.classList.add('active');
-    }
-    if (isFavoritesMode) window.doSearch();
-  };
-
-  window.toggleFavoritesView = function() {
-    isFavoritesMode = !isFavoritesMode;
-    const btn = document.getElementById('favFilterBtn');
-    if (isFavoritesMode) {
-      btn.classList.add('active');
-      btn.innerHTML = '★ Csak a kedvenceim';
-    } else {
-      btn.classList.remove('active');
-      btn.innerHTML = '★ Kedvenceim';
-    }
-    window.doSearch();
-  };
 
   window.toggleTypeFilter = function(type) {
     if (currentTypeFilter === type) {
@@ -1762,8 +1926,14 @@
     window.doSearch();
   };
 
-  window.toggleCard = function(id) {
-    document.getElementById(id).classList.toggle('open');
+  window.filterVenue = function(el, e) {
+    e.stopPropagation();
+    document.getElementById('searchInput').value = el.innerText.trim();
+    window.doSearch();
+  }
+
+  window.toggleCard = function(el) {
+    el.closest('.event-card').classList.toggle('open');
   }
 
   window.showDay = function(index, btn) {
@@ -1774,14 +1944,11 @@
     activeTabBeforeSearch = index;
     
     document.getElementById('searchInput').value = "";
-    isFavoritesMode = false;
     currentTypeFilter = null;
-    document.getElementById('favFilterBtn').classList.remove('active');
-    document.getElementById('favFilterBtn').innerHTML = '★ Kedvenceim';
     document.querySelectorAll('.legend-item').forEach(el => el.classList.remove('inactive'));
     
     window.doSearch();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(window.scrollToCurrent, 300);
   }
 
   window.doSearch = function() {
@@ -1789,13 +1956,47 @@
     const dayPanels = document.querySelectorAll('.day-panel');
     const tabsWrap = document.getElementById('tabsWrap');
 
-    if (query.trim() === "" && !isFavoritesMode && !currentTypeFilter) {
-      tabsWrap.style.display = 'block';
+    // 1. EASTER EGG: Vitéz László
+    if(query === "lászló" || query === "laszlo") {
+      const vitez = document.getElementById('vitezLaszlo');
+      vitez.classList.add('show');
+      document.querySelector('.search-input-box').classList.add('search-shake');
+      const pan = document.getElementById('vitezPan');
+      setTimeout(() => { pan.classList.add('hit'); }, 500);
+      setTimeout(() => { 
+        vitez.classList.remove('show'); 
+        pan.classList.remove('hit');
+        document.querySelector('.search-input-box').classList.remove('search-shake');
+        document.getElementById('searchInput').value = ""; 
+      }, 3000);
+      return;
+    }
+
+    // 2. EASTER EGG: Kritikus mód
+    if(query === "kritika" || query === "kritikus") {
+      document.body.style.transform = "rotate(180deg)";
+      window.showToast("A kritikusok mindent másképp látnak!", true);
+      setTimeout(() => { document.body.style.transform = "none"; document.getElementById('searchInput').value = ""; }, 6000);
+      return;
+    }
+
+    // 3. EASTER EGG: Titkos Büfé
+    if(['sör','bor','fröccs','kávé','kave','büfé','bufe'].includes(query.trim())) {
+      tabsWrap.style.display = 'none';
+      document.querySelectorAll('.day-panel').forEach(p => p.style.display = 'none');
+      document.getElementById('secretBufeCard').style.display = 'block';
+      return;
+    } else {
+      document.getElementById('secretBufeCard').style.display = 'none';
+    }
+
+    // ALAP KERESŐ
+    if (query.trim() === "" && !currentTypeFilter) {
+      tabsWrap.style.display = 'flex';
       dayPanels.forEach(panel => {
         panel.style.display = '';
         const dayTitle = panel.querySelector('.search-day-title');
         if(dayTitle) dayTitle.style.display = 'none';
-        
         panel.querySelectorAll('.event-card').forEach(card => card.style.display = 'block');
         panel.querySelectorAll('.slot-time').forEach(time => time.style.display = 'block');
       });
@@ -1814,8 +2015,7 @@
       if(!dayTitle) {
         dayTitle = document.createElement('h3');
         dayTitle.className = 'search-day-title';
-        const btnText = document.querySelectorAll('.tab-btn')[index].getAttribute('data-day-name');
-        dayTitle.innerText = btnText;
+        dayTitle.innerText = document.querySelectorAll('.tab-btn')[index].getAttribute('data-day-name');
         panel.prepend(dayTitle);
       }
       
@@ -1825,23 +2025,18 @@
       cards.forEach(card => {
         const text = card.innerText.toLowerCase();
         const isMatchSearch = query === "" || text.includes(query);
-        const isMatchFav = !isFavoritesMode || localStorage.getItem('fav_' + card.id) === 'true';
-        
         let isMatchType = true;
+        
         if(currentTypeFilter) {
-          if(currentTypeFilter === 'public') {
-             isMatchType = card.querySelector('.badge-public') !== null;
-          } else {
-             isMatchType = card.classList.contains(currentTypeFilter);
-          }
+          if(currentTypeFilter === 'public') isMatchType = card.querySelector('.badge-public') !== null;
+          else isMatchType = card.classList.contains(currentTypeFilter);
         }
 
-        if(isMatchSearch && isMatchFav && isMatchType) {
+        if(isMatchSearch && isMatchType) {
           card.style.display = 'block';
           let prev = card.previousElementSibling;
           while(prev && !prev.classList.contains('slot-time')) prev = prev.previousElementSibling;
           if(prev && prev.classList.contains('slot-time')) prev.style.display = 'block';
-          
           hasMatchInDay = true;
         } else {
           card.style.display = 'none';
@@ -1857,6 +2052,60 @@
       }
     });
   }
+
+  // --- KIEGÉSZÍTŐ FUNKCIÓK (Easter eggs) ---
+
+  const quotes =[
+    "A báb nem a kezedben kel életre, hanem a szívedben... de azért tartsd feszesen a mozgatópálcát.",
+    "A taps olyan, mint a tiszavirág. De a büfében a sör örök.",
+    "Ha a díszlet dől, dőlj vele te is. Úgy tűnik majd, hogy benne volt a rendezésben.",
+    "Nincs kis szerep, csak kis báb.",
+    "A drótok sosem gubancolódnak össze maguktól. Nyilván a dramaturg volt.",
+    "Az igazi varázslat nem a paraván mögött van, hanem amikor a turnébusz beindul elsőre."
+  ];
+
+  window.generateQuote = function() {
+    const q = quotes[Math.floor(Math.random() * quotes.length)];
+    document.getElementById("quoteText").innerText = `"${q}"`;
+    document.getElementById("quoteModal").classList.add("visible");
+  }
+
+  window.showToast = function(msg, upsideDown = false) {
+    const toast = document.getElementById("toastMsg");
+    toast.innerText = msg;
+    toast.style.transform = upsideDown ? "translateX(-50%) rotate(180deg)" : "translateX(-50%)";
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 3000);
+  }
+
+  window.fireConfetti = function() {
+    const colors =['#e67e22', '#1a5c58', '#c4913a', '#c0392b'];
+    for(let i=0; i<40; i++) {
+      let c = document.createElement('div');
+      c.className = 'confetti';
+      c.style.left = Math.random() * 100 + 'vw';
+      c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      c.style.animationDuration = (Math.random() * 2 + 1) + 's';
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 3000);
+    }
+  }
+
+  window.playGong = function() {
+    const audio = new Audio('https://upload.wikimedia.org/wikipedia/commons/d/d4/Doorbell_ringing.ogg');
+    audio.play().catch(e => console.log("Audio play blockolva."));
+  }
+
+  let marionetteClicks = 0;
+  document.getElementById('marionetteBtn').addEventListener('click', () => {
+    marionetteClicks++;
+    if(marionetteClicks === 5) {
+      document.body.classList.add('marionette-mode');
+      window.showToast("Marionett mód aktiválva! (Dupla kattintás a kikapcsoláshoz)");
+      marionetteClicks = 0;
+    }
+  });
+
 </script>
 </body>
 </html>
