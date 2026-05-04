@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#1a5c58">
+<link rel="manifest" href="manifest.json">
 <title>Magyarországi Bábszínházak XVII. Találkozója</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -23,20 +24,17 @@
 
   /* HEADER */
   .site-header { background: var(--teal-dark); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--teal); position: relative; z-index: 50; }
-  .header-logo { width: 40px; }
-  .header-logo img { height: 32px; display: block; object-fit: contain; }
-  
-  .header-title-box { position: absolute; left: 50%; transform: translateX(-50%); text-align: center; cursor: pointer; user-select: none; }
-  .header-title { color: var(--gold-light); font-family: 'Playfair Display', serif; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; line-height: 1.2; width: 100%; white-space: nowrap;}
-  
-  .header-right { min-width: 40px; text-align: right; }
+  .header-logo { width: auto; max-width:180px; }
+  .header-logo img { height: 35px; display: block; object-fit: contain; }
   .secret-admin-link { color: rgba(255,255,255,0.15); text-decoration: none; font-size: 11px; letter-spacing: 2px; font-weight: 700; transition: .2s; cursor: pointer; }
   .secret-admin-link:hover { color: #fff; text-decoration: none; }
-  @media (max-width: 480px) { .header-title { font-size: 10px; } .header-logo img { height: 26px; } }
 
+  /* HERO */
   .hero { background: var(--teal); text-align: center; padding: 40px 20px 50px; position: relative; overflow: hidden; }
-  h1 { font-family: 'Playfair Display', serif; font-size: clamp(26px,6vw,48px); line-height: 1.2; color: #fff; margin-bottom: 10px; }
+  .hero-eyebrow { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold-light); font-weight: 600; margin-bottom: 14px; }
+  h1 { font-family: 'Playfair Display', serif; font-size: clamp(24px,6vw,42px); line-height: 1.2; color: #fff; margin-bottom: 10px; }
   h1 em { color: var(--gold-light); font-style: italic; }
+  .hero-date { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: #fff; margin-top: 14px; font-weight: 600; }
   
   .hero-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 24px; }
   .hero-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: transparent; border: 2px solid rgba(255,255,255,0.35); border-radius: 4px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; color: #fff; text-decoration: none; transition: .2s; cursor: pointer; }
@@ -44,54 +42,49 @@
 
   #topAlertBar { background: var(--red); color: #fff; text-align: center; padding: 12px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; cursor: pointer; display: none; transition: background .2s; position: sticky; top:0; z-index: 1000;}
 
-  /* SEARCH & BUTTONS */
+  /* KERESŐ & GOMBOK */
   .search-wrap { background: var(--teal-dark); padding: 12px 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
   .search-input-box { position: relative; width: 100%; max-width: 400px; }
   .search-input-box input { width: 100%; padding: 12px 16px 12px 40px; border-radius: 20px; border: none; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; outline: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
   .search-input-box svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); }
-  
-  .pan-img { position: fixed; right: -200px; top: 15%; width: 150px; z-index: 3001; transition: 0.3s; transform-origin: bottom right; pointer-events: none;}
-  .pan-img.hit { right: 50%; top: 180px; transform: translateX(50%); animation: whack 0.6s forwards; }
-  @keyframes whack { 0% { transform: translateX(50%) rotate(45deg); } 50% { transform: translateX(50%) rotate(-30deg); } 100% { transform: translateX(50%) rotate(0deg); } }
+  .search-shake { animation: shake 0.5s ease-in-out; }
+  @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 50% { transform: translateX(10px); } 75% { transform: translateX(-10px); } }
 
   .quick-filters { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
   .q-btn { padding: 8px 16px; border-radius: 20px; border: 2px solid var(--gold-light); background: transparent; color: var(--gold-light); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: .2s; }
   .q-btn:hover, .q-btn.active { background: var(--gold-light); color: #000; }
 
-  /* LEGEND (SZŰRŐ) */
+  /* CÍMKÉK (SZŰRŐK) */
   .legend-bar { background: var(--teal-dark); display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; padding: 12px 20px; border-top: 1px solid rgba(255,255,255,0.1); }
   .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.8); font-weight: 700; cursor: pointer; transition: .2s; user-select: none; }
   .legend-item:hover { color: #fff; }
   .legend-item.inactive { opacity: 0.3; }
   .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 
-  /* TABS */
-  .tabs-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; background: var(--surface); border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+  /* DÁTUMOK KÖZÉPRE */
+  .tabs-wrap { background: var(--surface); border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; white-space: nowrap; overflow-x: auto; scrollbar-width: none;}
   .tabs-wrap::-webkit-scrollbar { display: none; }
-  .tabs { display: flex; min-width: max-content; padding: 0 12px; justify-content: center; }
-  @media (max-width: 600px) { .tabs { justify-content: flex-start; } }
-  .tab-btn { background: none; border: none; border-bottom: 3px solid transparent; color: var(--muted); padding: 16px 18px 13px; font-family: 'Montserrat', sans-serif; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; cursor: pointer; transition: .2s; white-space: nowrap; line-height: 1.4; text-align: center; }
+  .tabs { display: inline-flex; margin: 0 auto; }
+  .tab-btn { background: none; border: none; border-bottom: 3px solid transparent; color: var(--muted); padding: 16px 18px 13px; font-family: 'Montserrat', sans-serif; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; cursor: pointer; transition: .2s; line-height: 1.4; text-align: center; }
   .tab-btn .day-date { display: block; font-weight: 500; font-size: 10px; letter-spacing: 1px; margin-top: 2px; }
   .tab-btn.active { color: var(--teal); border-bottom-color: var(--gold); }
   .tab-btn.active .day-date { color: var(--teal); }
 
-  /* TARTALOM ÉS KÁRTYÁK */
+  /* KÁRTYÁK */
   .content { padding: 32px 16px 40px; max-width: 680px; margin: 0 auto; position: relative; }
   .day-panel { display: none; }
   .day-panel.active { display: block; animation: fadein .25s ease; }
   @keyframes fadein { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
 
   .search-day-title { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--teal); border-bottom: 2px solid var(--gold-light); padding-bottom: 5px; margin: 30px 0 15px; display: none; }
-
   .slot-time { font-size: 11px; letter-spacing: 3px; color: var(--teal); font-weight: 700; text-transform: uppercase; padding: 22px 0 8px; scroll-margin-top: 80px;}
 
-  .event-card { background: var(--card); border: 1px solid var(--border); border-left: 5px solid var(--border); border-radius: 4px; margin-bottom: 10px; overflow: hidden; transition: box-shadow .2s, transform 0.2s; position: relative; }
+  .event-card { background: var(--card); border: 1px solid var(--border); border-left: 5px solid var(--border); border-radius: 4px; margin-bottom: 10px; overflow: hidden; transition: box-shadow .2s; position: relative; }
   .event-card.type-show  { border-left-color: var(--teal); }
   .event-card.type-forum { border-left-color: var(--gold); }
   .event-card.type-social { border-left-color: #b0a898; background: var(--surface); }
 
   .card-header { padding: 14px 16px 12px 18px; cursor: pointer; user-select: none; }
-  
   .event-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--teal-dark); line-height: 1.3; margin-bottom: 4px; }
   .event-card.type-social .event-title { font-family: 'Montserrat', sans-serif; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; color: var(--muted); }
   .event-company { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
@@ -103,6 +96,10 @@
   .card-header-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
   .header-actions { display: flex; align-items: center; gap: 10px; }
   
+  .star-btn { font-size: 24px; cursor: pointer; color: var(--border); transition: .2s; user-select: none; line-height: 1; }
+  .star-btn.active { color: var(--gold-light); }
+  .star-btn:hover { transform: scale(1.15); }
+
   .expand-icon { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; transition: transform .25s; color: var(--teal); pointer-events: none;}
   .event-card.open .expand-icon { background: var(--teal); color: #fff; transform: rotate(180deg); border-color: var(--teal); }
 
@@ -128,19 +125,19 @@
 
   .podcast-promo { display: block; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-top: 8px; font-weight: 600; }
   .podcast-promo a { color: var(--teal); text-decoration: none; border-bottom: 1px solid var(--teal); }
-
   .section-divider { height: 2px; background: var(--border); margin: 32px 0 10px; }
 
-  /* KÖZÉRDEKŰ INFÓK (RÉGI NÉZET) ÉS PDF */
+  /* KÖZÉRDEKŰ INFÓK ÉS TÉRKÉP */
   .info-box-bottom { background: var(--surface); border-top: 2px solid var(--border); padding: 40px 20px; max-width: 680px; margin: 0 auto; border-radius: 6px 6px 0 0; }
   .info-box-bottom h3 { font-family: 'Playfair Display', serif; color: var(--teal-dark); font-size: 22px; margin-bottom: 20px; }
-  
   .pdf-btn { display: block; width: 100%; text-align: center; background: var(--teal); color: #fff; padding: 14px; border-radius: 4px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; font-size: 12px; margin-bottom: 30px; transition: .2s; }
   .pdf-btn:hover { background: var(--teal-dark); color: #fff; text-decoration: none; }
 
-  .info-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 40px; }
+  .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 40px; }
+  @media (max-width: 600px) { .info-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 400px) { .info-grid { grid-template-columns: 1fr; } }
   .info-item { font-size: 13px; color: #000; font-weight: 600; display: flex; flex-direction: column;}
-  .info-item strong { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--teal); margin-bottom: 2px; font-weight: 700;}
+  .info-item strong { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--teal); margin-bottom: 2px; font-weight: 700;}
   .info-item a { color: #000; text-decoration: none; }
 
   .map-container { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 20px; }
@@ -153,7 +150,7 @@
   .route-btn { display: inline-flex; align-items: center; padding: 6px 12px; background: rgba(26,92,88,0.07); border: 1px solid rgba(26,92,88,0.3); border-radius: 3px; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; color: var(--teal-dark); transition: .2s; white-space: nowrap; flex-shrink: 0; text-decoration: none;}
   .route-btn:hover { background: var(--teal); color: #fff; }
 
-  /* GUESTBOOK SZÖVEGES EMLÉKKÖNYV */
+  /* GUESTBOOK SZÖVEGES */
   .gb-message { background: rgba(26,92,88,0.05); border: 1px solid rgba(26,92,88,0.15); padding: 14px; border-radius: 6px; margin-bottom: 12px; text-align: left; }
   .gb-header { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px dashed rgba(26,92,88,0.2); padding-bottom: 6px; }
   .gb-name { font-weight: 700; font-size: 12px; color: var(--teal-dark); }
@@ -179,16 +176,13 @@
   .quote-author { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); font-weight: 700; }
 
   /* EASTER EGGS CSS */
-  .vitez-laszlo { position: fixed; bottom: -300px; right: 20px; width: 150px; z-index: 3000; transition: bottom 0.5s ease-out; }
+  .vitez-laszlo { position: fixed; bottom: -350px; right: 20px; width: 150px; z-index: 3000; transition: bottom 0.5s ease-out; }
   .vitez-laszlo.show { bottom: 0; }
-  .vitez-bubble { position: absolute; top: -50px; right: 80px; background: #fff; border: 2px solid #000; padding: 10px; border-radius: 10px; font-weight: bold; font-size: 14px; width: 160px; text-align: center; opacity: 0; transition: 0.3s; }
+  .vitez-bubble { position: absolute; top: -50px; right: 80px; background: #fff; border: 2px solid #000; padding: 10px; border-radius: 10px; font-weight: bold; font-size: 14px; width: 160px; text-align: center; opacity: 0; transition: 0.3s; color:#000;}
   .vitez-laszlo.show .vitez-bubble { opacity: 1; transition-delay: 0.5s; }
-
-  .marionette-mode .event-card { animation: sway 3s infinite ease-in-out; transform-origin: top center; overflow: visible !important; }
-  .marionette-mode .event-card::before, .marionette-mode .event-card::after { content:''; position:absolute; top:-100vh; width:1px; background:rgba(0,0,0,0.3); height:100vh; z-index: 100;}
-  .marionette-mode .event-card::before { left: 20%; }
-  .marionette-mode .event-card::after { right: 20%; }
-  @keyframes sway { 0%, 100% { transform: rotate(-1.5deg); } 50% { transform: rotate(1.5deg); } }
+  .pan-img { position: fixed; right: -200px; top: 15%; width: 150px; z-index: 3001; transition: 0.3s; transform-origin: bottom right; pointer-events: none;}
+  .pan-img.hit { right: 50%; top: 180px; transform: translateX(50%); animation: whack 0.6s forwards; }
+  @keyframes whack { 0% { transform: translateX(50%) rotate(45deg); } 50% { transform: translateX(50%) rotate(-30deg); } 100% { transform: translateX(50%) rotate(0deg); } }
 
   .confetti { position: fixed; width: 10px; height: 10px; background: #f00; z-index: 9999; animation: fall linear forwards; }
   @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
@@ -210,12 +204,11 @@
 </head>
 <body>
 
-<!-- Vitéz László Easter Egg Element -->
 <div id="vitezLaszlo" class="vitez-laszlo">
   <div class="vitez-bubble">Szervusztok, Pajtikák!</div>
   <img src="https://www.hungarikum.hu/sites/default/files/vit%C3%A9zl3.jpg" alt="Vitéz László" style="width:100%; border-radius: 10px;">
 </div>
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Frying_pan.png/220px-Frying_pan.png" class="pan-img" id="vitezPan" alt="Serpenyő">
+<img src="https://webimg.praktiker.hu/_upload/images/praktiker_catalog/301264/1200x1200/301264_01_palacsintasuto-25x22x47cm-es.png?version=1736351040" class="pan-img" id="vitezPan" alt="Serpenyő">
 
 <div id="toastMsg" class="toast-msg"></div>
 
@@ -265,11 +258,8 @@
 <header class="site-header">
   <div class="header-logo">
     <a href="https://ciroka.hu" target="_blank">
-      <img src="https://ciroka.hu/wp-content/uploads/2024/05/Ciroka-logo-website-header-01.svg" alt="Ciróka Bábszínház" onerror="this.src='https://via.placeholder.com/100x30/113d3a/d4a84a?text=CIRÓKA'">
+      <img src="https://ciroka.hu/wp-content/uploads/2024/05/Ciroka-logo-website-header-01.svg" alt="Ciróka Bábszínház">
     </a>
-  </div>
-  <div class="header-title-box" id="marionetteBtn">
-    <div class="header-title">Magyarországi Bábszínházak<br>XVII. Találkozója</div>
   </div>
   <div class="header-right">
     <a href="vezerlo-2026.html" class="secret-admin-link">2026</a>
@@ -277,12 +267,19 @@
 </header>
 
 <div class="hero">
-  <h1>Magyarországi Bábszínházak<br><em>XVII. Találkozója</em></h1>
+  <div class="hero-eyebrow">Magyarországi Bábszínházak</div>
+  <h1>XVII. <em>Találkozó</em></h1>
   <div class="hero-date">2026. június 13–18. &nbsp;·&nbsp; Kecskemét</div>
   
   <div class="hero-buttons">
-    <a class="hero-btn" href="https://www.facebook.com/magyarorszagibabszinhazaktalalkozoja/" target="_blank">A Találkozó FB-oldala</a>
-    <a class="hero-btn" href="https://ciroka.hu" target="_blank">ciroka.hu</a>
+    <a class="hero-btn" href="https://www.facebook.com/magyarorszagibabszinhazaktalalkozoja/" target="_blank">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+      A Találkozó FB-oldala
+    </a>
+    <a class="hero-btn" href="https://ciroka.hu" target="_blank">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      ciroka.hu
+    </a>
   </div>
 </div>
 
@@ -317,7 +314,6 @@
 </div>
 
 <svg style="display:none">
-  <symbol id="fb-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></symbol>
   <symbol id="chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></symbol>
 </svg>
 
@@ -358,6 +354,7 @@
           <div class="event-company">KL Színház</div>
         </div>
         <div class="header-actions">
+          <span class="star-btn">☆</span>
           <div class="mini-pulse-alert">!</div>
           <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
         </div>
@@ -374,13 +371,12 @@
         </div>
       </div>
       <div class="details-section">
-        <div class="details-label">Korosztály / Web</div>
-        <div class="details-text">14+ | <a href="http://www.kabocababszinhaz.hu" target="_blank">www.kabocababszinhaz.hu</a></div>
+        <div class="details-label">Korosztály</div>
+        <div class="details-text">14+</div>
       </div>
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka nagyterem</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -401,6 +397,7 @@
           <div class="event-company">Békéscsabai Napsugár Bábszínház</div>
         </div>
         <div class="header-actions">
+          <span class="star-btn">☆</span>
           <div class="mini-pulse-alert">!</div>
           <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
         </div>
@@ -418,13 +415,12 @@
         </div>
       </div>
       <div class="details-section">
-        <div class="details-label">Korosztály / Web</div>
-        <div class="details-text">4+ | <a href="http://www.napsugarbabszinahaz.hu" target="_blank">www.napsugarbabszinahaz.hu</a></div>
+        <div class="details-label">Korosztály</div>
+        <div class="details-text">4+</div>
       </div>
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Kelemen L. Kamaraszínház</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -442,6 +438,7 @@
           <div class="event-company">Ciróka Bábszínház</div>
         </div>
         <div class="header-actions">
+          <span class="star-btn">☆</span>
           <div class="mini-pulse-alert">!</div>
           <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
         </div>
@@ -461,13 +458,12 @@
         </div>
       </div>
       <div class="details-section">
-        <div class="details-label">Korosztály / Web</div>
-        <div class="details-text">6+ | <a href="http://www.ciroka.hu" target="_blank">www.ciroka.hu</a></div>
+        <div class="details-label">Korosztály</div>
+        <div class="details-text">6+</div>
       </div>
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka nagyterem</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -476,7 +472,7 @@
   <div class="event-card type-social">
     <div class="card-header" onclick="window.toggleCard(this)">
       <div class="event-title">🍽️ Vacsora</div>
-      <div class="podcast-promo">Szünetben hallgasd: <a href="#" target="_blank">🎧 BábszínPod</a></div>
+      <div class="podcast-promo">Szünetben hallgasd: <a href="https://open.spotify.com/show/5i145Tg1u0hGvR8dPBR956?si=463aa175999f45f4" target="_blank">🎧 BábszínPod</a></div>
     </div>
   </div>
   
@@ -492,6 +488,7 @@
           <div class="event-company">SZFE - Russa Karina</div>
         </div>
         <div class="header-actions">
+          <span class="star-btn">☆</span>
           <div class="mini-pulse-alert">!</div>
           <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
         </div>
@@ -509,7 +506,6 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka kisterem</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 </div>
@@ -551,10 +547,6 @@
           Szereplők: Mészáros Pancsa, Szabados Böbe, Bencze Mónika, Bankó Bence, Zádori Szilárd
         </div>
       </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály / Web</div>
-        <div class="details-text">8+ | <a href="http://www.harlekin.hu" target="_blank">www.harlekin.hu</a></div>
-      </div>
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Kelemen L. Kamaraszínház</span></div>
@@ -565,7 +557,7 @@
   <div class="event-card type-social">
     <div class="card-header" onclick="window.toggleCard(this)">
       <div class="event-title">🍴 Ebédszünet</div>
-      <div class="podcast-promo">Szünetben hallgasd: <a href="#" target="_blank">🎧 BábszínPod</a></div>
+      <div class="podcast-promo">Szünetben hallgasd: <a href="https://open.spotify.com/show/5i145Tg1u0hGvR8dPBR956?si=463aa175999f45f4" target="_blank">🎧 BábszínPod</a></div>
     </div>
   </div>
 
@@ -597,10 +589,6 @@
           Szereplők: Dénes Emőke, Stekbauer-Hanzi Réka, Matola Norbert
         </div>
       </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály / Web</div>
-        <div class="details-text">4+ | <a href="http://www.griffbabszinhaz.hu" target="_blank">www.griffbabszinhaz.hu</a></div>
-      </div>
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka nagyterem</span></div>
@@ -630,10 +618,6 @@
           Zeneszerző: Cseri Hanna<br><br>
           Szereplők: Papp Melinda, Szalai Barbara, Arató Máté, Matta Lóránt, Rácz Attila
         </div>
-      </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály / Web</div>
-        <div class="details-text">5+ | <a href="http://www.bobita.hu" target="_blank">www.bobita.hu</a></div>
       </div>
     </div></div>
     <div class="event-footer">
@@ -667,10 +651,6 @@
           Szereplők: Pfeiffer Zsófia, Varga Péter Róbert
         </div>
       </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály / Web</div>
-        <div class="details-text">5+ | <a href="http://www.ziranoszinhaz.hu" target="_blank">www.ziranoszinhaz.hu</a></div>
-      </div>
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka nagyterem</span></div>
@@ -682,7 +662,7 @@
   <div class="event-card type-social">
     <div class="card-header" onclick="window.toggleCard(this)">
       <div class="event-title">🍽️ Vacsora</div>
-      <div class="podcast-promo">Szünetben hallgasd: <a href="#" target="_blank">🎧 BábszínPod</a></div>
+      <div class="podcast-promo">Szünetben hallgasd: <a href="https://open.spotify.com/show/5i145Tg1u0hGvR8dPBR956?si=463aa175999f45f4" target="_blank">🎧 BábszínPod</a></div>
     </div>
   </div>
   
@@ -711,14 +691,9 @@
           Maszk, báb: Ágfay Míra<br>
           Zene: Hegedűs Dániel<br>
           Díszlet: Mayer Gábor<br>
-          Jelmez: Csoboth Viktória<br>
-          Rendező: Barabás Bíborka<br><br>
+          Jelmez: Csoboth Viktória<br><br>
           Játssza: Barabás Bíborka
         </div>
-      </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály</div>
-        <div class="details-text">14+</div>
       </div>
     </div></div>
     <div class="event-footer">
@@ -764,10 +739,6 @@
           <em>Az előadásban elhangzik Kiss Judit Ágnes Éva monológja című verse.</em>
         </div>
       </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály / Web</div>
-        <div class="details-text">14+ | <a href="http://www.kabocababszinhaz.hu" target="_blank">www.kabocababszinhaz.hu</a></div>
-      </div>
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ruszt J. Stúdiószínház</span></div>
@@ -796,10 +767,6 @@
           Szereplők: Nyirkó Krisztina és Nizsai Dániel
         </div>
       </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály</div>
-        <div class="details-text">1+</div>
-      </div>
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka kisterem</span></div>
@@ -810,7 +777,7 @@
   <div class="event-card type-social">
     <div class="card-header" onclick="window.toggleCard(this)">
       <div class="event-title">🍴 Ebédszünet</div>
-      <div class="podcast-promo">Szünetben hallgasd: <a href="#" target="_blank">🎧 BábszínPod</a></div>
+      <div class="podcast-promo">Szünetben hallgasd: <a href="https://open.spotify.com/show/5i145Tg1u0hGvR8dPBR956?si=463aa175999f45f4" target="_blank">🎧 BábszínPod</a></div>
     </div>
   </div>
 
@@ -837,12 +804,8 @@
           Látvány: Osgyányi Zsófia<br>
           Koreográfus: Bábinszki Ágnes<br>
           Rendező: Szilner Olivér<br><br>
-          Szereplők: Cservenka Ferenc, Sipos Áron, Bablena Vanda, Mónus Szonja, Bablena Vanda, Romhányi Réka
+          Szereplők: Cservenka Ferenc, Sipos Áron, Bablena Vanda, Mónus Szonja, Romhányi Réka
         </div>
-      </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály / Web</div>
-        <div class="details-text">4+ | <a href="http://www.csodamalom.hu" target="_blank">www.csodamalom.hu</a></div>
       </div>
     </div></div>
     <div class="event-footer">
@@ -876,10 +839,6 @@
           Szereplők: Bársonyosi Dávid, Bánky Sára, Vitányi-Juhász István, Ragán Edit, Dunai Julia, Sebestény Bernát, Darvas Emőke, Urszinyi Ádám, Rab Viki, Szukenyik Tamás
         </div>
       </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály / Web</div>
-        <div class="details-text">5+ | <a href="http://www.vaskakas.hu" target="_blank">www.vaskakas.hu</a></div>
-      </div>
     </div></div>
     <div class="event-footer">
       <div class="event-meta">
@@ -894,7 +853,7 @@
   <div class="event-card type-social">
     <div class="card-header" onclick="window.toggleCard(this)">
       <div class="event-title">🍽️ Vacsora</div>
-      <div class="podcast-promo">Szünetben hallgasd: <a href="#" target="_blank">🎧 BábszínPod</a></div>
+      <div class="podcast-promo">Szünetben hallgasd: <a href="https://open.spotify.com/show/5i145Tg1u0hGvR8dPBR956?si=463aa175999f45f4" target="_blank">🎧 BábszínPod</a></div>
     </div>
   </div>
   
@@ -925,10 +884,6 @@
           Dramaturg, rendező: Kiss Dorina<br><br>
           Szereplők: Gyöngyössy Csenge, Lajhó Máté
         </div>
-      </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály</div>
-        <div class="details-text">14+</div>
       </div>
     </div></div>
     <div class="event-footer">
@@ -975,10 +930,6 @@
           Szereplők: Podlovics Laura, Vizi Dávid, Messaoudi Emina, Georgita Máté Dezső, Hrisztov Toma
         </div>
       </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály / Web</div>
-        <div class="details-text">6+ | <a href="http://www.juranyihaz.hu/hu/eloadas/hamarlud" target="_blank">www.juranyihaz.hu</a></div>
-      </div>
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ifjúsági Otthon udvara</span></div>
@@ -989,7 +940,7 @@
   <div class="event-card type-social">
     <div class="card-header" onclick="window.toggleCard(this)">
       <div class="event-title">🍴 Ebédszünet</div>
-      <div class="podcast-promo">Szünetben hallgasd: <a href="#" target="_blank">🎧 BábszínPod</a></div>
+      <div class="podcast-promo">Szünetben hallgasd: <a href="https://open.spotify.com/show/5i145Tg1u0hGvR8dPBR956?si=463aa175999f45f4" target="_blank">🎧 BábszínPod</a></div>
     </div>
   </div>
 
@@ -1022,10 +973,6 @@
           Szereplők: Kovács Domokos, Nagy Petra
         </div>
       </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály</div>
-        <div class="details-text">6+</div>
-      </div>
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Kelemen L. Kamaraszínház</span></div>
@@ -1054,10 +1001,6 @@
           Alkotók: Antal Csaba, Vass Gergely, Reiter Zita, Simon András<br><br>
           Szereplők: Reiter Zita, Simon András
         </div>
-      </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály</div>
-        <div class="details-text">16+</div>
       </div>
     </div></div>
     <div class="event-footer">
@@ -1097,10 +1040,6 @@
           Szereplők: Baditz Dávid, Csiky Csongor Ábel e.h., Hell Krisztina, Mercs Máté Péter, Nagy Mónika, Telenkó-Oláh Tímea
         </div>
       </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály / Web</div>
-        <div class="details-text">12+ | <a href="http://www.vojtinababszinhaz.hu" target="_blank">www.vojtinababszinhaz.hu</a></div>
-      </div>
     </div></div>
     <div class="event-footer">
       <div class="event-meta">
@@ -1115,12 +1054,13 @@
   <div class="event-card type-social">
     <div class="card-header" onclick="window.toggleCard(this)">
       <div class="event-title">🍽️ Vacsora</div>
-      <div class="podcast-promo">Szünetben hallgasd: <a href="#" target="_blank">🎧 BábszínPod</a></div>
+      <div class="podcast-promo">Szünetben hallgasd: <a href="https://open.spotify.com/show/5i145Tg1u0hGvR8dPBR956?si=463aa175999f45f4" target="_blank">🎧 BábszínPod</a></div>
     </div>
   </div>
   
   <div class="slot-time">20:30</div>
   <div class="event-card type-forum"><div class="card-header"><div class="event-title">💬 Szakmai megbeszélés</div></div></div>
+
 </div>
 
 <!-- ════════════════════════════════════
@@ -1153,10 +1093,6 @@
           Szereplők: Horváth Márk, Markó-Valentyik Anna (Junior Príma-díjas)
         </div>
       </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály / Web</div>
-        <div class="details-text">4+ | <a href="http://www.klszinhaz.hu" target="_blank">www.klszinhaz.hu</a></div>
-      </div>
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka nagyterem</span></div>
@@ -1167,7 +1103,7 @@
   <div class="event-card type-social">
     <div class="card-header" onclick="window.toggleCard(this)">
       <div class="event-title">🍴 Ebédszünet</div>
-      <div class="podcast-promo">Szünetben hallgasd: <a href="#" target="_blank">🎧 BábszínPod</a></div>
+      <div class="podcast-promo">Szünetben hallgasd: <a href="https://open.spotify.com/show/5i145Tg1u0hGvR8dPBR956?si=463aa175999f45f4" target="_blank">🎧 BábszínPod</a></div>
     </div>
   </div>
 
@@ -1196,10 +1132,6 @@
           Tervező: Mátravölgyi Ákos<br><br>
           Szereplők: Berekméri Réka, Csörögi Gábor, Farkas Dóra, Józsa Anna, Nagy Máté, Nyitrai Hédi, Stoian Antónia
         </div>
-      </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály / Web</div>
-        <div class="details-text">4+ | <a href="http://www.studioszinhaz.ro" target="_blank">www.studioszinhaz.ro</a></div>
       </div>
     </div></div>
     <div class="event-footer">
@@ -1234,10 +1166,6 @@
           Szereplők: Karádi Borbála, Kovács Judit
         </div>
       </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály</div>
-        <div class="details-text">7+</div>
-      </div>
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka kisterem</span></div>
@@ -1271,10 +1199,6 @@
           Rendező: Kovács Domokos<br><br>
           Szereplők: Kovács Domokos, L. Nagy Attila
         </div>
-      </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály</div>
-        <div class="details-text">14+</div>
       </div>
     </div></div>
     <div class="event-footer">
@@ -1311,10 +1235,6 @@
           Szereplők: Balasi Jolán, Presits Tamás, Schneider Jankó, Nikodémusz Hajnalka
         </div>
       </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály</div>
-        <div class="details-text">14+</div>
-      </div>
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka nagyterem</span></div>
@@ -1326,7 +1246,7 @@
   <div class="event-card type-social">
     <div class="card-header" onclick="window.toggleCard(this)">
       <div class="event-title">🍽️ Vacsora</div>
-      <div class="podcast-promo">Szünetben hallgasd: <a href="#" target="_blank">🎧 BábszínPod</a></div>
+      <div class="podcast-promo">Szünetben hallgasd: <a href="https://open.spotify.com/show/5i145Tg1u0hGvR8dPBR956?si=463aa175999f45f4" target="_blank">🎧 BábszínPod</a></div>
     </div>
   </div>
   
@@ -1372,10 +1292,6 @@
           Szereplők: Fodor Orsolya, Varsányi Péter
         </div>
       </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály / Web</div>
-        <div class="details-text">16+ | <a href="http://www.szegedibabszinhaz.hu" target="_blank">www.szegedibabszinhaz.hu</a></div>
-      </div>
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Kelemen L. Kamaraszínház</span></div>
@@ -1406,10 +1322,6 @@
           Rendező: Fabók Mariann<br><br>
           Szereplők: Bíró Eszter, Daróczi Klarissza, Dávid Péter, Nagy Lázár József
         </div>
-      </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály / Web</div>
-        <div class="details-text">6+ | <a href="http://www.fabokmancsi.hu" target="_blank">www.fabokmancsi.hu</a></div>
       </div>
     </div></div>
     <div class="event-footer">
@@ -1443,10 +1355,6 @@
           Rendező: Kovács Judit<br><br>
           Szereplők: Karádi Borbála, Kovács Judit
         </div>
-      </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály</div>
-        <div class="details-text">7+</div>
       </div>
     </div></div>
     <div class="event-footer">
@@ -1482,10 +1390,6 @@
           Szereplők: Kovács Domokos, L. Nagy Attila
         </div>
       </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály</div>
-        <div class="details-text">14+</div>
-      </div>
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ruszt J. Stúdiószínház</span></div>
@@ -1517,10 +1421,6 @@
           Szereplők: Kolozsi Angéla, Gyurkovics Zsófia, Varga Bori, Kovács Bálint, Lukács Gábor, Kőmíves Csongor
         </div>
       </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály / Web</div>
-        <div class="details-text">14+ | <a href="http://www.meseboltbabszinhaz.hu" target="_blank">www.meseboltbabszinhaz.hu</a></div>
-      </div>
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Kelemen L. Kamaraszínház</span></div>
@@ -1529,10 +1429,8 @@
 
 </div>
 
-</div><!-- /content -->
-
-<!-- TITKOS BÜFÉ KÁRTYA (Easter Egg) -->
-<div id="secretBufeCard" style="display:none; max-width:680px; margin: 0 auto 40px auto; padding: 0 16px;">
+<!-- TITKOS BÜFÉ KÁRTYA (Easter Egg - Keresésre jelenik meg) -->
+<div id="secretBufeCard" style="display:none; padding: 0 0 20px 0;">
   <div class="event-card type-social" style="border-left-color: var(--gold-light);">
     <div class="card-header" style="pointer-events:none;">
       <div class="event-title">🍻 A Találkozó</div>
@@ -1546,25 +1444,25 @@
   </div>
 </div>
 
-<!-- KÖZÉRDEKŰ INFORMÁCIÓK ÉS TÉRKÉP DOBOZ -->
+</div><!-- /content vége -->
+
+<!-- KÖZÉRDEKŰ INFORMÁCIÓK DOBOZ (RÉGI STÍLUS + TÉRKÉP LINKS) -->
 <div class="info-box-bottom">
   <h3>Közérdekű Információk</h3>
   
-  <!-- PDF LETÖLTÉS GOMB -->
-  <a href="https://drive.google.com/file/d/1eDwb5_U7Fy0et1VN9GWzLfthKv9j35Nm/view?usp=sharing" target="_blank" class="pdf-btn">
-    Töltsd le a programot egyben (PDF)
-  </a>
+  <a href="https://drive.google.com/file/d/1eDwb5_U7Fy0et1VN9GWzLfthKv9j35Nm/view?usp=sharing" target="_blank" class="pdf-btn">Töltsd le a programot egyben (PDF)</a>
 
+  <!-- 3 OSZLOPOS INFÓK -->
   <div class="info-grid">
-    <div class="info-item"><strong>Kiszely Ágnes igazgató</strong><a href="tel:+36309075265" style="color:#000;">+36 30 907 5265</a></div>
-    <div class="info-item"><strong>Kuthy Ágnes művészeti vezető</strong><a href="tel:+36308310713" style="color:#000;">+36 30 831 0713</a></div>
-    <div class="info-item"><strong>Bodor Éva fesztiválszervező</strong><a href="tel:+36204195584" style="color:#000;">+36 20 419 5584</a></div>
-    <div class="info-item"><strong>Váriné Dósa Eszter művészeti titkár</strong><a href="tel:+36309075318" style="color:#000;">+36 30 907 5318</a></div>
-    <div class="info-item"><strong>Borsosné Oláh Nóra (szerződések)</strong><a href="tel:+36707996647" style="color:#000;">+36 70 799 6647</a></div>
-    <div class="info-item"><strong>Harkai György kommunikáció</strong><a href="tel:+36304359149" style="color:#000;">+36 30 435 9149</a></div>
-    <div class="info-item"><strong>Műszaki Ügyelet (Bujdosó Zsolt)</strong><a href="tel:+36706200139" style="color:#000;">+36 70 620 0139</a></div>
-    <div class="info-item"><strong>Faműhely (Dudás Péter)</strong><a href="tel:+36305944476" style="color:#000;">+36 30 594 4476</a></div>
-    <div class="info-item"><strong>Varróműhely (Emőd Kriszta)</strong><a href="tel:+36209446533" style="color:#000;">+36 20 944 6533</a></div>
+    <div class="info-item"><strong>Kiszely Ágnes igazgató</strong><a href="tel:+36309075265">+36 30 907 5265</a></div>
+    <div class="info-item"><strong>Kuthy Ágnes művészeti vezető</strong><a href="tel:+36308310713">+36 30 831 0713</a></div>
+    <div class="info-item"><strong>Bodor Éva fesztiválszervező</strong><a href="tel:+36204195584">+36 20 419 5584</a></div>
+    <div class="info-item"><strong>Váriné Dósa Eszter művészeti titkár</strong><a href="tel:+36309075318">+36 30 907 5318</a></div>
+    <div class="info-item"><strong>Borsosné Oláh Nóra (szerződések)</strong><a href="tel:+36707996647">+36 70 799 6647</a></div>
+    <div class="info-item"><strong>Harkai György kommunikáció</strong><a href="tel:+36304359149">+36 30 435 9149</a></div>
+    <div class="info-item"><strong>Műszaki Ügyelet (Bujdosó Zsolt)</strong><a href="tel:+36706200139">+36 70 620 0139</a></div>
+    <div class="info-item"><strong>Faműhely (Dudás Péter)</strong><a href="tel:+36305944476">+36 30 594 4476</a></div>
+    <div class="info-item"><strong>Varróműhely (Emőd Kriszta)</strong><a href="tel:+36209446533">+36 20 944 6533</a></div>
   </div>
 
   <div class="map-container">
@@ -1604,10 +1502,10 @@
 
     <div class="venue-item" style="border-bottom:none; padding-bottom:0;">
       <div>
-        <a href="https://www.google.com/maps/dir/?api=1&destination=Ifjúsági+Otthon,+Kecskemét" target="_blank" class="venue-item-title">Ifjúsági Otthon</a>
+        <a href="https://www.google.com/maps/dir/?api=1&destination=46.908781114630614,19.690731010272213" target="_blank" class="venue-item-title">Ifjúsági Otthon</a>
         <div class="venue-item-address">Kossuth tér 4.</div>
       </div>
-      <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=Ifjúsági+Otthon,+Kecskemét" target="_blank">📍 Útvonal</a>
+      <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=46.908781114630614,19.690731010272213" target="_blank">📍 Útvonal</a>
     </div>
     
     <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2726.3146462725835!2d19.688174515598687!3d46.90159497914442!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4743da0f0c97693d%3A0xc3b8384f509e5b22!2sCir%C3%B3ka%20B%C3%A1bsz%C3%ADnh%C3%A1z!5e0!3m2!1shu!2shu!4v1689254391234!5m2!1shu!2shu" width="100%" height="250" style="border:0; border-radius:4px; margin-top:20px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
@@ -1627,13 +1525,13 @@
   </div>
   
   <div class="podcast-promo" style="margin-top:20px;">
-    <a href="#" target="_blank" style="color:rgba(255,255,255,0.6); font-size:12px;"><span style="font-size:16px; vertical-align:middle;">🎧</span> BábszínPod</a>
+    <a href="https://open.spotify.com/show/5i145Tg1u0hGvR8dPBR956?si=463aa175999f45f4" target="_blank" style="color:rgba(255,255,255,0.6); font-size:12px; font-weight:600;"><span style="font-size:16px; vertical-align:middle;">🎧</span> BábszínPod</a>
   </div>
 </footer>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyB7BkU92oIK3H_01uX9hr8GatQyE_NXMyA",
@@ -1649,7 +1547,9 @@
   const db  = getDatabase(app);
   window.globalAlerts =[];
 
-  // ÉRTESÍTÉSEK
+  // ===============================
+  // ÉRTESÍTÉSEK (Havária)
+  // ===============================
   onValue(ref(db, "alertsList"), (snap) => {
     document.querySelectorAll('.event-card').forEach(card => card.classList.remove('has-alert'));
     if (!snap.exists()) {
@@ -1694,7 +1594,7 @@
       const titleEl = el.querySelector('.event-title');
       if(titleEl) {
         let titleText = titleEl.innerText.replace('MOST ZAJLIK', '').trim();
-        return `<div style="font-size:12px; color:var(--teal); font-weight:700; margin-bottom:6px; text-transform:uppercase;">Érintett program: ${titleText}</div>`;
+        return `<div style="font-size:12px; color:var(--teal); font-weight:700; margin-bottom:6px; text-transform:uppercase;">Előadás: ${titleText}</div>`;
       }
     }
     return "";
@@ -1748,8 +1648,11 @@
     }
   };
 
-  // EMLÉKKÖNYV
+  // ===============================
+  // VIRTUALIS EMLÉKKÖNYV
+  // ===============================
   const gbRef = ref(db, "guestbook");
+  
   onValue(gbRef, (snap) => {
     const list = document.getElementById("guestbookList");
     list.innerHTML = "";
@@ -1772,19 +1675,28 @@
     });
   });
 
-  window.openGuestbook = function() { document.getElementById('guestbookModal').classList.add('visible'); }
+  window.openGuestbook = function() {
+    document.getElementById('guestbookModal').classList.add('visible');
+  }
 
   window.submitGuestbook = function() {
     const name = document.getElementById('gbName').value.trim();
     const text = document.getElementById('gbText').value.trim();
-    if(!name || !text) { alert("Kérjük, add meg a neved és az üzenetet is!"); return; }
+    if(!name || !text) { window.showToast("Kérjük, add meg a neved és az üzenetet is!"); return; }
     
     const now = new Date();
     const dateStr = now.toLocaleDateString('hu-HU', {month:'short', day:'numeric'}) + " " + now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
     
-    push(gbRef, { name: name, text: text, timeRaw: Date.now(), dateStr: dateStr }).then(() => {
-       document.getElementById('gbText').value = "";
-    });
+    const newRef = push(gbRef);
+    set(newRef, { name: name, text: text, timeRaw: Date.now(), dateStr: dateStr })
+      .then(() => {
+         document.getElementById('gbText').value = "";
+         window.showToast("Üzenet sikeresen elküldve!");
+      })
+      .catch((err) => {
+         console.error("Firebase hiba:", err);
+         window.showToast("Hiba! (Firebase jogosultság blokkolva?)");
+      });
   }
 
   window.escapeHTML = function(str) {
@@ -1793,14 +1705,18 @@
 </script>
 
 <script>
+  // ===============================
+  // DOM INTERAKCIÓK & EASTER EGGEK
+  // ===============================
   let activeTabBeforeSearch = 0;
   let currentTypeFilter = null;
+  let isFavoritesMode = false;
   let audioContextAllowed = false; 
 
   window.addEventListener('DOMContentLoaded', () => {
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW hiba', err));
 
-    // Kártyák és Vastaps
+    // Kártyák és Vastaps Long Press
     document.querySelectorAll('.event-card').forEach(card => {
       const titleEl = card.querySelector('.event-title');
       if (titleEl) {
@@ -1810,8 +1726,18 @@
         titleEl.addEventListener('touchend', cancelPress);
         titleEl.addEventListener('mouseup', cancelPress);
         titleEl.addEventListener('mouseleave', cancelPress);
-        function startPress(e) { pressTimer = setTimeout(() => { window.showToast("Vastaps a társulatnak! 👏"); window.fireConfetti(); }, 3000); }
+        function startPress() { pressTimer = setTimeout(() => { window.showToast("Vastaps a társulatnak! 👏"); window.fireConfetti(); window.playApplause(); }, 3000); }
         function cancelPress() { clearTimeout(pressTimer); }
+      }
+      
+      const headerActions = card.querySelector('.header-actions');
+      if (headerActions && card.id) {
+        const star = document.createElement('span');
+        star.className = 'star-btn';
+        star.innerHTML = '☆';
+        star.onclick = (e) => window.toggleStar(e, card.id, star);
+        if(localStorage.getItem('fav_' + card.id)) star.classList.add('active');
+        headerActions.prepend(star);
       }
     });
 
@@ -1826,14 +1752,14 @@
     checkLiveEvents();
     setInterval(checkLiveEvents, 60000);
     
-    // Marionett kikapcsolás bárhol
-    document.body.addEventListener('dblclick', () => {
-      if(document.body.classList.contains('marionette-mode')) {
-        document.body.classList.remove('marionette-mode');
-        window.showToast("Marionett mód kikapcsolva!");
-      }
+    // Ugrás gomb mutatás
+    window.addEventListener('scroll', () => {
+      const jumpBtn = document.getElementById('jumpBtn');
+      if (document.querySelector('.day-panel.active .is-live')) jumpBtn.classList.add('show');
+      else jumpBtn.classList.remove('show');
     });
 
+    // Oldal bármilyen érintése engedélyezi a hangot
     document.body.addEventListener('click', () => { audioContextAllowed = true; }, { once: true });
   });
 
@@ -1848,6 +1774,8 @@
 
   function checkLiveEvents() {
     const now = new Date();
+    // TESZT: const now = new Date('2026-06-13T10:55:00');
+    
     if (now.getFullYear() !== 2026 || now.getMonth() !== 5) return;
 
     document.querySelectorAll('.day-panel').forEach((panel, dayIndex) => {
@@ -1912,6 +1840,27 @@
     return now >= startObj && now <= endObj;
   }
 
+  // --- SZŰRŐK ÉS FÜLEK ---
+  window.toggleStar = function(event, cardId, starElement) {
+    event.stopPropagation();
+    if (localStorage.getItem('fav_' + cardId)) {
+      localStorage.removeItem('fav_' + cardId);
+      starElement.classList.remove('active');
+    } else {
+      localStorage.setItem('fav_' + cardId, 'true');
+      starElement.classList.add('active');
+    }
+    if (isFavoritesMode) window.doSearch();
+  };
+
+  window.toggleFavoritesView = function() {
+    isFavoritesMode = !isFavoritesMode;
+    const btn = document.getElementById('favFilterBtn');
+    if (isFavoritesMode) { btn.classList.add('active'); btn.innerHTML = '★ Csak a kedvenceim'; } 
+    else { btn.classList.remove('active'); btn.innerHTML = '★ Kedvenceim'; }
+    window.doSearch();
+  };
+
   window.toggleTypeFilter = function(type) {
     if (currentTypeFilter === type) {
       currentTypeFilter = null;
@@ -1928,7 +1877,13 @@
 
   window.filterVenue = function(el, e) {
     e.stopPropagation();
-    document.getElementById('searchInput').value = el.innerText.trim();
+    const input = document.getElementById('searchInput');
+    const venueName = el.innerText.trim();
+    if(input.value === venueName) {
+      input.value = ""; // Ha már szűrve van, kikapcsolja
+    } else {
+      input.value = venueName;
+    }
     window.doSearch();
   }
 
@@ -1944,19 +1899,23 @@
     activeTabBeforeSearch = index;
     
     document.getElementById('searchInput').value = "";
+    isFavoritesMode = false;
     currentTypeFilter = null;
+    document.getElementById('favFilterBtn').classList.remove('active');
+    document.getElementById('favFilterBtn').innerHTML = '★ Kedvenceim';
     document.querySelectorAll('.legend-item').forEach(el => el.classList.remove('inactive'));
     
     window.doSearch();
     setTimeout(window.scrollToCurrent, 300);
   }
 
+  // --- KERESŐ & EASTER EGGS ---
   window.doSearch = function() {
     const query = document.getElementById('searchInput').value.toLowerCase();
     const dayPanels = document.querySelectorAll('.day-panel');
     const tabsWrap = document.getElementById('tabsWrap');
 
-    // 1. EASTER EGG: Vitéz László
+    // EASTER EGG: Vitéz László
     if(query === "lászló" || query === "laszlo") {
       const vitez = document.getElementById('vitezLaszlo');
       vitez.classList.add('show');
@@ -1968,19 +1927,24 @@
         pan.classList.remove('hit');
         document.querySelector('.search-input-box').classList.remove('search-shake');
         document.getElementById('searchInput').value = ""; 
+        window.doSearch();
       }, 3000);
       return;
     }
 
-    // 2. EASTER EGG: Kritikus mód
+    // EASTER EGG: Kritikus mód
     if(query === "kritika" || query === "kritikus") {
       document.body.style.transform = "rotate(180deg)";
       window.showToast("A kritikusok mindent másképp látnak!", true);
-      setTimeout(() => { document.body.style.transform = "none"; document.getElementById('searchInput').value = ""; }, 6000);
+      setTimeout(() => { 
+        document.body.style.transform = "none"; 
+        document.getElementById('searchInput').value = ""; 
+        window.doSearch();
+      }, 5000);
       return;
     }
 
-    // 3. EASTER EGG: Titkos Büfé
+    // EASTER EGG: Titkos Büfé
     if(['sör','bor','fröccs','kávé','kave','büfé','bufe'].includes(query.trim())) {
       tabsWrap.style.display = 'none';
       document.querySelectorAll('.day-panel').forEach(p => p.style.display = 'none');
@@ -1990,13 +1954,14 @@
       document.getElementById('secretBufeCard').style.display = 'none';
     }
 
-    // ALAP KERESŐ
-    if (query.trim() === "" && !currentTypeFilter) {
+    // NORMÁL KERESŐ MŰKÖDÉS
+    if (query.trim() === "" && !isFavoritesMode && !currentTypeFilter) {
       tabsWrap.style.display = 'flex';
       dayPanels.forEach(panel => {
         panel.style.display = '';
         const dayTitle = panel.querySelector('.search-day-title');
         if(dayTitle) dayTitle.style.display = 'none';
+        
         panel.querySelectorAll('.event-card').forEach(card => card.style.display = 'block');
         panel.querySelectorAll('.slot-time').forEach(time => time.style.display = 'block');
       });
@@ -2015,7 +1980,8 @@
       if(!dayTitle) {
         dayTitle = document.createElement('h3');
         dayTitle.className = 'search-day-title';
-        dayTitle.innerText = document.querySelectorAll('.tab-btn')[index].getAttribute('data-day-name');
+        const btnText = document.querySelectorAll('.tab-btn')[index].getAttribute('data-day-name');
+        dayTitle.innerText = btnText;
         panel.prepend(dayTitle);
       }
       
@@ -2025,18 +1991,23 @@
       cards.forEach(card => {
         const text = card.innerText.toLowerCase();
         const isMatchSearch = query === "" || text.includes(query);
-        let isMatchType = true;
+        const isMatchFav = !isFavoritesMode || localStorage.getItem('fav_' + card.id) === 'true';
         
+        let isMatchType = true;
         if(currentTypeFilter) {
-          if(currentTypeFilter === 'public') isMatchType = card.querySelector('.badge-public') !== null;
-          else isMatchType = card.classList.contains(currentTypeFilter);
+          if(currentTypeFilter === 'public') {
+             isMatchType = card.querySelector('.badge-public') !== null;
+          } else {
+             isMatchType = card.classList.contains(currentTypeFilter);
+          }
         }
 
-        if(isMatchSearch && isMatchType) {
+        if(isMatchSearch && isMatchFav && isMatchType) {
           card.style.display = 'block';
           let prev = card.previousElementSibling;
           while(prev && !prev.classList.contains('slot-time')) prev = prev.previousElementSibling;
           if(prev && prev.classList.contains('slot-time')) prev.style.display = 'block';
+          
           hasMatchInDay = true;
         } else {
           card.style.display = 'none';
@@ -2053,8 +2024,7 @@
     });
   }
 
-  // --- KIEGÉSZÍTŐ FUNKCIÓK (Easter eggs) ---
-
+  // --- MOTIVÁTOR & HANGOK ---
   const quotes =[
     "A báb nem a kezedben kel életre, hanem a szívedben... de azért tartsd feszesen a mozgatópálcát.",
     "A taps olyan, mint a tiszavirág. De a büfében a sör örök.",
@@ -2093,18 +2063,13 @@
 
   window.playGong = function() {
     const audio = new Audio('https://upload.wikimedia.org/wikipedia/commons/d/d4/Doorbell_ringing.ogg');
-    audio.play().catch(e => console.log("Audio play blockolva."));
+    audio.play().catch(e => console.log("A böngésző blokkolta az auto-lejátszást."));
   }
 
-  let marionetteClicks = 0;
-  document.getElementById('marionetteBtn').addEventListener('click', () => {
-    marionetteClicks++;
-    if(marionetteClicks === 5) {
-      document.body.classList.add('marionette-mode');
-      window.showToast("Marionett mód aktiválva! (Dupla kattintás a kikapcsoláshoz)");
-      marionetteClicks = 0;
-    }
-  });
+  window.playApplause = function() {
+    const audio = new Audio('https://upload.wikimedia.org/wikipedia/commons/1/1a/Applause.ogg');
+    audio.play().catch(e => console.log("A böngésző blokkolta az auto-lejátszást."));
+  }
 
 </script>
 </body>

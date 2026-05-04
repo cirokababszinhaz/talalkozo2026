@@ -8,10 +8,10 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root { --teal: #1a5c58; --teal-dark: #113d3a; --gold: #c4913a; --gold-light: #d4a84a; --bg: #f0ece3; --card: #fff; --text: #1a1a1a; --muted: #6b6258; --border: rgba(26,92,88,0.18); --red: #c0392b; --green: #1a7a4a; }
-  body { background: var(--bg); font-family: 'Montserrat', sans-serif; font-weight: 500; min-height: 100vh; display: flex; flex-direction: column; }
+  body { background: var(--bg); font-family: 'Montserrat', sans-serif; font-weight: 500; min-height: 100vh; display: flex; flex-direction: column; transition: transform 0.5s; }
   header { background: var(--teal-dark); padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
   header .logo { font-weight: 700; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-light); }
-  header .badge { background: var(--red); color: #fff; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; padding: 3px 8px; border-radius: 2px; }
+  header .badge { background: var(--red); color: #fff; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; padding: 3px 8px; border-radius: 2px; cursor: pointer; user-select: none; }
 
   #loginScreen { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
   .login-box { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 32px; max-width: 380px; width: 100%; }
@@ -44,13 +44,21 @@
   .gb-item .del-btn { border-color: var(--teal); color: var(--teal); background: rgba(26,92,88,0.05); }
 
   footer { background: var(--teal-dark); text-align: center; padding: 20px; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.35); font-weight: 600; }
+
+  /* MARIONETT MÓD ADMIN */
+  .marionette-mode { animation: sway 3s infinite ease-in-out; transform-origin: top center; overflow: visible !important; }
+  .marionette-mode::before, .marionette-mode::after { content:''; position:fixed; top:0; width:1px; background:rgba(0,0,0,0.4); height:100vh; z-index: 9999; pointer-events:none;}
+  .marionette-mode::before { left: 20%; }
+  .marionette-mode::after { right: 20%; }
+  @keyframes sway { 0%, 100% { transform: rotate(-1.5deg); } 50% { transform: rotate(1.5deg); } }
+
 </style>
 </head>
 <body>
 
 <header>
   <div class="logo">XVII. Találkozó</div>
-  <div class="badge">Vezérlőpult</div>
+  <div class="badge" id="marionetteBtn">Vezérlőpult</div>
 </header>
 
 <div id="loginScreen">
@@ -172,9 +180,7 @@
   window.doLogout = function() { signOut(auth).then(() => location.reload()); };
 
   function escapeHTML(str) {
-    return str.replace(/[&<>'"]/g, tag => ({
-      '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
-    }[tag]));
+    return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag]));
   }
 
   function initAdmin() {
@@ -182,21 +188,15 @@
       const container = document.getElementById("activeAlertsContainer");
       container.innerHTML = "";
       if (!snap.exists()) { container.innerHTML = "<p style='font-size:12px;color:var(--muted)'>Nincs aktív értesítés.</p>"; return; }
-      
       const data = snap.val();
       const alertsArray = Object.keys(data).map(key => ({ id: key, ...data[key] })).sort((a,b) => b.timeRaw - a.timeRaw);
-      
       alertsArray.forEach(alert => {
         let targetName = alert.targetId === "all" ? "Általános" : document.querySelector(`#alertTarget option[value="${alert.targetId}"]`).textContent;
         container.innerHTML += `
           <div class="alert-item">
-            <div>
-              <div class="alert-meta">${alert.timestamp} | Célpont: ${targetName}</div>
-              <div class="alert-text">${escapeHTML(alert.message)}</div>
-            </div>
+            <div><div class="alert-meta">${alert.timestamp} | Célpont: ${targetName}</div><div class="alert-text">${escapeHTML(alert.message)}</div></div>
             <button class="del-btn" onclick="window.deleteAlert('${alert.id}')">Törlés</button>
-          </div>
-        `;
+          </div>`;
       });
     });
 
@@ -204,20 +204,14 @@
       const container = document.getElementById("guestbookAdminContainer");
       container.innerHTML = "";
       if (!snap.exists()) { container.innerHTML = "<p style='font-size:12px;color:var(--muted)'>Nincs még bejegyzés.</p>"; return; }
-      
       const data = snap.val();
       const gbArray = Object.keys(data).map(key => ({ id: key, ...data[key] })).sort((a,b) => b.timeRaw - a.timeRaw);
-      
       gbArray.forEach(msg => {
         container.innerHTML += `
           <div class="alert-item gb-item">
-            <div>
-              <div class="alert-meta">${msg.dateStr} | ${escapeHTML(msg.name)}</div>
-              <div class="alert-text">${escapeHTML(msg.text)}</div>
-            </div>
+            <div><div class="alert-meta">${msg.dateStr} | ${escapeHTML(msg.name)}</div><div class="alert-text">${escapeHTML(msg.text)}</div></div>
             <button class="del-btn" onclick="window.deleteGbMessage('${msg.id}')">Törlés</button>
-          </div>
-        `;
+          </div>`;
       });
     });
   }
@@ -227,7 +221,6 @@
     const target = document.getElementById("alertTarget").value;
     const fb = document.getElementById("publishFeedback");
     if (!text) { showFeedback(fb, "Írj be egy üzenetet!", "err"); return; }
-    
     const nowStr = new Date().toLocaleString("hu-HU", { month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" });
     try {
       const newRef = push(ref(db, "alertsList"));
@@ -244,6 +237,13 @@
     el.textContent = msg; el.className = "feedback " + type; el.style.display = "block";
     setTimeout(() => el.style.display = "none", 4000);
   }
+</script>
+
+<script>
+  let marionetteClicks = 0;
+  document.getElementById('marionetteBtn').addEventListener('dblclick', () => {
+    document.body.classList.toggle('marionette-mode');
+  });
 </script>
 </body>
 </html>
