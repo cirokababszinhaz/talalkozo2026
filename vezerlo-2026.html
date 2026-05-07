@@ -13,8 +13,9 @@
   header .logo { font-weight: 700; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-light); }
   header .badge { background: var(--red); color: #fff; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; padding: 3px 8px; border-radius: 2px; cursor: pointer; user-select: none; }
 
-  #loginScreen { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
-  .login-box { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 32px; max-width: 380px; width: 100%; }
+  #loginScreen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; }
+  .login-joke { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--teal-dark); text-align: center; margin-bottom: 30px; font-style: italic; }
+  .login-box { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 32px; max-width: 380px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.05);}
   .login-box h2 { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--teal-dark); margin-bottom: 6px; }
 
   #adminPanel { flex: 1; display: none; padding: 32px 20px 60px; max-width: 600px; margin: 0 auto; width: 100%; }
@@ -28,6 +29,7 @@
 
   .btn { display: block; width: 100%; padding: 12px; font-family: 'Montserrat', sans-serif; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; font-weight: 700; border: none; border-radius: 3px; cursor: pointer; transition: .2s; margin-bottom: 10px; }
   .btn-primary { background: var(--red); color: #fff; }
+  .btn-primary:hover { background: #a93226; }
   .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
 
   .feedback { font-size: 12px; padding: 10px 14px; border-radius: 3px; margin-top: 4px; display: none; font-weight: 600;}
@@ -45,7 +47,6 @@
 
   footer { background: var(--teal-dark); text-align: center; padding: 20px; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.35); font-weight: 600; }
 
-  /* MARIONETT MÓD ADMIN */
   .marionette-mode { animation: sway 3s infinite ease-in-out; transform-origin: top center; overflow: visible !important; }
   .marionette-mode::before, .marionette-mode::after { content:''; position:fixed; top:0; width:1px; background:rgba(0,0,0,0.4); height:100vh; z-index: 9999; pointer-events:none;}
   .marionette-mode::before { left: 20%; }
@@ -62,6 +63,7 @@
 </header>
 
 <div id="loginScreen">
+  <div class="login-joke">Kíváncsiskodunk, kíváncsiskodunk,<br>a nézőtér meg üres?</div>
   <div class="login-box">
     <h2>Belépés</h2>
     <label for="emailInput" style="margin-top:20px;">Email cím</label>
@@ -93,7 +95,7 @@
     <option value="show-juhasz">Az igazmondó juhász</option>
     <option value="show-frida">Itt vagyok, hát élek, Frida</option>
     <option value="show-tragedia-hetfo-d">Az ember tragédiája</option>
-    <option value="show-doboz-hetfo">A doboz</option>
+    <option value="show-doboz-hetfo">A doboz (Hétfő)</option>
     <option value="show-graffalo">Graffaló</option>
     <option value="show-bambi">Bambi</option>
     <option value="show-liselotte">Liselotte és a május</option>
