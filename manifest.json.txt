@@ -4,6 +4,9 @@
   "description": "Magyarországi Bábszínházak 17. Találkozója - Kecskemét",
   "start_url": "./index.html",
   "display": "standalone",
+  "orientation": "portrait",
+  "lang": "hu",
+  "categories":["entertainment", "lifestyle", "events"],
   "background_color": "#f0ece3",
   "theme_color": "#1a5c58",
   "icons":[
