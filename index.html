@@ -5,8 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#1a5c58">
 <link rel="manifest" href="manifest.json">
+
+<!-- FB OPEN GRAPH META TAGEK (A Végleges képpel) -->
+<meta property="og:title" content="Magyarországi Bábszínházak XVII. Találkozója">
+<meta property="og:description" content="2026. június 13-18. Kecskemét. Nézd meg a teljes programot!">
+<meta property="og:image" content="https://ciroka.hu/wp-content/themes/ciroka/assets/img/logo.svg"> <!-- IDE MAJD BE KELL TENNED A VÉGLEGES KÉP LINKJÉT! -->
+<meta property="og:url" content="https://ciroka.hu">
+<meta property="og:type" content="website">
+
 <title>Magyarországi Bábszínházak XVII. Találkozója</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   
@@ -46,6 +54,7 @@
     .quote-box { background: rgba(255,255,255,0.05); }
     .filter-btn { background: rgba(255,255,255,0.1); border-color: transparent; color: #fff;}
     .filter-btn.active { background: var(--gold-light); color: #000; font-weight: 700;}
+    .post-it { background: #d4d450; color: #111; }
   }
 
   body { background: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; font-weight: 500; min-height: 100vh; overflow-x: hidden; transition: transform 0.5s ease; }
@@ -56,12 +65,11 @@
   .site-header { background: var(--teal-dark); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--teal); position: relative; z-index: 50; }
   .header-logo { width: auto; max-width:180px; }
   .header-logo img { height: 35px; display: block; object-fit: contain; }
+  
+  .header-right { position: relative; }
   .secret-admin-link { color: rgba(255,255,255,0.15); text-decoration: none; font-size: 11px; letter-spacing: 2px; font-weight: 700; transition: .2s; cursor: pointer; padding: 5px;}
   .secret-admin-link:hover { color: #fff; text-decoration: none; }
-
-  /* EASTER EGG: ADMIN TOOLTIP */
-  .header-right { position: relative; }
-  .admin-tooltip { position: absolute; top: 100%; right: 0; background: #fff; color: var(--teal-dark); font-size: 10px; padding: 6px 10px; border-radius: 4px; white-space: nowrap; opacity: 0; transition: .3s; pointer-events: none; margin-top: 5px; font-weight: 700; box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
+  .admin-tooltip { position: absolute; top: 100%; right: 0; background: #fff; color: var(--teal-dark); font-size: 10px; padding: 6px 10px; border-radius: 4px; white-space: nowrap; opacity: 0; transition: .3s; pointer-events: none; margin-top: 10px; font-weight: 700; box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
   .secret-admin-link:hover + .admin-tooltip { opacity: 1; }
 
   /* HERO */
@@ -71,7 +79,7 @@
   h1 em { color: var(--gold-light); font-style: italic; }
   .hero-date { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: #fff; margin-top: 14px; font-weight: 600; }
   
-  .hero-buttons { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; margin-top: 24px; }
+  .hero-buttons { display: flex; flex-direction: column; align-items: center; gap: 14px; margin-top: 24px; }
   .pdf-dl-btn { background: var(--gold); color: #fff; padding: 12px 24px; border-radius: 4px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; text-decoration: none; transition: .2s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
   .pdf-dl-btn:hover { background: var(--gold-light); color: #000; text-decoration: none; }
   
@@ -81,18 +89,24 @@
   #topAlertBar { background: var(--red); color: #fff; text-align: center; padding: 12px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; cursor: pointer; display: none; transition: background .2s; position: sticky; top:0; z-index: 1000;}
 
   /* KERESŐ & GOMBOK */
-  .search-wrap { background: var(--teal-dark); padding: 16px 20px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .search-wrap { background: var(--teal-dark); padding: 16px 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
   .search-input-box { position: relative; width: 100%; max-width: 400px; }
   .search-input-box input { width: 100%; padding: 12px 16px 12px 40px; border-radius: 20px; border: none; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; outline: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
   .search-input-box svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); }
   .search-shake { animation: shake 0.5s ease-in-out; }
   @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 50% { transform: translateX(10px); } 75% { transform: translateX(-10px); } }
 
-  /* KIEGYENSÚLYOZOTT FLEXBOX A GOMBOKNAK */
-  .quick-links { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 500px;}
-  .ql-btn { background: transparent; border: none; color: var(--gold-light); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: .2s; display: flex; align-items: center; gap: 4px; padding: 8px 12px; border: 1px solid rgba(212, 168, 74, 0.3); border-radius: 20px;}
-  .ql-btn:hover, .ql-btn.active { color: #000; background: var(--gold-light); text-decoration: none; }
-  .checkin-status { width: 100%; text-align: center; font-size: 10px; color: rgba(255,255,255,0.6); margin-top: 8px; cursor: pointer; font-weight: 600;}
+  .quick-links { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 600px; margin-top: 4px; }
+  .ql-wrapper { flex: 1 1 calc(33.333% - 10px); min-width: 140px; position: relative; display: flex; justify-content: center; flex-direction: column; align-items: center;}
+  .ql-btn { width: 100%; background: transparent; border: 1px solid rgba(212, 168, 74, 0.3); border-radius: 20px; color: var(--gold-light); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: .2s; display: flex; align-items: center; justify-content: center; gap: 4px; padding: 10px 8px; white-space: nowrap; }
+  .ql-btn:hover, .ql-btn.active { color: #000; background: var(--gold-light); text-decoration: none; border-color: var(--gold-light); }
+  
+  .checkin-status { width: 100%; text-align: center; font-size: 10px; color: rgba(255,255,255,0.6); margin-top: 6px; cursor: pointer; font-weight: 600; line-height: 1.3;}
+  .checkin-status span { color: var(--gold-light); text-decoration: underline; font-weight: 700; }
+
+  @media (max-width: 480px) {
+    .ql-wrapper { flex: 1 1 calc(50% - 8px); min-width: 120px; }
+  }
 
   /* SZŰRŐ GOMBOK (Legend) */
   .legend-bar { background: var(--teal-dark); display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.1); }
@@ -102,7 +116,7 @@
   .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 
   /* TABS (Középre igazítva) */
-  .tabs-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; background: var(--surface); border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center;}
+  .tabs-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; background: var(--surface); border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; transition: top 0.3s;}
   .tabs-wrap::-webkit-scrollbar { display: none; }
   .tabs { display: inline-flex; min-width: max-content; padding: 0 12px; justify-content: center; margin: 0 auto;}
   @media (max-width: 650px) { .tabs { justify-content: flex-start; margin: 0;} }
@@ -137,9 +151,9 @@
   @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
   .card-header-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
-  .header-actions { display: flex; align-items: center; gap: 8px; }
+  .header-actions { display: flex; align-items: center; gap: 10px; }
   
-  .star-btn { font-size: 24px; cursor: pointer; color: var(--border); transition: .2s; user-select: none; line-height: 1; }
+  .star-btn { font-size: 24px; cursor: pointer; color: var(--border); transition: .2s; user-select: none; line-height: 1; display: flex; align-items: center; justify-content: center;}
   .star-btn.active { color: var(--gold-light); }
   .star-btn:hover { transform: scale(1.15); }
 
@@ -175,7 +189,7 @@
 
   .section-divider { height: 2px; background: var(--border); margin: 32px 0 10px; }
 
-  /* KÖZÉRDEKŰ INFÓK ÉS TÉRKÉP */
+  /* KÖZÉRDEKŰ INFÓK (RÉGI NÉZET) ÉS TÉRKÉP */
   .info-box-bottom { background: var(--surface); border-top: 2px solid var(--border); padding: 40px 20px; max-width: 680px; margin: 0 auto; border-radius: 6px 6px 0 0; position: relative;}
   .info-box-bottom h3 { font-family: 'Playfair Display', serif; color: var(--teal-dark); font-size: 22px; margin-bottom: 20px; }
   
@@ -190,27 +204,47 @@
   .map-title { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-light); font-weight: 700; margin-bottom: 15px; }
   
   /* GASZTRO ÉS HELYSZÍNEK TÁBLA STÍLUS */
-  .venue-item { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 10px;}
+  .venue-item { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;}
   .venue-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-  .venue-item-title { font-size: 13px; font-weight: 700; color: var(--teal-dark); margin-bottom: 2px; transition: .2s; }
+  .venue-item-title { font-size: 13px; font-weight: 700; color: var(--teal-dark); margin-bottom: 2px; transition: .2s; display:inline-block;}
   .venue-item-title:hover { color: var(--gold); text-decoration: none;}
   .venue-item-address { font-size: 11px; color: var(--muted); font-weight: 600; }
   
   /* CHECKIN BUBORÉKOK */
-  .checkin-list { display: flex; flex-wrap: wrap; gap: 6px; min-height: 10px; margin-top: 6px;}
+  .checkin-list { display: flex; flex-wrap: wrap; gap: 6px; min-height: 10px; margin-top: 6px; align-items: center;}
   .checkin-bubble { background: var(--gold-light); color: #000; font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 12px; animation: popIn .3s ease; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
   .checkin-bubble::before { content: ''; display: block; width: 6px; height: 6px; background: #fff; border-radius: 50%; animation: pulse 1.5s infinite; }
   @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-  /* GUESTBOOK SZÖVEGES EMLÉKKÖNYV */
-  .gb-message { background: rgba(26,92,88,0.05); border: 1px solid rgba(26,92,88,0.15); padding: 14px; border-radius: 6px; margin-bottom: 12px; text-align: left; }
+  .gastro-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
+  .gastro-table th, .gastro-table td { border-bottom: 1px solid var(--border); padding: 10px; text-align: left; }
+  .gastro-table th { color: var(--teal); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; font-size: 10px; }
+  .gastro-table td { color: var(--text); font-weight: 600; }
+  .gastro-table td em { color: var(--muted); font-style: normal; font-size: 11px; display: block; margin-top: 2px; font-weight: 500;}
+
+  /* POLAROID EMLÉKKÖNYV FOTÓFAL ÉS POST-IT */
+  .gb-grid { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; align-items: flex-start; padding-top: 10px; }
+  .polaroid { background: #fff; padding: 10px 10px 30px 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); position: relative; width: 100%; max-width: 240px; display: flex; flex-direction: column; transform: rotate(calc(-4deg + 8deg * var(--rand))); }
+  .polaroid.wide { max-width: 320px; }
+  .polaroid img { width: 100%; height: auto; object-fit: cover; display: block; background: #eee; filter: sepia(0.2) contrast(1.1); }
+  .polaroid-text { font-family: 'Playfair Display', serif; font-size: 14px; color: #222; text-align: center; margin-top: 15px; line-height: 1.3; font-weight: 600;}
+  .polaroid-author { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--teal); margin-top: 8px; text-align: center; font-weight: 800; font-family: 'Montserrat', sans-serif;}
+  .cellux { position: absolute; top: -10px; left: 50%; transform: translateX(-50%) rotate(-4deg); width: 80px; height: 25px; background: rgba(255, 255, 255, 0.4); border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 1px 3px rgba(0,0,0,0.1); backdrop-filter: blur(2px); z-index: 2; }
+  
+  .post-it { background: #fdfd86; padding: 15px; width: 130px; height: 130px; box-shadow: 2px 4px 6px rgba(0,0,0,0.15); position: relative; display: flex; align-items: center; justify-content: center; text-align: center; font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: #222; transform: rotate(calc(-10deg + 20deg * var(--rand))); margin: 10px; }
+  .post-it::before { content: ''; position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 12px; height: 12px; background: #e74c3c; border-radius: 50%; box-shadow: inset -2px -2px 4px rgba(0,0,0,0.3), 1px 2px 2px rgba(0,0,0,0.2); }
+
+  .gb-message { background: rgba(26,92,88,0.05); border: 1px solid rgba(26,92,88,0.15); padding: 14px; border-radius: 6px; margin-bottom: 12px; text-align: left; width: 100%;}
   .gb-header { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px dashed rgba(26,92,88,0.2); padding-bottom: 6px; }
-  .gb-name { font-weight: 700; font-size: 12px; color: var(--teal-dark); }
+  .gb-name { font-weight: 800; font-size: 13px; color: var(--teal); text-transform: uppercase; letter-spacing: 1px; }
   .gb-date { font-size: 10px; color: var(--muted); font-weight: 600; }
-  .gb-text { font-size: 13px; color: var(--text); line-height: 1.5; font-weight: 500; }
+  .gb-text { font-size: 14px; color: var(--text); line-height: 1.5; font-weight: 600; }
+  
   .gb-form { background: var(--surface); padding: 16px; border-top: 2px solid var(--border); }
   .gb-form input, .gb-form textarea, .gb-form select { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 4px; font-family: inherit; font-size: 13px; outline: none; background: #fff;}
-  .gb-submit { background: var(--teal); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: .2s;}
+  .gb-submit { background: var(--teal); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: .2s; margin-top: 10px;}
+  .gb-submit:hover { background: var(--teal-dark); }
+  .gb-submit:disabled { opacity: 0.6; cursor: wait; }
   
   /* MODALS */
   .overlay { display: none; position: fixed; inset: 0; background: rgba(17,61,58,0.8); z-index: 2000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
@@ -223,7 +257,7 @@
   .modal-body { padding: 20px; overflow-y: auto; }
   
   .modal-close, .modal-submit { display: block; width: 100%; padding: 14px; background: var(--teal); color: #fff; border: none; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; font-weight: 700; cursor: pointer; transition: .2s; border-radius: 0; }
-  .modal-submit { background: var(--gold); color: #fff; margin-top: 15px; border-radius: 4px; }
+  .modal-submit { background: var(--gold); color: #fff; margin-top: 15px; border-radius: 4px; padding: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; border: none; width: 100%; cursor: pointer;}
   
   .alert-card { padding: 16px; border: 2px solid rgba(192,57,43,0.3); background: rgba(192,57,43,0.05); border-radius: 4px; margin-bottom: 12px; }
   .alert-card:last-child { margin-bottom: 0; }
@@ -235,20 +269,18 @@
   .quote-author { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); font-weight: 700; }
 
   /* EASTER EGGS CSS */
-  .vitez-laszlo { position: fixed; bottom: -400px; right: 20px; width: 220px; max-width: 60vw; z-index: 3000; transition: bottom 0.5s ease-out; }
+  .vitez-laszlo { position: fixed; bottom: -400px; right: 20px; width: 250px; max-width: 60vw; z-index: 3000; transition: bottom 0.5s ease-out; }
   .vitez-laszlo.show { bottom: -20px; }
   .vitez-bubble { position: absolute; top: -60px; right: 50px; background: #fff; border: 2px solid #000; padding: 10px; border-radius: 10px; font-weight: bold; font-size: 14px; width: 160px; text-align: center; opacity: 0; transition: 0.3s; color:#000;}
   .vitez-laszlo.show .vitez-bubble { opacity: 1; transition-delay: 0.5s; }
 
-  .confetti { position: fixed; width: 10px; height: 10px; background: #f00; z-index: 9999; animation: fall linear forwards; pointer-events: none;}
-  @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
   .toast-msg { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: #fff; padding: 12px 24px; border-radius: 30px; font-weight: bold; font-size: 14px; z-index: 4000; opacity: 0; transition: 0.3s; pointer-events: none; text-align:center; min-width: 250px;}
   .toast-msg.show { opacity: 1; }
   
   .jump-btn { position: fixed; bottom: 20px; right: 20px; background: var(--teal); color: #fff; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; z-index: 900; opacity: 0; pointer-events: none; transition: .3s; border: none; font-size: 24px;}
   .jump-btn.show { opacity: 1; pointer-events: auto; }
 
-  /* EASTER EGG LÁBLÉC REJTÉS (Javított) */
+  /* EASTER EGG LÁBLÉC */
   footer { position: relative; background: var(--teal-dark); text-align: center; padding: 30px 20px 80px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4); font-weight: 600; z-index: 1;}
   footer a { color: var(--gold-light); text-decoration: none; }
   .footer-flex { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px;}
@@ -258,7 +290,7 @@
   .easter-trigger:hover .year-text { color: #fff; }
   .easter-content { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(20px); opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 51; pointer-events: none; text-align: center; }
   .easter-photo { width: 160px; border-radius: 4px; border: 5px solid #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.5); display: block; margin: 0 auto; }
-  .easter-text { background: #fff; color: var(--teal-dark); font-size: 10px; font-weight: 700; letter-spacing: 1px; padding: 6px 12px; border-radius: 20px; margin-bottom: -15px; position: relative; z-index: 53; box-shadow: 0 4px 10px rgba(0,0,0,0.3); white-space: nowrap; }
+  .easter-text { background: #fff; color: var(--teal-dark); font-size: 10px; font-weight: 700; letter-spacing: 1px; padding: 6px 12px; border-radius: 20px; margin-bottom: -15px; position: relative; z-index: 53; box-shadow: 0 4px 10px rgba(0,0,0,0.3); white-space: normal; line-height: 1.4; text-align: center;}
   .easter-trigger:hover .easter-content, .easter-trigger:active .easter-content { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 </style>
@@ -283,18 +315,28 @@
   </div>
 </div>
 
+<!-- VIRTUALIS EMLÉKKÖNYV MODAL -->
 <div class="overlay" id="guestbookModal">
-  <div class="modal-box" style="border-top-color: var(--teal);">
+  <div class="modal-box" style="border-top-color: var(--teal); max-width: 600px;">
     <div class="modal-header" style="background: var(--teal);">
       <span class="modal-title">📖 Virtuális Emlékkönyv</span>
     </div>
-    <div class="modal-body" style="padding: 0; display: flex; flex-direction: column; max-height: 70vh;">
-      <div id="guestbookList" style="padding: 20px; overflow-y: auto; flex: 1;"></div>
+    <div class="modal-body" style="padding: 0; display: flex; flex-direction: column; max-height: 75vh;">
+      <div id="guestbookList" style="padding: 20px; overflow-y: auto; flex: 1; background: var(--surface);">
+         <div class="gb-grid" id="gbGrid"></div>
+      </div>
       <div class="gb-form">
-         <div style="font-size: 11px; font-weight: 700; color: var(--teal-dark); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">Üzenet a szervezőknek</div>
-         <input type="text" id="gbName" placeholder="Neved vagy beceneved" maxlength="30">
-         <textarea id="gbText" placeholder="Írd ide a gondolataidat a fesztiválról..." maxlength="300"></textarea>
-         <button class="gb-submit" onclick="window.submitGuestbook()">Beküldöm</button>
+         <div style="font-size: 11px; font-weight: 700; color: var(--teal-dark); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">Örökíts meg egy pillanatot!</div>
+         <input type="text" id="gbName" placeholder="Neved vagy társulatod" maxlength="40">
+         <textarea id="gbText" placeholder="Írj egy rövid üzenetet vagy poént a képhez..." maxlength="150"></textarea>
+         
+         <input type="file" id="gbPhotoInput" accept="image/*" style="display:none;" onchange="window.handlePhotoSelect(event)">
+         <button class="hero-btn" id="gbPhotoBtn" onclick="document.getElementById('gbPhotoInput').click()" style="width:100%; border-color:var(--teal); color:var(--teal); justify-content:center;">
+            📸 FOTÓ KIVÁLASZTÁSA (Opcionális)
+         </button>
+         <div id="gbPhotoPreview" style="font-size:10px; color:var(--green); text-align:center; margin-top:5px; font-weight:700; display:none;">✓ Fotó csatolva!</div>
+         
+         <button class="gb-submit" id="gbSubmitBtn" onclick="window.submitGuestbook()">Fellövöm a falra!</button>
       </div>
     </div>
     <button class="modal-close" style="background: var(--teal-dark);" onclick="document.getElementById('guestbookModal').classList.remove('visible')">Bezárom</button>
@@ -304,7 +346,7 @@
 <div class="overlay" id="checkinModal">
   <div class="modal-box checkin-mode">
     <div class="modal-header">
-      <span class="modal-title">📍 Itt vagyok! - Ott tala!</span>
+      <span class="modal-title" style="margin:0 auto;">📍 Itt vagyok! - Ott tala!</span>
     </div>
     <div class="modal-body">
       <p style="font-size:12px; color:var(--muted); margin-bottom:20px;">Jelöld be magad a térképen, hogy a többiek lássák, merre jársz!</p>
@@ -317,6 +359,7 @@
          <option value="kelemen">Kelemen L. Kamaraszínház</option>
          <option value="ruszt">Ruszt J. Stúdió</option>
          <option value="ifjusagi">Ifjúsági Otthon</option>
+         <option value="tmh">Tudomány és Művészetek Háza</option>
          <option value="bufe">☕ Kávézóban / Étkezem</option>
       </select>
       
@@ -375,10 +418,11 @@
     <input type="text" id="searchInput" placeholder="Keresés..." onkeyup="window.doSearch()">
   </div>
   <div class="quick-links">
-    <button class="ql-btn" id="favFilterBtn" onclick="window.toggleFavoritesView()">★ Kedvenceim</button>
-    <button class="ql-btn" onclick="window.openGuestbook()">📖 Emlékkönyv</button>
-    <button class="ql-btn" onclick="window.generateQuote()">🎭 Napi motiváció</button>
-    <div style="display:flex; flex-direction:column; align-items:center;">
+    <div class="ql-wrapper"><button class="ql-btn" id="favFilterBtn" onclick="window.toggleFavoritesView()">★ Kedvenceim</button></div>
+    <div class="ql-wrapper"><button class="ql-btn" onclick="window.openGuestbook()">📖 Emlékkönyv</button></div>
+    <div class="ql-wrapper"><button class="ql-btn" onclick="window.generateQuote()">🎭 Napi motiváció</button></div>
+    <div class="ql-wrapper"><button class="ql-btn" onclick="window.showGastroCard()">🍔 Hol egyek?</button></div>
+    <div class="ql-wrapper">
        <button class="ql-btn" onclick="window.openCheckin()" style="color:var(--orange);">📍 Itt vagyok!</button>
        <div class="checkin-status" id="myCheckinStatus" style="display:none;"></div>
     </div>
@@ -410,7 +454,10 @@
 
 <div class="content" id="mainContent">
 
-<div id="noResultsMsg" class="no-results-msg">Csak azért is lesz Találkozó!</div>
+<div id="noResultsMsg" class="no-results-msg">
+  <span style="font-size:16px; color:var(--muted); font-style:normal; font-family:'Montserrat', sans-serif; font-weight:600; display:block; margin-bottom:10px;">A keresésre nincs találat.</span>
+  Csak azért is lesz Találkozó!
+</div>
 
 <!-- TITKOS BÜFÉ KÁRTYA (Easter Egg) -->
 <div id="secretBufeCard" style="display:none; margin-bottom:10px;">
@@ -427,7 +474,7 @@
   </div>
 </div>
 
-<!-- ÚJ: GASZTRO KÁRTYA (Étterem Easter Egg) -->
+<!-- ÚJ: GASZTRO KÁRTYA (Étterem Easter Egg / Hol egyek) -->
 <div id="secretGastroCard" style="display:none; margin-bottom:10px;">
   <div class="event-card type-social" style="border-left-color: var(--orange);">
     <div class="card-header" style="pointer-events:none;">
@@ -561,15 +608,15 @@
     </div>
   </div>
 
-  <div class="slot-time">16:30</div>
+  <div class="slot-time">16:30 – 17:00</div>
   <div class="event-card type-social">
     <div class="card-header" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div><div class="event-title">🖼️ MKE – MATE látványtervező hallgatók</div><div class="event-company">Kiállításmegnyitó</div></div>
       </div>
     </div>
-    <div class="event-footer">
-      <div class="event-meta"></div>
+    <div class="event-footer" style="padding-top: 10px;">
+      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Tudomány és Művészetek Háza</span></div>
       <a class="fb-event-btn" href="https://fb.me/e/5TBTJWJsS" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
@@ -679,7 +726,7 @@
       <div class="card-header-row">
         <div>
           <div class="event-title">Szakmai fórum</div>
-          <div class="event-company">UNIMA / Bábművész Szövetség / Igazgatók – zártkörű megbeszélés</div>
+          <div class="event-company">Igazgatók – zártkörű megbeszélés</div>
         </div>
       </div>
     </div>
@@ -728,7 +775,7 @@
     </div>
   </div>
 
-  <div class="slot-time">12:00</div>
+  <div class="slot-time">12:00 – 14:00</div>
   <div class="event-card type-social">
     <div class="card-header" onclick="window.toggleCard(this)">
       <div class="event-title">🍴 Ebédszünet</div>
@@ -885,7 +932,8 @@
           Maszk, báb: Ágfay Míra<br>
           Zene: Hegedűs Dániel<br>
           Díszlet: Mayer Gábor<br>
-          Jelmez: Csoboth Viktória<br><br>
+          Jelmez: Csoboth Viktória<br>
+          Rendező: Barabás Bíborka<br><br>
           Játssza: Barabás Bíborka
         </div>
       </div>
@@ -912,7 +960,7 @@
       <div class="card-header-row">
         <div>
           <div class="event-title">Szakmai fórum</div>
-          <div class="event-company">UNIMA / Bábművész Szövetség / Igazgatók – zártkörű megbeszélés</div>
+          <div class="event-company">UNIMA közgyűlés</div>
         </div>
       </div>
     </div>
@@ -995,7 +1043,7 @@
     </div>
   </div>
 
-  <div class="slot-time">12:00</div>
+  <div class="slot-time">12:00 – 14:00</div>
   <div class="event-card type-social">
     <div class="card-header" onclick="window.toggleCard(this)">
       <div class="event-title">🍴 Ebédszünet</div>
@@ -1167,42 +1215,6 @@
   <div class="slot-time">20:30 – 22:30</div>
   <div class="event-card type-forum"><div class="card-header" onclick="window.toggleCard(this)"><div class="event-title">💬 Szakmai megbeszélés</div></div></div>
 
-  <div class="slot-time">23:00 – 0:15</div>
-  <div class="event-card type-show" id="show-liselotte">
-    <div class="card-header clickable" onclick="window.toggleCard(this)">
-      <div class="card-header-row">
-        <div>
-          <div class="event-title">Liselotte és a május<span class="live-badge">MOST ZAJLIK</span></div>
-          <div class="event-company">SZFE - Kiss Dorina</div>
-        </div>
-        <div class="header-actions">
-          <div class="star-container"></div>
-          <div class="mini-pulse-alert">!</div>
-          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
-        </div>
-      </div>
-    </div>
-    <div class="card-details"><div class="card-details-inner">
-      <div class="details-section">
-        <div class="details-label">Alkotók</div>
-        <div class="details-text">
-          Szerző: Pozsgai Zsolt<br>
-          Tervező: Horváth Márk<br>
-          Koreográfus: Puha Bernadett<br>
-          Dramaturg, rendező: Kiss Dorina<br><br>
-          Szereplők: Gyöngyössy Csenge, Lajhó Máté
-        </div>
-      </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály</div>
-        <div class="details-text">14+</div>
-      </div>
-    </div></div>
-    <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka nagyterem</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/6XWjRK3Z7" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
-    </div>
-  </div>
 </div>
 
 <!-- ════════════════════════════════════
@@ -1216,7 +1228,7 @@
       <div class="card-header-row">
         <div>
           <div class="event-title">Szakmai fórum</div>
-          <div class="event-company">UNIMA / Bábművész Szövetség / Igazgatók – zártkörű megbeszélés</div>
+          <div class="event-company">Bábművész Szövetség közgyűlés</div>
         </div>
       </div>
     </div>
@@ -1266,7 +1278,7 @@
     </div>
   </div>
 
-  <div class="slot-time">12:00</div>
+  <div class="slot-time">12:00 – 14:00</div>
   <div class="event-card type-social">
     <div class="card-header" onclick="window.toggleCard(this)">
       <div class="event-title">🍴 Ebédszünet</div>
@@ -1629,6 +1641,7 @@
   
   <div class="slot-time">20:30 – 22:30</div>
   <div class="event-card type-forum"><div class="card-header" onclick="window.toggleCard(this)"><div class="event-title">💬 Szakmai megbeszélés</div></div></div>
+
 </div>
 
 <!-- ════════════════════════════════════
@@ -1753,7 +1766,6 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ciróka kisterem</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/9zPdzLzA5" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -1793,7 +1805,6 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Ruszt J. Stúdiószínház</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/7yrhzpeiV" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -1830,7 +1841,6 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Kelemen L. Kamaraszínház</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/6QBxzINC1" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -1881,43 +1891,81 @@
     <div class="map-title">📍 Helyszínek</div>
     
     <div class="venue-item">
-      <div>
-        <a href="https://www.google.com/maps/dir/?api=1&destination=Ciróka+Bábszínház,+Kecskemét" target="_blank" class="venue-item-title">Ciróka Bábszínház</a>
-        <div class="venue-item-address">6000 Kecskemét, Budai utca 15.</div>
+      <div style="width: 100%;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=Ciróka+Bábszínház,+Kecskemét" target="_blank" class="venue-item-title">Ciróka Bábszínház</a>
+            <div class="venue-item-address">6000 Kecskemét, Budai utca 15.</div>
+          </div>
+          <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=Ciróka+Bábszínház,+Kecskemét" target="_blank">📍 Útvonal</a>
+        </div>
+        <div class="checkin-list" id="checkins-ciroka"></div>
       </div>
-      <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=Ciróka+Bábszínház,+Kecskemét" target="_blank">📍 Útvonal</a>
     </div>
 
     <div class="venue-item">
-      <div>
-        <a href="https://www.google.com/maps/dir/?api=1&destination=Hírös+Agóra+Kulturális+Központ,+Kecskemét" target="_blank" class="venue-item-title">Hírös Agóra</a>
-        <div class="venue-item-address">Deák Ferenc tér 1.</div>
+      <div style="width: 100%;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=Hírös+Agóra+Kulturális+Központ,+Kecskemét" target="_blank" class="venue-item-title">Hírös Agóra</a>
+            <div class="venue-item-address">Deák Ferenc tér 1.</div>
+          </div>
+          <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=Hírös+Agóra+Kulturális+Központ,+Kecskemét" target="_blank">📍 Útvonal</a>
+        </div>
+        <div class="checkin-list" id="checkins-agora"></div>
       </div>
-      <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=Hírös+Agóra+Kulturális+Központ,+Kecskemét" target="_blank">📍 Útvonal</a>
     </div>
 
     <div class="venue-item">
-      <div>
-        <a href="https://www.google.com/maps/dir/?api=1&destination=Kelemen+László+Kamaraszínház,+Kecskemét" target="_blank" class="venue-item-title">Kelemen L. Kamaraszínház</a>
-        <div class="venue-item-address">Rákóczi út 15.</div>
+      <div style="width: 100%;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=Kelemen+László+Kamaraszínház,+Kecskemét" target="_blank" class="venue-item-title">Kelemen L. Kamaraszínház</a>
+            <div class="venue-item-address">Rákóczi út 15.</div>
+          </div>
+          <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=Kelemen+László+Kamaraszínház,+Kecskemét" target="_blank">📍 Útvonal</a>
+        </div>
+        <div class="checkin-list" id="checkins-kelemen"></div>
       </div>
-      <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=Kelemen+László+Kamaraszínház,+Kecskemét" target="_blank">📍 Útvonal</a>
     </div>
 
     <div class="venue-item">
-      <div>
-        <a href="https://www.google.com/maps/dir/?api=1&destination=Katona+József+tér+5,+Kecskemét" target="_blank" class="venue-item-title">Ruszt J. Stúdiószínház</a>
-        <div class="venue-item-address">Katona József tér 5.</div>
+      <div style="width: 100%;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=Katona+József+tér+5,+Kecskemét" target="_blank" class="venue-item-title">Ruszt J. Stúdiószínház</a>
+            <div class="venue-item-address">Katona József tér 5.</div>
+          </div>
+          <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=Katona+József+tér+5,+Kecskemét" target="_blank">📍 Útvonal</a>
+        </div>
+        <div class="checkin-list" id="checkins-ruszt"></div>
       </div>
-      <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=Katona+József+tér+5,+Kecskemét" target="_blank">📍 Útvonal</a>
+    </div>
+
+    <div class="venue-item">
+      <div style="width: 100%;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=46.908781114630614,19.690731010272213" target="_blank" class="venue-item-title">Ifjúsági Otthon</a>
+            <div class="venue-item-address">Kossuth tér 4.</div>
+          </div>
+          <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=46.908781114630614,19.690731010272213" target="_blank">📍 Útvonal</a>
+        </div>
+        <div class="checkin-list" id="checkins-ifjusagi"></div>
+      </div>
     </div>
 
     <div class="venue-item" style="border-bottom:none; padding-bottom:0;">
-      <div>
-        <a href="https://www.google.com/maps/dir/?api=1&destination=46.908781114630614,19.690731010272213" target="_blank" class="venue-item-title">Ifjúsági Otthon</a>
-        <div class="venue-item-address">Kossuth tér 4.</div>
+      <div style="width: 100%;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=Kecskemét,+Rákóczi+út+2" target="_blank" class="venue-item-title">Tudomány és Művészetek Háza</a>
+            <div class="venue-item-address">Rákóczi út 2.</div>
+          </div>
+          <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=Kecskemét,+Rákóczi+út+2" target="_blank">📍 Útvonal</a>
+        </div>
+        <div class="checkin-list" id="checkins-tmh"></div>
       </div>
-      <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=46.908781114630614,19.690731010272213" target="_blank">📍 Útvonal</a>
     </div>
     
     <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2726.3146462725835!2d19.688174515598687!3d46.90159497914442!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4743da0f0c97693d%3A0xc3b8384f509e5b22!2sCir%C3%B3ka%20B%C3%A1bsz%C3%ADnh%C3%A1z!5e0!3m2!1shu!2shu!4v1689254391234!5m2!1shu!2shu" width="100%" height="250" style="border:0; border-radius:4px; margin-top:20px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
@@ -1931,7 +1979,7 @@
   <div class="easter-trigger">
     <span class="year-text" title="Nincs itt semmi látnivaló!">2026</span>
     <div class="easter-content">
-      <div class="easter-text">A weboldalt elkövette: Harkai György</div>
+      <div class="easter-text">A weboldalt elkövette:<br>Harkai György</div>
       <img src="https://ciroka.hu/wp-content/uploads/2025/08/Harkai_Gyorgy_marketing-munkatars-2048x2048.jpg" class="easter-photo" alt="Harkai György">
     </div>
   </div>
@@ -1941,9 +1989,11 @@
   </div>
 </footer>
 
+<!-- FIREBASE SDK ÉS STORAGE MODULOK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  import { getDatabase, ref, push, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  import { getStorage, ref as sRef, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyB7BkU92oIK3H_01uX9hr8GatQyE_NXMyA",
@@ -1957,9 +2007,12 @@
 
   const app = initializeApp(firebaseConfig);
   const db  = getDatabase(app);
+  const storage = getStorage(app);
   window.globalAlerts =[];
 
-  // ÉRTESÍTÉSEK (Havária)
+  // ===============================
+  // ÉRTESÍTÉSEK LOGIKÁJA
+  // ===============================
   onValue(ref(db, "alertsList"), (snap) => {
     document.querySelectorAll('.event-card').forEach(card => card.classList.remove('has-alert'));
     if (!snap.exists()) {
@@ -2004,14 +2057,14 @@
       const titleEl = el.querySelector('.event-title');
       if(titleEl) {
         let titleText = titleEl.innerText.replace('MOST ZAJLIK', '').trim();
-        return `<div style="font-size:12px; color:var(--teal); font-weight:700; margin-bottom:6px; text-transform:uppercase;">Érintett program: ${titleText}</div>`;
+        return `<div style="font-size:12px; color:var(--teal); font-weight:700; margin-bottom:6px; text-transform:uppercase;">Előadás: ${titleText}</div>`;
       }
     }
     return "";
   }
 
-  window.showPopup = function(alert, isReminder = false) {
-    document.getElementById("modalTitle").textContent = isReminder ? "Emlékeztető!" : "Új Értesítés!";
+  window.showPopup = function(alert) {
+    document.getElementById("modalTitle").textContent = "Új Értesítés!";
     const showInfo = window.getShowTitleHTML(alert.targetId);
     document.getElementById("modalBody").innerHTML = `
       <div class="alert-card">
@@ -2021,8 +2074,6 @@
       </div>
     `;
     document.getElementById("alertsModal").classList.add("visible");
-    if(!isReminder) window.currentPopupAlert = alert;
-    if ("vibrate" in navigator) navigator.vibrate([200, 100, 200]);
   }
 
   window.openAlertsModal = function(targetId = null) {
@@ -2048,72 +2099,151 @@
 
   window.closeAlertsModal = function() {
     document.getElementById("alertsModal").classList.remove("visible");
-    if (window.currentPopupAlert) {
-      const savedAlert = window.currentPopupAlert;
-      window.currentPopupAlert = null; 
-      setTimeout(() => {
-        const stillExists = window.globalAlerts.find(a => a.id === savedAlert.id);
-        if (stillExists) window.showPopup(stillExists, true);
-      }, 3 * 60 * 1000);
-    }
   };
 
-  // VIRTUALIS EMLÉKKÖNYV JAVÍTVA
+  // ===============================
+  // VIRTUALIS EMLÉKKÖNYV + POLAROID
+  // ===============================
   const gbRef = ref(db, "guestbook");
   
   onValue(gbRef, (snap) => {
-    const list = document.getElementById("guestbookList");
+    const list = document.getElementById("gbGrid");
     list.innerHTML = "";
     if(!snap.exists()) {
-       list.innerHTML = "<p style='font-size:12px; color:var(--muted); text-align:center;'>Még nincs üzenet. Legyél te az első!</p>";
+       list.innerHTML = "<p style='font-size:12px; color:var(--muted); text-align:center; width:100%;'>Még nincs üzenet. Legyél te az első!</p>";
        return;
     }
     const data = snap.val();
     const gbArr = Object.keys(data).map(k => ({id: k, ...data[k]})).sort((a,b) => b.timeRaw - a.timeRaw);
+    
     gbArr.forEach(msg => {
-       list.innerHTML += `
-         <div class="gb-message">
-           <div class="gb-header">
-             <span class="gb-name">${window.escapeHTML(msg.name)}</span>
-             <span class="gb-date">${msg.dateStr}</span>
+      const randRot = Math.random();
+      let content = "";
+      
+      if (msg.photoUrl) {
+         let extraClass = msg.isWide ? 'wide' : '';
+         content = `
+           <div class="polaroid ${extraClass}" style="--rand: ${randRot};">
+             <div class="cellux"></div>
+             <img src="${msg.photoUrl}" alt="Kép">
+             <div class="polaroid-text">${window.escapeHTML(msg.text)}</div>
+             <div class="polaroid-author">${window.escapeHTML(msg.name)}<br><span style="font-size:8px;color:#888;">${msg.dateStr}</span></div>
            </div>
-           <div class="gb-text">${window.escapeHTML(msg.text)}</div>
-         </div>
-       `;
+         `;
+      } else {
+         content = `
+           <div class="gb-message" style="width:100%;">
+             <div class="gb-header">
+               <span class="gb-name">${window.escapeHTML(msg.name)}</span>
+               <span class="gb-date">${msg.dateStr}</span>
+             </div>
+             <div class="gb-text">${window.escapeHTML(msg.text)}</div>
+           </div>
+         `;
+      }
+      list.innerHTML += content;
     });
+
+    // Post-it generálás a képek közé
+    const numPostits = Math.floor(gbArr.length / 3) + 1; 
+    const postitTexts =["I ❤️ Ciróka!", "I Báb you", "Nekedbe", "LOL", "Este Csapat-juk", "Este csapat-tuk"];
+    for(let i=0; i<numPostits; i++) {
+        const randText = postitTexts[Math.floor(Math.random() * postitTexts.length)];
+        const randRot = Math.random();
+        list.innerHTML += `<div class="post-it" style="--rand: ${randRot};">${randText}</div>`;
+    }
   });
 
   window.openGuestbook = function() {
     document.getElementById('guestbookModal').classList.add('visible');
   }
 
-  window.submitGuestbook = function() {
+  window.handlePhotoSelect = function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function(e) {
+      const img = new Image();
+      img.src = e.target.result;
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 800;
+        const MAX_HEIGHT = 800;
+        let width = img.width;
+        let height = img.height;
+
+        window.isPhotoWide = width > height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+        } else {
+          if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        window.resizedImageDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+        
+        document.getElementById('gbPhotoPreview').style.display = 'block';
+        document.getElementById('gbPhotoBtn').style.borderColor = 'var(--green)';
+        document.getElementById('gbPhotoBtn').style.color = 'var(--green)';
+        document.getElementById('gbPhotoBtn').innerText = '✓ FOTÓ CSATOLVA';
+      }
+    }
+  };
+
+  window.submitGuestbook = async function() {
     const name = document.getElementById('gbName').value.trim();
     const text = document.getElementById('gbText').value.trim();
     if(!name || !text) { window.showToast("Kérjük, add meg a neved és az üzenetet is!"); return; }
-    
+
+    const submitBtn = document.getElementById('gbSubmitBtn');
+    submitBtn.innerText = "Feltöltés folyamatban...";
+    submitBtn.disabled = true;
+
     const now = new Date();
     const dateStr = now.toLocaleDateString('hu-HU', {month:'short', day:'numeric'}) + " " + now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
-    
-    const newRef = push(gbRef);
-    set(newRef, { name: name, text: text, timeRaw: Date.now(), dateStr: dateStr })
-      .then(() => {
-         document.getElementById('gbText').value = "";
-         window.showToast("Üzenet sikeresen elküldve!");
-      })
-      .catch((err) => {
-         console.error("Firebase hiba:", err);
-         window.showToast("Hiba! (Ellenőrizd a Firebase szabályokat!)");
-      });
+
+    try {
+      let photoUrl = "";
+      
+      if (window.resizedImageDataUrl) {
+        const photoRef = sRef(storage, 'guestbook/' + Date.now() + '.jpg');
+        await uploadString(photoRef, window.resizedImageDataUrl, 'data_url');
+        photoUrl = await getDownloadURL(photoRef);
+      }
+
+      const newRef = push(gbRef);
+      await set(newRef, { name: name, text: text, timeRaw: Date.now(), dateStr: dateStr, photoUrl: photoUrl, isWide: window.isPhotoWide || false });
+
+      document.getElementById('gbText').value = "";
+      document.getElementById('gbPhotoInput').value = "";
+      document.getElementById('gbPhotoPreview').style.display = 'none';
+      document.getElementById('gbPhotoBtn').style.borderColor = 'var(--teal)';
+      document.getElementById('gbPhotoBtn').style.color = 'var(--teal)';
+      document.getElementById('gbPhotoBtn').innerText = '📸 FOTÓ KIVÁLASZTÁSA (Opcionális)';
+      window.resizedImageDataUrl = null;
+      
+      window.showToast("Üzenet sikeresen elküldve!");
+    } catch(err) {
+      console.error(err);
+      window.showToast("Hiba a feltöltésnél! Kérlek, ellenőrizd a Firebase Storage beállításokat.");
+    } finally {
+      submitBtn.innerText = "Fellövöm a falra!";
+      submitBtn.disabled = false;
+    }
   }
 
-  window.escapeHTML = function(str) {
-    return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag]));
-  }
-
-  // ITT VAGYOK CHECK-IN
+  // ===============================
+  // ITT VAGYOK CHECK-IN (+ VISSZAVONÁS)
+  // ===============================
   const checkinRef = ref(db, 'checkins');
-  const venueNames = { 'ciroka': 'Ciróka Bábszínház', 'agora': 'Hírös Agóra', 'kelemen': 'Kelemen L. Kamaraszínház', 'ruszt': 'Ruszt J. Stúdió', 'ifjusagi': 'Ifjúsági Otthon', 'bufe': '☕ Kávézóban / Étkezem' };
+  const venueNames = { 'ciroka': 'Ciróka Bábszínház', 'agora': 'Hírös Agóra', 'kelemen': 'Kelemen L. Kamaraszínház', 'ruszt': 'Ruszt J. Stúdió', 'ifjusagi': 'Ifjúsági Otthon', 'tmh': 'Tudomány és Művészetek Háza', 'bufe': '☕ Kávézóban / Étkezem' };
 
   const urlParams = new URLSearchParams(window.location.search);
   const checkinVenueId = urlParams.get('checkin');
@@ -2136,22 +2266,39 @@
     const nameInput = document.getElementById('checkinNameInput').value.trim();
     if(nameInput.length < 2) { window.showToast('Légyszi adj meg egy nevet!'); return; }
     
-    localStorage.setItem('myCheckinName', nameInput);
     const venueId = document.getElementById('ciVenue').value;
-
     const newRef = push(ref(db, 'checkins/' + venueId));
+    
     set(newRef, { name: nameInput, timeRaw: Date.now() })
       .then(() => {
+        localStorage.setItem('myCheckinName', nameInput);
+        localStorage.setItem('myCheckinVenue', venueId);
+        localStorage.setItem('myCheckinId', newRef.key);
+
         document.getElementById('checkinModal').classList.remove('visible');
-        if ("vibrate" in navigator) navigator.vibrate(100);
         window.showToast("Sikeres becsekkolás!");
         
         const myStatus = document.getElementById('myCheckinStatus');
         myStatus.style.display = 'block';
-        myStatus.innerHTML = `Most itt vagy: <span style="color:var(--gold-light); text-decoration:underline;">${venueNames[venueId]}</span><br><div style="font-size:9px; color:rgba(255,255,255,0.4); margin-top:4px; font-weight:500;">Módosítod?</div>`;
+        myStatus.innerHTML = `Most itt vagy:<br><span style="color:var(--gold-light); text-decoration:underline;" onclick="window.openCheckin()">`+venueNames[venueId]+`</span><br><div style="margin-top:4px;"><span style="font-size:9px; color:rgba(255,255,255,0.4); cursor:pointer;" onclick="window.openCheckin()">Módosítod?</span> &nbsp;|&nbsp; <span style="font-size:9px; color:var(--red); cursor:pointer;" onclick="window.revokeCheckin(event)">Visszavonod?</span></div>`;
       })
       .catch((err) => window.showToast("Hiba a mentésnél: " + err.message));
   };
+
+  window.revokeCheckin = function(e) {
+    e.stopPropagation();
+    const venueId = localStorage.getItem('myCheckinVenue');
+    const checkinId = localStorage.getItem('myCheckinId');
+    if(venueId && checkinId) {
+       remove(ref(db, `checkins/${venueId}/${checkinId}`)).then(() => {
+          localStorage.removeItem('myCheckinName');
+          localStorage.removeItem('myCheckinVenue');
+          localStorage.removeItem('myCheckinId');
+          document.getElementById('myCheckinStatus').style.display = 'none';
+          window.showToast("Becsekkolás visszavonva!");
+       });
+    }
+  }
 
   onValue(checkinRef, (snap) => {
     Object.keys(venueNames).forEach(id => {
@@ -2169,10 +2316,16 @@
       const venueContainer = document.getElementById('checkins-' + venueId);
       if(!venueContainer) continue;
 
+      let hasCheckin = false;
       const checkins = data[venueId];
+      
       Object.keys(checkins).forEach(key => {
         const checkinData = checkins[key];
         if (now - checkinData.timeRaw < TWO_HOURS) {
+          if(!hasCheckin) {
+             venueContainer.innerHTML = '<div style="font-size:10px; color:var(--muted); margin-bottom:5px; font-weight:600; width: 100%;">Akik itt vannak:</div>';
+             hasCheckin = true;
+          }
           const span = document.createElement('span');
           span.className = 'checkin-bubble';
           span.innerText = checkinData.name;
@@ -2181,43 +2334,24 @@
       });
     }
   });
+
+  window.escapeHTML = function(str) {
+    return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag]));
+  }
 </script>
 
 <script>
   // ===============================
-  // DOM INTERAKCIÓK & EASTER EGGEK MOTORJA
+  // BÖNGÉSZŐ LOGIKA & KERESŐ
   // ===============================
   let activeTabBeforeSearch = 0;
   let currentTypeFilter = null;
   let isFavoritesMode = false;
-  let audioContextAllowed = false; 
 
   window.addEventListener('DOMContentLoaded', () => {
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW hiba', err));
 
-    // VASTAPS JAVÍTÁS (Gyors tripla kattintás, nem nyomva tartás)
-    document.querySelectorAll('.event-title').forEach(titleEl => {
-      let clickCount = 0;
-      let clickTimer;
-      titleEl.addEventListener('click', (e) => {
-        e.stopPropagation();
-        clickCount++;
-        clearTimeout(clickTimer);
-        
-        if(clickCount === 3) {
-          window.showToast("Vastaps a társulatnak! 👏");
-          window.fireConfetti();
-          window.playApplause();
-          clickCount = 0;
-        } else {
-          clickTimer = setTimeout(() => { 
-            clickCount = 0; 
-            window.toggleCard(titleEl); // Ha nem lett meg a 3 kattintás, simán lenyitja
-          }, 350); 
-        }
-      });
-    });
-
+    // Kártya nyitás
     document.querySelectorAll('.card-header').forEach(header => {
       header.addEventListener('click', function(e) {
         if(!e.target.closest('.header-actions') && !e.target.closest('.event-title')) {
@@ -2226,10 +2360,17 @@
       });
     });
 
+    // Kedvencek (Csillagok)
     document.querySelectorAll('.event-card').forEach(card => {
       const headerActions = card.querySelector('.header-actions');
-      const starContainer = card.querySelector('.star-container');
-      if (starContainer && card.id) {
+      if (headerActions && card.id) {
+        let starContainer = card.querySelector('.star-container');
+        if(!starContainer) {
+           starContainer = document.createElement('div');
+           starContainer.className = 'star-container';
+           headerActions.prepend(starContainer);
+        }
+        
         const star = document.createElement('span');
         star.className = 'star-btn';
         star.innerHTML = '☆';
@@ -2249,9 +2390,10 @@
       }
     });
 
-    const today = new Date();
-    if (today.getFullYear() === 2026 && today.getMonth() === 5 && today.getDate() >= 13 && today.getDate() <= 18) {
-       const dIndex = today.getDate() - 13;
+    // Időzóna-biztos Auto-Nap
+    const budapestTime = new Date(new Date().toLocaleString("en-US", {timeZone: "Europe/Budapest"}));
+    if (budapestTime.getFullYear() === 2026 && budapestTime.getMonth() === 5 && budapestTime.getDate() >= 13 && budapestTime.getDate() <= 18) {
+       const dIndex = budapestTime.getDate() - 13;
        window.showDay(dIndex, document.querySelectorAll('.tab-btn')[dIndex]);
     } else {
        window.showDay(0, document.querySelectorAll('.tab-btn')[0]);
@@ -2265,8 +2407,6 @@
       if (document.querySelector('.day-panel.active .is-live')) jumpBtn.classList.add('show');
       else jumpBtn.classList.remove('show');
     });
-
-    document.body.addEventListener('click', () => { audioContextAllowed = true; }, { once: true });
   });
 
   window.scrollToCurrent = function() {
@@ -2279,7 +2419,7 @@
   }
 
   function checkLiveEvents() {
-    const now = new Date();
+    const now = new Date(new Date().toLocaleString("en-US", {timeZone: "Europe/Budapest"}));
     if (now.getFullYear() !== 2026 || now.getMonth() !== 5) return;
 
     document.querySelectorAll('.day-panel').forEach((panel, dayIndex) => {
@@ -2306,27 +2446,12 @@
           
           if (isLive) card.classList.add('is-live');
           else card.classList.remove('is-live');
-
-          // ÜGYELŐ CSENGŐ (10 perc)
-          times.forEach(t => {
-            const [h, m] = t.split(':').map(Number);
-            const startObj = new Date(now); startObj.setHours(h, m, 0, 0);
-            const diffMin = (startObj - now) / 60000;
-            
-            const cardId = card.id || t;
-            const playedKey = 'gong_' + cardId + '_' + now.getDate();
-
-            if (diffMin > 0 && diffMin <= 10 && !localStorage.getItem(playedKey) && audioContextAllowed) {
-              window.playGong();
-              window.showToast("Első figyelmeztetés! Kérem a művészeket a színpadra!");
-              localStorage.setItem(playedKey, 'true');
-            }
-          });
         }
       });
     });
 
     if (document.querySelector('.day-panel.active .is-live')) document.getElementById('jumpBtn').classList.add('show');
+    else document.getElementById('jumpBtn').classList.remove('show');
   }
 
   function isWithinHour(startStr, now) {
@@ -2337,7 +2462,7 @@
   }
 
   function isWithinRange(startStr, endStr, now) {
-    const[sh, sm] = startStr.split(':').map(Number);
+    const [sh, sm] = startStr.split(':').map(Number);
     const startObj = new Date(now); startObj.setHours(sh, sm, 0, 0);
     const [eh, em] = endStr.split(':').map(Number);
     const endObj = new Date(now); endObj.setHours(eh, em, 0, 0);
@@ -2399,12 +2524,14 @@
   }
 
   window.doSearch = function() {
-    const query = document.getElementById('searchInput').value.toLowerCase().trim();
+    let queryRaw = document.getElementById('searchInput').value.toLowerCase().trim();
+    const query = queryRaw.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); 
+    
     const dayPanels = document.querySelectorAll('.day-panel');
     const tabsWrap = document.getElementById('tabsWrap');
 
     // 1. Vitéz László
-    if(query === "lászló" || query === "laszlo") {
+    if(query === "laszlo") {
       const vitez = document.getElementById('vitezLaszlo');
       vitez.classList.add('show');
       setTimeout(() => { 
@@ -2427,8 +2554,8 @@
       return;
     }
 
-    // 3. Titkos Büfé & Hol Egyek előkészítés
-    if(['sör','bor','fröccs','kávé','kave','büfé','bufe'].includes(query)) {
+    // 3. Titkos Büfé
+    if(['sor','bor','froccs','kave','bufe'].includes(query)) {
       tabsWrap.style.display = 'none';
       document.querySelectorAll('.day-panel').forEach(p => p.style.display = 'none');
       document.getElementById('noResultsMsg').style.display = 'none';
@@ -2440,7 +2567,7 @@
     }
 
     // 4. Gasztro Kártya
-    if(['éhes','ehes','leves','tészta','teszta','szendvics','étterem','etterem','kaja'].includes(query)) {
+    if(['ehes','leves','teszta','szendvics','etterem','kaja'].includes(query)) {
       tabsWrap.style.display = 'none';
       document.querySelectorAll('.day-panel').forEach(p => p.style.display = 'none');
       document.getElementById('noResultsMsg').style.display = 'none';
@@ -2488,7 +2615,9 @@
       panel.querySelectorAll('.slot-time').forEach(time => time.style.display = 'none');
 
       cards.forEach(card => {
-        const text = card.innerText.toLowerCase();
+        const textOriginal = card.innerText.toLowerCase();
+        const text = textOriginal.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); 
+        
         const isMatchSearch = query === "" || text.includes(query);
         const isMatchFav = !isFavoritesMode || localStorage.getItem('fav_' + card.id) === 'true';
         
@@ -2530,103 +2659,12 @@
     }
   }
 
-  // --- KIEGÉSZÍTŐK ---
-  const quotes =[
-    "A báb hallgat, de mindent elmond. Te meg próbálj nem belebeszélni!",
-    "A paraván mögött mindenki egyenlő. Kivéve aki tudja, hol a hosszabbító.",
-    "Ha elszakad a zsinór, az még nem tragédia. Ha elszáll a hangosítás is, az már költészet.",
-    "Egy Találkozó nem attól jó, hogy mit látsz, hanem hogy kivel beszéled ki utána.",
-    "A legjobb jelenetek néha a színpadon kívül történnek. Például a harmadik fröccs után.",
-    "A báb súlya nem kilóban mérhető. Hanem a vastapsokban.",
-    "Ha minden működik, az gyanús. Valami biztos kimaradt.",
-    "A közönség nem lát mindent. Szerencsére!",
-    "A bábok nem fáradnak el. De te igen, szóval igyál még egy kávét.",
-    "Egy jó Találkozón nem csak előadásokat gyűjtesz, hanem történeteket is.",
-    "A báb akkor él, amikor elfelejted, hogy te mozgatod.",
-    "Minden előadás egy kicsit más. Akkor is, ha ugyanaz.",
-    "A kötetlen beszélgetés a Találkozó szíve. A színpad csak a dobbanás.",
-    "A fröccs dramaturgiája egyszerű: első felvonás – beszélgetés, második – őszinteség.",
-    "A kávézóban dőlnek el a szakmai viták. És néha a székek is.",
-    "A legjobb kritikák nem íródnak le. Csak elhangzanak két korty között.",
-    "A legőszintébb beszélgetések nem a szakmai programon, hanem utána kezdődnek.",
-    "A kávézó nem szünet. Az a második felvonás.",
-    "Aki az esti beszélgetéseket kihagyja, a történet felét sem érti.",
-    "Egy Találkozó addig tart, amíg van mit inni és kivel megbeszélni.",
-    "A rendezői koncepció addig tiszta, amíg meg nem érkezik a díszlet.",
-    "Nem az a kérdés, hogy működik-e. Hanem hogy elhisszük-e, hogy működik.",
-    "Ha valamit háromszor kell megmagyarázni, az már biztosan szándékos.",
-    "A próbán még keresed a megoldást. A Találkozón már magyarázod.",
-    "Ez nem hiba, hanem stiláris döntés. Csak még nem döntöttük el.",
-    "A dramaturg akkor nyugodt, ha mindenki más ideges.",
-    "A minimalizmus ott kezdődik, ahol elfogyott a költségvetés.",
-    "Ha nem érted, az valószínűleg mély.",
-    "A báb akkor működik jól, ha nem esik szét. Minden más már esztétika.",
-    "A színész mindent megold. Ha nem, akkor azt is megoldja.",
-    "A technika mindig akkor romlik el, amikor végre működne.",
-    "Ez egy tudatos csend. Csak kicsit hosszabb lett.",
-    "Ha improvizáció, akkor szabad. Ha nem működik, akkor kísérlet.",
-    "Ezt majd a fény megoldja... (A fény nem oldja meg.)",
-    "A próbafolyamat vége: amikor már nincs több idő új ötletekre.",
-    "A kompromisszum az a hely, ahol mindenki egy kicsit elégedetlen.",
-    "Ha mindenki érti, akkor valamit biztosan túlegyszerűsítettünk.",
-    "A produkció kész van. Csak még dolgozunk rajta.",
-    "A bemutató után mindenki fáradt. Kivéve azt, akinek még bontania kell.",
-    "A Találkozó harmadik napján már mindenki tegez mindenkit. Néha saját magát is.",
-    "Az előadás hossza relatív. A pakolásé nem.",
-    "A legjobb beszélgetés ott kezdődik, ahol elfogyott a hivatalos program.",
-    "Minden Találkozón van egy ember, aki tudja, hol van a hosszabbító. Ő a valódi főszereplő.",
-    "A kávézó-záróra után születnek a legnagyobb esztétikai felismerések.",
-    "A technikai rider egy kívánságlista. A valóság pedig performansz.",
-    "A negyedik kávé már nem élénkít. Az egy segélykiáltás.",
-    "A díszlet addig könnyű, amíg fel nem kell vinni a harmadikra lift nélkül.",
-    "A Találkozó-barátságok intenzitása vetekszik a turnébusz légkondijának kiszámíthatatlanságával.",
-    "Az igazi szakmai elismerés: amikor valaki kölcsönad egy gaffer szalagot.",
-    "Mindenki kísérletezik. Van, aki nyilvánosan.",
-    "A legnagyobb hazugság a színházban: ‘öt perc és kész vagyunk.’",
-    "A Találkozó végére minden telefontöltő közkinccsé válik.",
-    "A bábos szakma fele művészet, fele logisztika.",
-    "Az előadás akkor igazán kortárs, ha a technikus sem tudja pontosan, mi történik.",
-    "Az éjszakai szakmázás reggelre rendszerint filozófiává nemesedik.",
-    "A színház varázslat. A Találkozó túlélőtúra.",
-    "A legnagyobb szakmai bizalom: amikor valaki rád bízza a saját bábját.",
-    "Minden Találkozó végén elhangzik: ‘legközelebb kevesebbet vállalunk.’",
-    "A művészet örök. A catering viszont elfogy.",
-    "Az alternatív megoldás általában azt jelenti, hogy eltört valami."
-  ];
-
-  window.generateQuote = function() {
-    const q = quotes[Math.floor(Math.random() * quotes.length)];
-    document.getElementById("quoteText").innerText = `"${q}"`;
-    document.getElementById("quoteModal").classList.add("visible");
-  }
-
   window.showToast = function(msg, upsideDown = false) {
     const toast = document.getElementById("toastMsg");
     toast.innerText = msg;
     toast.style.transform = upsideDown ? "translateX(-50%) rotate(180deg)" : "translateX(-50%)";
     toast.classList.add("show");
     setTimeout(() => toast.classList.remove("show"), 3000);
-  }
-
-  window.fireConfetti = function() {
-    const colors =['#e67e22', '#1a5c58', '#c4913a', '#c0392b'];
-    for(let i=0; i<40; i++) {
-      let c = document.createElement('div');
-      c.className = 'confetti';
-      c.style.left = Math.random() * 100 + 'vw';
-      c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-      c.style.animationDuration = (Math.random() * 2 + 1) + 's';
-      document.body.appendChild(c);
-      setTimeout(() => c.remove(), 3000);
-    }
-  }
-
-  window.playGong = function() {
-    new Audio('https://upload.wikimedia.org/wikipedia/commons/d/d4/Doorbell_ringing.ogg').play().catch(e => console.log("Hang blokkolva."));
-  }
-  
-  window.playApplause = function() {
-    new Audio('https://upload.wikimedia.org/wikipedia/commons/1/1a/Applause.ogg').play().catch(e => console.log("Hang blokkolva."));
   }
 
 </script>

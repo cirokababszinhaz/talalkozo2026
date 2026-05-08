@@ -14,7 +14,7 @@
   header .badge { background: var(--red); color: #fff; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; padding: 3px 8px; border-radius: 2px; cursor: pointer; user-select: none; }
 
   #loginScreen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; }
-  .login-joke { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--teal-dark); text-align: center; margin-bottom: 30px; font-style: italic; }
+  .login-joke { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--teal-dark); text-align: center; margin-bottom: 30px; font-style: italic; line-height:1.4;}
   .login-box { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 32px; max-width: 380px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.05);}
   .login-box h2 { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--teal-dark); margin-bottom: 6px; }
 
@@ -41,12 +41,15 @@
   .alert-item { background: #fff; border: 1px solid var(--border); border-left: 4px solid var(--red); border-radius: 4px; padding: 12px 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;}
   .alert-meta { font-size: 10px; color: var(--muted); margin-bottom: 6px; font-weight: 700; text-transform: uppercase;}
   .alert-text { font-size: 14px; line-height: 1.4; color: var(--text); font-weight: 600;}
-  .del-btn { background: #fee; color: var(--red); border: 1px solid var(--red); padding: 6px 10px; border-radius: 3px; cursor: pointer; font-size: 10px; font-weight: 700; text-transform: uppercase; }
-  .gb-item { border-left-color: var(--teal); }
-  .gb-item .del-btn { border-color: var(--teal); color: var(--teal); background: rgba(26,92,88,0.05); }
+  .del-btn { background: #fee; color: var(--red); border: 1px solid var(--red); padding: 6px 10px; border-radius: 3px; cursor: pointer; font-size: 10px; font-weight: 700; text-transform: uppercase; border:none;}
+  
+  .gb-item { border-left-color: var(--teal); flex-direction:column; }
+  .gb-item .del-btn { background: var(--teal); color: #fff; margin-top:10px;}
+  .gb-photo { max-width: 150px; border-radius: 4px; margin-top: 10px; border: 1px solid var(--border); display: block;}
 
   footer { background: var(--teal-dark); text-align: center; padding: 20px; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.35); font-weight: 600; }
 
+  /* MARIONETT MÓD ADMIN */
   .marionette-mode { animation: sway 3s infinite ease-in-out; transform-origin: top center; overflow: visible !important; }
   .marionette-mode::before, .marionette-mode::after { content:''; position:fixed; top:0; width:1px; background:rgba(0,0,0,0.4); height:100vh; z-index: 9999; pointer-events:none;}
   .marionette-mode::before { left: 20%; }
@@ -129,6 +132,7 @@
 
   <div class="divider"></div>
   <h2>Emlékkönyv moderálás</h2>
+  <div class="subtitle">Vendégek üzeneteinek ellenőrzése</div>
   <div id="guestbookAdminContainer">Nincs még bejegyzés.</div>
 
   <div class="divider"></div>
@@ -185,6 +189,10 @@
     return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag]));
   }
 
+  function getBudapestTimeStr() {
+    return new Date().toLocaleString("hu-HU", {timeZone: "Europe/Budapest", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"});
+  }
+
   function initAdmin() {
     onValue(ref(db, "alertsList"), (snap) => {
       const container = document.getElementById("activeAlertsContainer");
@@ -209,9 +217,14 @@
       const data = snap.val();
       const gbArray = Object.keys(data).map(key => ({ id: key, ...data[key] })).sort((a,b) => b.timeRaw - a.timeRaw);
       gbArray.forEach(msg => {
+        let imgHtml = msg.photoUrl ? `<img src="${msg.photoUrl}" class="gb-photo">` : '';
         container.innerHTML += `
           <div class="alert-item gb-item">
-            <div><div class="alert-meta">${msg.dateStr} | ${escapeHTML(msg.name)}</div><div class="alert-text">${escapeHTML(msg.text)}</div></div>
+            <div style="width:100%;">
+              <div class="alert-meta">${msg.dateStr} | ${escapeHTML(msg.name)}</div>
+              <div class="alert-text">${escapeHTML(msg.text)}</div>
+              ${imgHtml}
+            </div>
             <button class="del-btn" onclick="window.deleteGbMessage('${msg.id}')">Törlés</button>
           </div>`;
       });
@@ -223,10 +236,9 @@
     const target = document.getElementById("alertTarget").value;
     const fb = document.getElementById("publishFeedback");
     if (!text) { showFeedback(fb, "Írj be egy üzenetet!", "err"); return; }
-    const nowStr = new Date().toLocaleString("hu-HU", { month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" });
     try {
       const newRef = push(ref(db, "alertsList"));
-      await set(newRef, { message: text, targetId: target, timestamp: nowStr, timeRaw: Date.now() });
+      await set(newRef, { message: text, targetId: target, timestamp: getBudapestTimeStr(), timeRaw: Date.now() });
       document.getElementById("alertText").value = "";
       showFeedback(fb, "✓ Értesítés közzétéve!", "ok");
     } catch(e) { showFeedback(fb, "Hiba: " + e.message, "err"); }
@@ -243,8 +255,19 @@
 
 <script>
   let marionetteClicks = 0;
-  document.getElementById('marionetteBtn').addEventListener('dblclick', () => {
-    document.body.classList.toggle('marionette-mode');
+  let mTimer;
+  document.getElementById('marionetteBtn').addEventListener('click', () => {
+    marionetteClicks++;
+    clearTimeout(mTimer);
+    if(marionetteClicks === 5) {
+      document.body.classList.add('marionette-mode');
+      marionetteClicks = 0;
+    } else {
+      mTimer = setTimeout(() => { marionetteClicks = 0; }, 500);
+    }
+  });
+  document.body.addEventListener('dblclick', () => {
+    document.body.classList.remove('marionette-mode');
   });
 </script>
 </body>
