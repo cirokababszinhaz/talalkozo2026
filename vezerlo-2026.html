@@ -62,7 +62,12 @@
 
 <header>
   <div class="logo">XVII. Találkozó</div>
-  <div class="badge" id="marionetteBtn">Vezérlőpult</div>
+  <div style="display: flex; gap: 8px;">
+    <a href="https://drive.google.com/file/d/169T5cqGkVrjowQZXFdXqsY-2yZodyUHk/view?usp=drive_link" target="_blank" class="badge" id="phonebookBtn" style="background: var(--gold); text-decoration: none; display: none; align-items: center; gap: 4px;">
+      <span style="font-size:12px;">📞</span> Telefonkönyv
+    </a>
+    <div class="badge" id="marionetteBtn" style="display: flex; align-items: center;">Vezérlőpult</div>
+  </div>
 </header>
 
 <div id="loginScreen">
@@ -170,10 +175,12 @@
     if (user) {
       document.getElementById("loginScreen").style.display = "none";
       document.getElementById("adminPanel").style.display  = "block";
+      document.getElementById("phonebookBtn").style.display = "flex"; // Gomb MEGJELENÍTÉSE
       initAdmin();
     } else {
       document.getElementById("loginScreen").style.display = "flex";
       document.getElementById("adminPanel").style.display  = "none";
+      document.getElementById("phonebookBtn").style.display = "none"; // Gomb ELREJTÉSE
     }
   });
 
