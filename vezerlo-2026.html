@@ -88,30 +88,36 @@
   <label>Érintett program (Opcionális)</label>
   <select id="alertTarget">
     <option value="all">-- Általános (nem kötődik konkrét előadáshoz) --</option>
+    <!-- Szombat -->
     <option value="show-eye-catching">Eye catching</option>
     <option value="show-lathatatlan">A láthatatlan jóbarát</option>
-    <option value="show-kosziv">A kőszív</option>
     <option value="show-atanaz">Atanáz, a lámpaláz</option>
     <option value="show-honvagy">Örökölt honvágy</option>
+    <!-- Vasárnap -->
     <option value="show-cseresznyefa">Én és a cseresznyefa</option>
     <option value="show-piroska">Piroska és a farkas</option>
+    <option value="show-kosziv">A kőszív</option>
     <option value="show-juhasz">Az igazmondó juhász</option>
     <option value="show-frida">Itt vagyok, hát élek, Frida</option>
-    <option value="show-tragedia-hetfo-d">Az ember tragédiája</option>
-    <option value="show-doboz-hetfo">A doboz (Hétfő)</option>
+    <!-- Hétfő -->
+    <option value="show-tragedia-hetfo-d">Az ember tragédiája (Délelőtt)</option>
+    <option value="show-doboz-hetfo">A doboz (Délelőtt)</option>
     <option value="show-graffalo">Graffaló</option>
     <option value="show-bambi">Bambi</option>
-    <option value="show-liselotte">Liselotte és a május</option>
+    <option value="show-tragedia-hetfo-e">Az ember tragédiája (Délután)</option>
+    <option value="show-doboz-hetfo-e">A doboz (Délután)</option>
+    <!-- Kedd -->
     <option value="show-lud">Ha már lúd…</option>
-    <option value="show-golya">Fekete gólya...</option>
+    <option value="show-golya">Fekete gólya, fehér gólya, szürke gólya</option>
     <option value="show-lepke">A lepkegyűjtő</option>
     <option value="show-sarkany">Sárkánykirály</option>
-    <option value="show-anyad">Kár, hogy anyádat...</option>
-    <option value="show-halasz">A szegény halász...</option>
+    <!-- Szerda -->
+    <option value="show-halasz">A szegény halász, meg a túlsokra vágyó felesége</option>
     <option value="show-hapci">Hapci király</option>
     <option value="show-lenka-sze">Lenka és a Szemüveges lány (Szerda)</option>
     <option value="show-tryangle-sze">Tryangle (Szerda)</option>
     <option value="show-patkanyfogo">A Patkányfogó Projekt</option>
+    <!-- Csütörtök -->
     <option value="show-capitalism">Capitalism for children</option>
     <option value="show-csodaszarvas">Csodaszarvas</option>
     <option value="show-lenka-csut">Lenka és a Szemüveges lány (Csütörtök)</option>
@@ -186,6 +192,7 @@
   window.doLogout = function() { signOut(auth).then(() => location.reload()); };
 
   function escapeHTML(str) {
+    if(!str) return "";
     return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag]));
   }
 
@@ -241,7 +248,7 @@
       await set(newRef, { message: text, targetId: target, timestamp: getBudapestTimeStr(), timeRaw: Date.now() });
       document.getElementById("alertText").value = "";
       showFeedback(fb, "✓ Értesítés közzétéve!", "ok");
-    } catch(e) { showFeedback(fb, "Hiba: " + e.message, "err"); }
+    } catch(e) { showFeedback(fb, "Hiba: Nincs jogosultságod!", "err"); }
   };
 
   window.deleteAlert = async function(id) { if(confirm("Biztosan törlöd ezt az értesítést?")) await remove(ref(db, "alertsList/" + id)); };
