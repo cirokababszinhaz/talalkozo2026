@@ -66,6 +66,9 @@
     <a href="https://drive.google.com/file/d/169T5cqGkVrjowQZXFdXqsY-2yZodyUHk/view?usp=drive_link" target="_blank" class="badge" id="phonebookBtn" style="background: var(--gold); text-decoration: none; display: none; align-items: center; gap: 4px;">
       <span style="font-size:12px;">📞</span> Telefonkönyv
     </a>
+    <a href="https://drive.google.com/drive/folders/1WwTYq5HThmX1w2ppVP381ymKDKL0U4uN?usp=sharing" target="_blank" class="badge" id="allFilesBtn" style="background: var(--gold); text-decoration: none; display: none; align-items: center; gap: 4px;">
+      <span style="font-size:12px;">📁</span> MINDEN
+    </a>
     <div class="badge" id="marionetteBtn" style="display: flex; align-items: center;">Vezérlőpult</div>
   </div>
 </header>
@@ -175,26 +178,16 @@
     if (user) {
       document.getElementById("loginScreen").style.display = "none";
       document.getElementById("adminPanel").style.display  = "block";
-      document.getElementById("phonebookBtn").style.display = "flex"; // Gomb MEGJELENÍTÉSE
+      document.getElementById("phonebookBtn").style.display = "flex"; // Telefonkönyv megjelenítése
+      document.getElementById("allFilesBtn").style.display = "flex"; // "Minden" gomb megjelenítése
       initAdmin();
     } else {
       document.getElementById("loginScreen").style.display = "flex";
       document.getElementById("adminPanel").style.display  = "none";
-      document.getElementById("phonebookBtn").style.display = "none"; // Gomb ELREJTÉSE
+      document.getElementById("phonebookBtn").style.display = "none"; // Telefonkönyv elrejtése
+      document.getElementById("allFilesBtn").style.display = "none"; // "Minden" gomb elrejtése
     }
   });
-
-  window.doLogin = function() {
-    const email = document.getElementById("emailInput").value;
-    const pwd = document.getElementById("pwdInput").value;
-    signInWithEmailAndPassword(auth, email, pwd)
-      .catch((error) => {
-        const errBox = document.getElementById("loginError");
-        errBox.style.display = "block";
-        errBox.textContent = "Helytelen email vagy jelszó!";
-        setTimeout(() => errBox.style.display = "none", 3000);
-      });
-  };
 
   window.doLogout = function() { signOut(auth).then(() => location.reload()); };
 
