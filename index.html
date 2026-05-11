@@ -2040,160 +2040,41 @@
     document.getElementById("alertsModal").classList.remove("visible");
   };
 
-  // ===============================
-  // VIRTUALIS EMLÉKKÖNYV + POLAROID
-  // ===============================
-  const gbRef = ref(db, "guestbook");
-  
-  function renderGuestbook(dataObj, containerId) {
-    const list = document.getElementById(containerId);
-    if(!list) return;
-    list.innerHTML = "";
-    if(!dataObj) {
-       list.innerHTML = "<p style='font-size:12px; color:var(--muted); text-align:center; width:100%;'>Még nincs üzenet. Legyél te az első!</p>";
-       return;
-    }
-    const gbArr = Object.keys(dataObj).map(k => ({id: k, ...dataObj[k]})).sort((a,b) => b.timeRaw - a.timeRaw);
-    
-    gbArr.forEach(msg => {
-      const randRot = Math.random();
-      let content = "";
-      if (msg.photoUrl) {
-         let extraClass = msg.isWide ? 'wide' : '';
-         content = `
-           <div class="polaroid ${extraClass}" style="--rand: ${randRot};">
-             <div class="cellux"></div>
-             <img src="${msg.photoUrl}" alt="Kép" loading="lazy">
-             <div class="polaroid-text">${window.escapeHTML(msg.text)}</div>
-             <div class="polaroid-author">${window.escapeHTML(msg.name)}<br><span style="font-size:8px;color:#888;">${msg.dateStr}</span></div>
-           </div>
-         `;
-      } else {
-         content = `
-           <div class="gb-message" style="width:100%;">
-             <div class="gb-header">
-               <span class="gb-name">${window.escapeHTML(msg.name)}</span>
-               <span class="gb-date">${msg.dateStr}</span>
-             </div>
-             <div class="gb-text">${window.escapeHTML(msg.text)}</div>
-           </div>
-         `;
-      }
-      list.innerHTML += content;
-    });
-  }
-
-  onValue(gbRef, (snap) => {
-    const data = snap.exists() ? snap.val() : null;
-    renderGuestbook(data, "gbGridModal");
-    renderGuestbook(data, "gbGridPostFest"); // Fesztivál utáni nézethez
-  });
-
-  window.openGuestbook = function() {
-    document.getElementById('guestbookModal').classList.add('visible');
-  }
-
-  window.handlePhotoSelect = function(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = function(e) {
-      const img = new Image();
-      img.src = e.target.result;
-      img.onload = function() {
-        const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 800; const MAX_HEIGHT = 800;
-        let width = img.width; let height = img.height;
-        window.isPhotoWide = width > height;
-        if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
-        else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
-        canvas.width = width; canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
-        window.resizedImageDataUrl = canvas.toDataURL('image/jpeg', 0.7);
-        
-        document.getElementById('gbPhotoPreview').style.display = 'block';
-        document.getElementById('gbPhotoBtn').style.borderColor = 'var(--green)';
-        document.getElementById('gbPhotoBtn').style.color = 'var(--green)';
-        document.getElementById('gbPhotoBtn').innerText = '✓ FOTÓ CSATOLVA';
-      }
-    }
-  };
-
-  // SPAM VÉDELEM: UUID és Rate Limit
-  function getDeviceUUID() {
-    let uuid = localStorage.getItem('deviceUUID');
-    if(!uuid) {
-      uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-          var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-          return v.toString(16);
-      });
-      localStorage.setItem('deviceUUID', uuid);
-    }
-    return uuid;
-  }
-
-  window.submitGuestbook = async function() {
-    const nowTime = Date.now();
-    const lastPost = localStorage.getItem('last_gb_post_time');
-    // 60 másodperces korlátozás
-    if(lastPost && (nowTime - parseInt(lastPost)) < 60000) {
-       window.showToast("Kérjük várj 1 percet az újabb posztolásig!");
-       return;
-    }
-
-    const name = document.getElementById('gbName').value.trim();
-    const text = document.getElementById('gbText').value.trim();
-    if(!name || !text) { window.showToast("Kérjük, add meg a neved és az üzenetet is!"); return; }
-
-    const submitBtn = document.getElementById('gbSubmitBtn');
-    submitBtn.innerText = "Feltöltés folyamatban...";
-    submitBtn.disabled = true;
-
-    const dateStr = new Date().toLocaleDateString('hu-HU', {month:'short', day:'numeric'}) + " " + new Date().getHours().toString().padStart(2,'0') + ":" + new Date().getMinutes().toString().padStart(2,'0');
-
-    try {
-      let photoUrl = "";
-      if (window.resizedImageDataUrl) {
-        const photoRef = sRef(storage, 'guestbook/' + Date.now() + '.jpg');
-        await uploadString(photoRef, window.resizedImageDataUrl, 'data_url');
-        photoUrl = await getDownloadURL(photoRef);
-      }
-
-      const newRef = push(gbRef);
-      await set(newRef, { 
-        name: name, text: text, timeRaw: Date.now(), dateStr: dateStr, 
-        photoUrl: photoUrl, isWide: window.isPhotoWide || false,
-        deviceId: getDeviceUUID() 
-      });
-
-      localStorage.setItem('last_gb_post_time', Date.now());
-
-      document.getElementById('gbText').value = "";
-      document.getElementById('gbPhotoInput').value = "";
-      document.getElementById('gbPhotoPreview').style.display = 'none';
-      document.getElementById('gbPhotoBtn').style.borderColor = 'var(--teal)';
-      document.getElementById('gbPhotoBtn').style.color = 'var(--teal)';
-      document.getElementById('gbPhotoBtn').innerText = '📸 FOTÓ KIVÁLASZTÁSA (Opcionális)';
-      window.resizedImageDataUrl = null;
-      
-      window.trackEvent('guestbook_upload'); // Analitika
-      window.showToast("Üzenet sikeresen elküldve!");
-    } catch(err) {
-      console.error(err);
-      window.showToast("Hiba a feltöltésnél! Kérlek, ellenőrizd a beállításokat.");
-    } finally {
-      submitBtn.innerText = "Fellövöm a falra!";
-      submitBtn.disabled = false;
-    }
-  }
-
-  // ===============================
+// ===============================
   // ITT VAGYOK CHECK-IN (+ VISSZAVONÁS)
   // ===============================
   const checkinRef = ref(db, 'checkins');
   const venueNames = { 'ciroka': 'Ciróka Bábszínház', 'agora': 'Hírös Agóra', 'kelemen': 'Kelemen L. Kamaraszínház', 'ruszt': 'Ruszt J. Stúdió', 'ifjusagi': 'Ifjúsági Otthon', 'tmh': 'Tudomány és Művészetek Háza', 'bufe': '☕ Kávézóban / Büfében' };
+
+  // OLDAL BETÖLTÉSKOR UI HELYREÁLLÍTÁSA
+  function restoreCheckinUI() {
+    const savedVenue = localStorage.getItem('myCheckinVenue');
+    const savedId = localStorage.getItem('myCheckinId');
+    const savedTime = localStorage.getItem('myCheckinTime');
+    const savedName = localStorage.getItem('myCheckinName');
+
+    if (savedVenue && savedId && savedTime) {
+      const now = Date.now();
+      // Ha 2 órán belüli a becsekkolás, helyreállítjuk a menüt
+      if (now - parseInt(savedTime) < 2 * 60 * 60 * 1000) { 
+        const myStatus = document.getElementById('myCheckinStatus');
+        myStatus.style.display = 'block';
+        myStatus.innerHTML = `Most itt vagy:<br><span style="color:var(--gold-light); text-decoration:underline;" onclick="window.openCheckin()">`+venueNames[savedVenue]+`</span><br><div style="margin-top:4px;"><span style="font-size:9px; color:rgba(255,255,255,0.4); cursor:pointer;" onclick="window.openCheckin()">Módosítod?</span> &nbsp;|&nbsp; <span style="font-size:9px; color:var(--red); cursor:pointer;" onclick="window.revokeCheckin(event)">Visszavonod?</span></div>`;
+        
+        if(savedName) document.getElementById('checkinNameInput').value = savedName;
+        document.getElementById('ciVenue').value = savedVenue;
+      } else {
+        // Lejárt (több mint 2 órája volt), töröljük a memóriából
+        localStorage.removeItem('myCheckinName');
+        localStorage.removeItem('myCheckinVenue');
+        localStorage.removeItem('myCheckinId');
+        localStorage.removeItem('myCheckinTime');
+      }
+    }
+  }
+  
+  // Futtatás azonnal az oldal betöltésekor
+  restoreCheckinUI();
 
   const urlParams = new URLSearchParams(window.location.search);
   const checkinVenueId = urlParams.get('checkin');
@@ -2201,8 +2082,6 @@
   if(checkinVenueId && venueNames[checkinVenueId]) {
     setTimeout(() => {
       document.getElementById('ciVenue').value = checkinVenueId;
-      const savedName = localStorage.getItem('myCheckinName');
-      if(savedName) document.getElementById('checkinNameInput').value = savedName;
       window.openCheckin();
       window.history.replaceState({}, document.title, window.location.pathname);
     }, 1000);
@@ -2217,6 +2096,14 @@
     if(nameInput.length < 2) { window.showToast('Légyszi adj meg egy nevet!'); return; }
     
     const venueId = document.getElementById('ciVenue').value;
+
+    // Ha már volt aktív csekkolása, töröljük a régit, mielőtt kitesszük az újat (Módosítás)
+    const oldVenue = localStorage.getItem('myCheckinVenue');
+    const oldId = localStorage.getItem('myCheckinId');
+    if (oldVenue && oldId) {
+      remove(ref(db, `checkins/${oldVenue}/${oldId}`));
+    }
+    
     const newRef = push(ref(db, 'checkins/' + venueId));
     
     set(newRef, { name: nameInput, timeRaw: Date.now() })
@@ -2224,15 +2111,13 @@
         localStorage.setItem('myCheckinName', nameInput);
         localStorage.setItem('myCheckinVenue', venueId);
         localStorage.setItem('myCheckinId', newRef.key);
+        localStorage.setItem('myCheckinTime', Date.now()); // Időbélyeg mentése!
 
         document.getElementById('checkinModal').classList.remove('visible');
-        
-        window.trackEvent('check_in_used', { venue: venueId }); // Analitika
+        window.trackEvent('check_in_used', { venue: venueId }); 
 
         window.showToast("Sikeres becsekkolás!");
-        const myStatus = document.getElementById('myCheckinStatus');
-        myStatus.style.display = 'block';
-        myStatus.innerHTML = `Most itt vagy:<br><span style="color:var(--gold-light); text-decoration:underline;" onclick="window.openCheckin()">`+venueNames[venueId]+`</span><br><div style="margin-top:4px;"><span style="font-size:9px; color:rgba(255,255,255,0.4); cursor:pointer;" onclick="window.openCheckin()">Módosítod?</span> &nbsp;|&nbsp; <span style="font-size:9px; color:var(--red); cursor:pointer;" onclick="window.revokeCheckin(event)">Visszavonod?</span></div>`;
+        restoreCheckinUI(); // UI frissítése azonnal
       })
       .catch((err) => window.showToast("Hiba a mentésnél: " + err.message));
   };
@@ -2246,7 +2131,9 @@
           localStorage.removeItem('myCheckinName');
           localStorage.removeItem('myCheckinVenue');
           localStorage.removeItem('myCheckinId');
+          localStorage.removeItem('myCheckinTime');
           document.getElementById('myCheckinStatus').style.display = 'none';
+          document.getElementById('checkinNameInput').value = ""; // Név törlése a dobozból
           window.showToast("Becsekkolás visszavonva!");
        });
     }
