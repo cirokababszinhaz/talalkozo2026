@@ -267,12 +267,22 @@
   .quote-text { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--teal-dark); font-style: italic; line-height: 1.4; margin-bottom: 15px; }
   .quote-author { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); font-weight: 700; }
 
-  /* TÁMOGATÓI SZEKCIÓ */
+ /* TÁMOGATÓI SZEKCIÓ (Új, animált és mobilon görgethető) */
   .sponsors-box { background: var(--surface); padding: 40px 20px; text-align: center; border-top: 2px solid var(--border); }
   .sponsors-title { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 25px; font-weight: 700; }
   .sponsors-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; align-items: center; max-width: 800px; margin: 0 auto; }
-  .sponsor-logo { max-width: 130px; max-height: 60px; object-fit: contain; opacity: 0.6; transition: .3s; filter: grayscale(100%); }
-  .sponsor-logo:hover { opacity: 1; filter: grayscale(0%); }
+  .sponsor-logo { max-width: 130px; height: 60px; object-fit: contain; opacity: 0.6; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); filter: grayscale(100%); cursor: pointer; }
+  .sponsor-logo:hover, .sponsor-logo:active { opacity: 1; filter: grayscale(0%); transform: scale(1.25); z-index: 10; position: relative; }
+
+  @media (max-width: 600px) {
+    .sponsors-grid { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 10px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .sponsors-grid::-webkit-scrollbar { display: none; }
+    .sponsor-logo { flex: 0 0 45%; scroll-snap-align: center; max-width: none; }
+  }
+
+  /* GASZTRO LOGÓK ANIMÁCIÓJA */
+  .gastro-logo { width: 45px; height: 45px; object-fit: contain; background: var(--card); border-radius: 4px; padding: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; flex-shrink: 0; }
+  .gastro-logo:hover, .gastro-logo:active { transform: scale(1.5) rotate(-5deg); z-index: 10; position: relative; }
 
   /* EASTER EGGS CSS */
   .vitez-laszlo { position: fixed; bottom: -400px; right: 20px; width: 250px; max-width: 60vw; z-index: 3000; transition: bottom 0.5s ease-out; }
@@ -503,7 +513,7 @@
         <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
           <div style="display:flex; align-items:center; gap:12px;">
              <!-- RELATÍV LINK A GITHUBRÓL -->
-             <img src="./levesm.png" style="width:45px; height:45px; object-fit:contain; background:var(--card); border-radius:4px; padding:2px; box-shadow:0 2px 5px rgba(0,0,0,0.1);" loading="lazy" alt="Leves'M">
+             <img src="./levesm.png" class="gastro-logo" loading="lazy" alt="Leves'M">
              <div>
                 <a href="https://levesm.hu/" target="_blank" class="venue-item-title">Leves’M Levesbár</a>
                 <div class="venue-item-address">Csányi u. 1-3. <br><span style="color:var(--red); font-weight:700;">10% kedvezmény mindenre</span></div>
@@ -522,7 +532,7 @@
         <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
           <div style="display:flex; align-items:center; gap:12px;">
              <!-- RELATÍV LINK A GITHUBRÓL -->
-             <img src="./dixie.png" style="width:45px; height:45px; object-fit:contain; background:var(--card); border-radius:4px; padding:2px; box-shadow:0 2px 5px rgba(0,0,0,0.1);" loading="lazy" alt="Dixie">
+             <img src="./dixie.png" class="gastro-logo" loading="lazy" alt="Dixie">
              <div>
                 <a href="https://www.facebook.com/dixiegyorsetterem" target="_blank" class="venue-item-title">Dixie Gyorsétterem</a>
                 <div class="venue-item-address">Dobó krt. 1. <br><span style="color:var(--red); font-weight:700;">10% kedvezmény mindenre</span></div>
@@ -541,7 +551,7 @@
         <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
           <div style="display:flex; align-items:center; gap:12px;">
              <!-- RELATÍV LINK A GITHUBRÓL -->
-             <img src="./spaletta.png" style="width:45px; height:45px; object-fit:contain; background:var(--card); border-radius:4px; padding:2px; box-shadow:0 2px 5px rgba(0,0,0,0.1);" loading="lazy" alt="Spaletta">
+             <img src="./spaletta.png" class="gastro-logo" loading="lazy" alt="Spaletta">
              <div>
                 <a href="https://spalettaetterem.com/hu" target="_blank" class="venue-item-title">Spaletta Étterem és Sörház</a>
                 <div class="venue-item-address">Jókai u. 15. <br><span style="color:var(--red); font-weight:700;">10% kedvezmény mindenre</span></div>
