@@ -9,10 +9,16 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root { --teal: #1a5c58; --teal-dark: #113d3a; --gold: #c4913a; --gold-light: #d4a84a; --bg: #f0ece3; --card: #fff; --text: #1a1a1a; --muted: #6b6258; --border: rgba(26,92,88,0.18); --red: #c0392b; --green: #1a7a4a; }
   body { background: var(--bg); font-family: 'Montserrat', sans-serif; font-weight: 500; min-height: 100vh; display: flex; flex-direction: column; transition: transform 0.5s; }
-  header { background: var(--teal-dark); padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+  
+  /* Fejléc reszponzív javítása */
+  header { background: var(--teal-dark); padding: 16px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
   header .logo { font-weight: 700; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-light); }
-  header .badge { background: var(--red); color: #fff; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; padding: 3px 8px; border-radius: 2px; cursor: pointer; user-select: none; }
-
+  .header-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  header .badge { background: var(--red); color: #fff; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; padding: 4px 8px; border-radius: 2px; cursor: pointer; user-select: none; display: flex; align-items: center; gap: 4px; text-decoration: none; border: 1px solid transparent; transition: 0.2s;}
+  header .badge:hover { filter: brightness(1.2); }
+  header .badge-gold { background: var(--gold); }
+  header .badge-outline { background: transparent; border-color: rgba(255,255,255,0.3); }
+  
   #loginScreen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; }
   .login-joke { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--teal-dark); text-align: center; margin-bottom: 30px; font-style: italic; line-height:1.4;}
   .login-box { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 32px; max-width: 380px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.05);}
@@ -62,14 +68,18 @@
 
 <header>
   <div class="logo">XVII. Találkozó</div>
-  <div style="display: flex; gap: 8px;">
-    <a href="https://drive.google.com/file/d/169T5cqGkVrjowQZXFdXqsY-2yZodyUHk/view?usp=drive_link" target="_blank" class="badge" id="phonebookBtn" style="background: var(--gold); text-decoration: none; display: none; align-items: center; gap: 4px;">
+  <div class="header-actions">
+    <!-- Csak bejelentkezve jelennek meg -->
+    <a href="https://drive.google.com/file/d/169T5cqGkVrjowQZXFdXqsY-2yZodyUHk/view?usp=drive_link" target="_blank" class="badge badge-gold" id="phonebookBtn" style="display: none;">
       <span style="font-size:12px;">📞</span> Telefonkönyv
     </a>
-    <a href="https://drive.google.com/drive/folders/1WwTYq5HThmX1w2ppVP381ymKDKL0U4uN?usp=sharing" target="_blank" class="badge" id="allFilesBtn" style="background: var(--gold); text-decoration: none; display: none; align-items: center; gap: 4px;">
+    <a href="https://drive.google.com/drive/folders/1WwTYq5HThmX1w2ppVP381ymKDKL0U4uN?usp=sharing" target="_blank" class="badge badge-gold" id="allFilesBtn" style="display: none;">
       <span style="font-size:12px;">📁</span> MINDEN
     </a>
-    <div class="badge" id="marionetteBtn" style="display: flex; align-items: center;">Vezérlőpult</div>
+    
+    <a href="index.html" class="badge badge-outline">⬅ Főoldalra</a>
+    <div class="badge" id="logoutBtnTop" style="display: none;" onclick="window.doLogout()">Kijelentkezés</div>
+    <div class="badge" id="marionetteBtn">Vezérlőpult</div>
   </div>
 </header>
 
@@ -109,173 +119,4 @@
     <option value="show-frida">Itt vagyok, hát élek, Frida</option>
     <!-- Hétfő -->
     <option value="show-tragedia-hetfo-d">Az ember tragédiája (Délelőtt)</option>
-    <option value="show-doboz-hetfo">A doboz (Délelőtt)</option>
-    <option value="show-graffalo">Graffaló</option>
-    <option value="show-bambi">Bambi</option>
-    <option value="show-tragedia-hetfo-e">Az ember tragédiája (Délután)</option>
-    <option value="show-doboz-hetfo-e">A doboz (Délután)</option>
-    <!-- Kedd -->
-    <option value="show-lud">Ha már lúd…</option>
-    <option value="show-golya">Fekete gólya, fehér gólya, szürke gólya</option>
-    <option value="show-lepke">A lepkegyűjtő</option>
-    <option value="show-sarkany">Sárkánykirály</option>
-    <!-- Szerda -->
-    <option value="show-halasz">A szegény halász, meg a túlsokra vágyó felesége</option>
-    <option value="show-hapci">Hapci király</option>
-    <option value="show-lenka-sze">Lenka és a Szemüveges lány (Szerda)</option>
-    <option value="show-tryangle-sze">Tryangle (Szerda)</option>
-    <option value="show-patkanyfogo">A Patkányfogó Projekt</option>
-    <!-- Csütörtök -->
-    <option value="show-capitalism">Capitalism for children</option>
-    <option value="show-csodaszarvas">Csodaszarvas</option>
-    <option value="show-lenka-csut">Lenka és a Szemüveges lány (Csütörtök)</option>
-    <option value="show-tryangle-csut">Tryangle (Csütörtök)</option>
-    <option value="show-vampir">Én, a vámpír</option>
-  </select>
-
-  <label>Üzenet szövege</label>
-  <textarea id="alertText" placeholder="Pl.: A Bambi előadás helyszíne megváltozott..."></textarea>
-  
-  <button class="btn btn-primary" onclick="window.publishAlert()">🔔 Közzététel</button>
-  <div class="feedback" id="publishFeedback"></div>
-
-  <div class="divider"></div>
-
-  <div class="section-title">Aktív értesítések</div>
-  <div id="activeAlertsContainer">Nincs aktív értesítés.</div>
-
-  <div class="divider"></div>
-  <h2>Emlékkönyv moderálás</h2>
-  <div class="subtitle">Vendégek üzeneteinek ellenőrzése</div>
-  <div id="guestbookAdminContainer">Nincs még bejegyzés.</div>
-
-  <div class="divider"></div>
-  <button class="btn btn-ghost" onclick="window.doLogout()">Kijelentkezés</button>
-</div>
-
-<footer>Vezérlőpult &nbsp;·&nbsp; XVII. Találkozó</footer>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, push, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyB7BkU92oIK3H_01uX9hr8GatQyE_NXMyA",
-    authDomain: "ciroka-18b93.firebaseapp.com",
-    databaseURL: "https://ciroka-18b93-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "ciroka-18b93",
-    storageBucket: "ciroka-18b93.firebasestorage.app",
-    messagingSenderId: "149700522771",
-    appId: "1:149700522771:web:75596da42e3f116aa3a0e6"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db  = getDatabase(app);
-  const auth = getAuth(app);
-  
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      document.getElementById("loginScreen").style.display = "none";
-      document.getElementById("adminPanel").style.display  = "block";
-      document.getElementById("phonebookBtn").style.display = "flex"; // Telefonkönyv megjelenítése
-      document.getElementById("allFilesBtn").style.display = "flex"; // "Minden" gomb megjelenítése
-      initAdmin();
-    } else {
-      document.getElementById("loginScreen").style.display = "flex";
-      document.getElementById("adminPanel").style.display  = "none";
-      document.getElementById("phonebookBtn").style.display = "none"; // Telefonkönyv elrejtése
-      document.getElementById("allFilesBtn").style.display = "none"; // "Minden" gomb elrejtése
-    }
-  });
-
-  window.doLogout = function() { signOut(auth).then(() => location.reload()); };
-
-  function escapeHTML(str) {
-    if(!str) return "";
-    return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag]));
-  }
-
-  function getBudapestTimeStr() {
-    return new Date().toLocaleString("hu-HU", {timeZone: "Europe/Budapest", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"});
-  }
-
-  function initAdmin() {
-    onValue(ref(db, "alertsList"), (snap) => {
-      const container = document.getElementById("activeAlertsContainer");
-      container.innerHTML = "";
-      if (!snap.exists()) { container.innerHTML = "<p style='font-size:12px;color:var(--muted)'>Nincs aktív értesítés.</p>"; return; }
-      const data = snap.val();
-      const alertsArray = Object.keys(data).map(key => ({ id: key, ...data[key] })).sort((a,b) => b.timeRaw - a.timeRaw);
-      alertsArray.forEach(alert => {
-        let targetName = alert.targetId === "all" ? "Általános" : document.querySelector(`#alertTarget option[value="${alert.targetId}"]`).textContent;
-        container.innerHTML += `
-          <div class="alert-item">
-            <div><div class="alert-meta">${alert.timestamp} | Célpont: ${targetName}</div><div class="alert-text">${escapeHTML(alert.message)}</div></div>
-            <button class="del-btn" onclick="window.deleteAlert('${alert.id}')">Törlés</button>
-          </div>`;
-      });
-    });
-
-    onValue(ref(db, "guestbook"), (snap) => {
-      const container = document.getElementById("guestbookAdminContainer");
-      container.innerHTML = "";
-      if (!snap.exists()) { container.innerHTML = "<p style='font-size:12px;color:var(--muted)'>Nincs még bejegyzés.</p>"; return; }
-      const data = snap.val();
-      const gbArray = Object.keys(data).map(key => ({ id: key, ...data[key] })).sort((a,b) => b.timeRaw - a.timeRaw);
-      gbArray.forEach(msg => {
-        let imgHtml = msg.photoUrl ? `<img src="${msg.photoUrl}" class="gb-photo">` : '';
-        container.innerHTML += `
-          <div class="alert-item gb-item">
-            <div style="width:100%;">
-              <div class="alert-meta">${msg.dateStr} | ${escapeHTML(msg.name)}</div>
-              <div class="alert-text">${escapeHTML(msg.text)}</div>
-              ${imgHtml}
-            </div>
-            <button class="del-btn" onclick="window.deleteGbMessage('${msg.id}')">Törlés</button>
-          </div>`;
-      });
-    });
-  }
-
-  window.publishAlert = async function() {
-    const text = document.getElementById("alertText").value.trim();
-    const target = document.getElementById("alertTarget").value;
-    const fb = document.getElementById("publishFeedback");
-    if (!text) { showFeedback(fb, "Írj be egy üzenetet!", "err"); return; }
-    try {
-      const newRef = push(ref(db, "alertsList"));
-      await set(newRef, { message: text, targetId: target, timestamp: getBudapestTimeStr(), timeRaw: Date.now() });
-      document.getElementById("alertText").value = "";
-      showFeedback(fb, "✓ Értesítés közzétéve!", "ok");
-    } catch(e) { showFeedback(fb, "Hiba: Nincs jogosultságod!", "err"); }
-  };
-
-  window.deleteAlert = async function(id) { if(confirm("Biztosan törlöd ezt az értesítést?")) await remove(ref(db, "alertsList/" + id)); };
-  window.deleteGbMessage = async function(id) { if(confirm("Biztosan törlöd ezt az emlékkönyv bejegyzést?")) await remove(ref(db, "guestbook/" + id)); };
-
-  function showFeedback(el, msg, type) {
-    el.textContent = msg; el.className = "feedback " + type; el.style.display = "block";
-    setTimeout(() => el.style.display = "none", 4000);
-  }
-</script>
-
-<script>
-  let marionetteClicks = 0;
-  let mTimer;
-  document.getElementById('marionetteBtn').addEventListener('click', () => {
-    marionetteClicks++;
-    clearTimeout(mTimer);
-    if(marionetteClicks === 5) {
-      document.body.classList.add('marionette-mode');
-      marionetteClicks = 0;
-    } else {
-      mTimer = setTimeout(() => { marionetteClicks = 0; }, 500);
-    }
-  });
-  document.body.addEventListener('dblclick', () => {
-    document.body.classList.remove('marionette-mode');
-  });
-</script>
-</body>
-</html>
+    <opt

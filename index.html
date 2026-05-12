@@ -498,7 +498,7 @@
         Mutasd fel a Találkozó belépődet/passzodat, és válogass a kedvezmények közül a közeli helyeken!
       </div>
       
-      <!-- ÉTTEREM 1: Leves'M -->
+      <!-- ÉTTEREM 1 -->
       <div class="venue-item" style="padding: 10px 0; border-bottom: 1px solid var(--border); display:flex; flex-direction:column;">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
           <div style="display:flex; align-items:center; gap:12px;">
@@ -517,7 +517,7 @@
         </div>
       </div>
 
-      <!-- ÉTTEREM 2: Dixie -->
+      <!-- ÉTTEREM 2 -->
       <div class="venue-item" style="padding: 10px 0; border-bottom: 1px solid var(--border); display:flex; flex-direction:column;">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
           <div style="display:flex; align-items:center; gap:12px;">
@@ -536,7 +536,7 @@
         </div>
       </div>
 
-      <!-- ÉTTEREM 3: Spaletta -->
+      <!-- ÉTTEREM 3 -->
       <div class="venue-item" style="padding: 10px 0; border-bottom: none; display:flex; flex-direction:column;">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
           <div style="display:flex; align-items:center; gap:12px;">
@@ -547,13 +547,17 @@
                 <div class="venue-item-address">Jókai u. 15. <br><span style="color:var(--red); font-weight:700;">10% kedvezmény mindenre</span></div>
              </div>
           </div>
-          <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=46.912844426856566, 19.690101007902406" target="_blank">📍 Útvonal</a>
+          <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=46.90510848117024,19.68788751997593" target="_blank">📍 Útvonal</a>
         </div>
         <div style="margin-top:8px; font-size:10px; color:var(--muted); background:var(--surface); padding:8px; border-radius:4px;">
            <strong style="display:block; margin-bottom:4px; color:var(--teal-dark);">Nyitvatartás:</strong>
            Sz-H: Zárva | K: 16:00-22:00 | Sz-Cs: 11:30-22:00
         </div>
       </div>
+
+    </div>
+  </div>
+</div>
 
 <!-- ════════════════════════════════════
      SZOMBAT – jún. 13.
@@ -2058,17 +2062,13 @@
     document.getElementById("alertsModal").classList.remove("visible");
   };
 
-  // ===============================
   // BIZTONSÁGOS STRING FORMÁZÁS
-  // ===============================
   window.escapeHTML = function(str) {
     if (!str) return "";
     return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag]));
   }
 
-  // ===============================
-  // VIRTUALIS EMLÉKKÖNYV + POLAROID
-  // ===============================
+  // VIRTUALIS EMLÉKKÖNYV
   const gbRef = ref(db, "guestbook");
   
   function renderGuestbook(dataObj, containerId) {
@@ -2136,24 +2136,14 @@
       
       img.onload = function() {
         const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 800; 
-        const MAX_HEIGHT = 800;
-        let width = img.width; 
-        let height = img.height;
-        
+        const MAX_WIDTH = 800; const MAX_HEIGHT = 800;
+        let width = img.width; let height = img.height;
         window.isPhotoWide = width > height;
-        
-        if (width > height) { 
-           if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } 
-        } else { 
-           if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } 
-        }
-        
-        canvas.width = width; 
-        canvas.height = height;
+        if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
+        else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
+        canvas.width = width; canvas.height = height;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, width, height);
-        
         window.resizedImageDataUrl = canvas.toDataURL('image/jpeg', 0.7);
         
         const btn = document.getElementById('gbPhotoBtn');
@@ -2182,7 +2172,7 @@
     const nowTime = Date.now();
     const lastPost = localStorage.getItem('last_gb_post_time');
     
-    // 10 másodperces SPAM védelem a teszteléshez
+    // SPAM VÉDELEM 10mp a teszteléshez
     if(lastPost && (nowTime - parseInt(lastPost)) < 10000) {
        window.showToast("Kérjük várj picit az újabb posztolásig!");
        return;
@@ -2215,12 +2205,8 @@
 
       const newRef = push(gbRef);
       await set(newRef, { 
-        name: name, 
-        text: text, 
-        timeRaw: Date.now(), 
-        dateStr: dateStr, 
-        photoUrl: photoUrl, 
-        isWide: window.isPhotoWide || false,
+        name: name, text: text, timeRaw: Date.now(), dateStr: dateStr, 
+        photoUrl: photoUrl, isWide: window.isPhotoWide || false,
         deviceId: getDeviceUUID() 
       });
 
@@ -2237,11 +2223,8 @@
       
       window.trackEvent('guestbook_upload'); 
       
-      if(photoUploadSuccess) {
-         window.showToast("Üzenet sikeresen elküldve!");
-      } else {
-         window.showToast("Az üzenet elment, de a kép feltöltése sikertelen volt.");
-      }
+      if(photoUploadSuccess) { window.showToast("Üzenet sikeresen elküldve!"); } 
+      else { window.showToast("Az üzenet elment, de a kép feltöltése sikertelen volt."); }
     } catch(err) {
       console.error("Adatbázis hiba:", err);
       window.showToast("Nem sikerült elküldeni! Hiba: " + err.code);
@@ -2251,9 +2234,7 @@
     }
   }
 
-  // ===============================
   // ITT VAGYOK CHECK-IN (+ VISSZAVONÁS)
-  // ===============================
   const checkinRef = ref(db, 'checkins');
   const venueNames = { 'ciroka': 'Ciróka Bábszínház', 'agora': 'Hírös Agóra', 'kelemen': 'Kelemen L. Kamaraszínház', 'ruszt': 'Ruszt J. Stúdió', 'ifjusagi': 'Ifjúsági Otthon', 'tmh': 'Tudomány és Művészetek Háza', 'bufe': '☕ Kávézóban / Büfében' };
 
@@ -2283,7 +2264,7 @@
   
   restoreCheckinUI();
 
-  const urlParams = new URLSearchParams(window.location.search);
+  const urlParams = newSearchParams(window.location.search);
   const checkinVenueId = urlParams.get('checkin');
 
   if(checkinVenueId && venueNames[checkinVenueId]) {
@@ -2296,9 +2277,7 @@
     }, 1000);
   }
 
-  window.openCheckin = function() {
-    document.getElementById('checkinModal').classList.add('visible');
-  }
+  window.openCheckin = function() { document.getElementById('checkinModal').classList.add('visible'); }
 
   window.submitCheckin = function() {
     const nameInput = document.getElementById('checkinNameInput').value.trim();
@@ -2387,16 +2366,13 @@
 </script>
 
 <script>
-  // ===============================
   // BÖNGÉSZŐ LOGIKA & KERESŐ
-  // ===============================
   let activeTabBeforeSearch = 0;
   let currentTypeFilter = null;
   let isFavoritesMode = false;
   let isGastroMode = false;
   let searchTimeout;
 
-  // Analitika wrapper funkció
   window.trackEvent = function(eventName, eventParams = {}) {
     if (typeof gtag === 'function') {
       gtag('event', eventName, eventParams);
@@ -2413,9 +2389,7 @@
 
     document.querySelectorAll('.card-header').forEach(header => {
       header.addEventListener('click', function(e) {
-        if(!e.target.closest('.header-actions') && !e.target.closest('.event-title')) {
-           window.toggleCard(this);
-        }
+        if(!e.target.closest('.header-actions') && !e.target.closest('.event-title')) { window.toggleCard(this); }
       });
     });
 
@@ -2428,7 +2402,6 @@
            starContainer.className = 'star-container';
            headerActions.prepend(starContainer);
         }
-        
         const star = document.createElement('span');
         star.className = 'star-btn';
         star.innerHTML = '☆';
@@ -2450,7 +2423,6 @@
     });
 
     initPostFestivalMode();
-
     checkLiveEvents();
     setInterval(checkLiveEvents, 60000);
     
@@ -2486,7 +2458,6 @@
       document.getElementById('topAlertBar').style.display = 'none';
       document.getElementById('heroButtons').style.display = 'none';
       document.getElementById('infoBoxBottom').style.display = 'none';
-      
       document.getElementById('postFestivalView').style.display = 'block';
     } else {
       const budapestTime = new Date(new Date().toLocaleString("en-US", {timeZone: "Europe/Budapest"}));
@@ -2779,15 +2750,6 @@
     if(!hasAnyMatchTotal && query !== "") { document.getElementById('noResultsMsg').style.display = 'block'; } 
     else { document.getElementById('noResultsMsg').style.display = 'none'; }
   }
-
-  window.showToast = function(msg, upsideDown = false) {
-    const toast = document.getElementById("toastMsg");
-    toast.innerText = msg;
-    toast.style.transform = upsideDown ? "translateX(-50%) rotate(180deg)" : "translateX(-50%)";
-    toast.classList.add("show");
-    setTimeout(() => toast.classList.remove("show"), 3000);
-  }
-
 </script>
 </body>
 </html>
