@@ -23,7 +23,6 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-BSSY6FZ7TK'); 
 </script>
 
@@ -337,10 +336,10 @@
          <input type="text" id="gbName" placeholder="Neved vagy társulatod" maxlength="40">
          <textarea id="gbText" placeholder="Írj egy rövid üzenetet vagy poént a képhez..." maxlength="150"></textarea>
          
-         <input type="file" id="gbPhotoInput" accept="image/*" style="display:none;" onchange="window.handlePhotoSelect(event)">
-         <button class="hero-btn" id="gbPhotoBtn" onclick="document.getElementById('gbPhotoInput').click()" style="width:100%; border-color:var(--teal); color:var(--teal); justify-content:center;">
+         <input type="file" id="gbPhotoInput" accept="image/*" style="position: absolute; opacity: 0; width: 1px; height: 1px; z-index: -1;" onchange="window.handlePhotoSelect(event)">
+         <label for="gbPhotoInput" class="hero-btn" id="gbPhotoBtn" style="width:100%; border-color:var(--teal); color:var(--teal); justify-content:center; cursor: pointer; text-align: center;">
             📸 FOTÓ KIVÁLASZTÁSA (Opcionális)
-         </button>
+         </label>
          <div id="gbPhotoPreview" style="font-size:10px; color:var(--green); text-align:center; margin-top:5px; font-weight:700; display:none;">✓ Fotó csatolva!</div>
          
          <button class="gb-submit" id="gbSubmitBtn" onclick="window.submitGuestbook()">Fellövöm a falra!</button>
@@ -499,46 +498,62 @@
         Mutasd fel a Találkozó belépődet/passzodat, és válogass a kedvezmények közül a közeli helyeken!
       </div>
       
-      <!-- ÉTTEREM 1 -->
-      <div class="venue-item" style="padding: 10px 0; border-bottom: 1px solid var(--border);">
-        <div style="display:flex; align-items:center; gap:12px;">
-           <div style="width:45px; height:45px; background:var(--surface); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">🍔</div>
-           <!-- LOGÓ HELYE: <img src="logo.png" style="width:45px; height:45px; object-fit:contain;" loading="lazy"> -->
-           <div>
-              <div class="venue-item-title">Teszt Étterem 1.</div>
-              <div class="venue-item-address">Budai u. 1. <br><span style="color:var(--red); font-weight:700;">15% a menüből</span></div>
-           </div>
+      <!-- ÉTTEREM 1: Leves'M -->
+      <div class="venue-item" style="padding: 10px 0; border-bottom: 1px solid var(--border); display:flex; flex-direction:column;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
+          <div style="display:flex; align-items:center; gap:12px;">
+             <!-- RELATÍV LINK A GITHUBRÓL -->
+             <img src="./levesm.png" style="width:45px; height:45px; object-fit:contain; background:var(--card); border-radius:4px; padding:2px; box-shadow:0 2px 5px rgba(0,0,0,0.1);" loading="lazy" alt="Leves'M">
+             <div>
+                <a href="https://levesm.hu/" target="_blank" class="venue-item-title">Leves’M Levesbár</a>
+                <div class="venue-item-address">Csányi u. 1-3. <br><span style="color:var(--red); font-weight:700;">10% kedvezmény mindenre</span></div>
+             </div>
+          </div>
+          <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=46.90754647824104,19.690316931387255" target="_blank">📍 Útvonal</a>
         </div>
-        <a class="route-btn" href="#" target="_blank">📍 Útvonal</a>
+        <div style="margin-top:8px; font-size:10px; color:var(--muted); background:var(--surface); padding:8px; border-radius:4px;">
+           <strong style="display:block; margin-bottom:4px; color:var(--teal-dark);">Nyitvatartás:</strong>
+           Sz: 10:00–15:00 | V: Zárva | H-Cs: 10:00–16:00
+        </div>
       </div>
 
-      <!-- ÉTTEREM 2 -->
-      <div class="venue-item" style="padding: 10px 0; border-bottom: 1px solid var(--border);">
-        <div style="display:flex; align-items:center; gap:12px;">
-           <div style="width:45px; height:45px; background:var(--surface); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">🍕</div>
-           <div>
-              <div class="venue-item-title">Teszt Étterem 2.</div>
-              <div class="venue-item-address">Pesti u. 2. <br><span style="color:var(--red); font-weight:700;">20% bármiből</span></div>
-           </div>
+      <!-- ÉTTEREM 2: Dixie -->
+      <div class="venue-item" style="padding: 10px 0; border-bottom: 1px solid var(--border); display:flex; flex-direction:column;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
+          <div style="display:flex; align-items:center; gap:12px;">
+             <!-- RELATÍV LINK A GITHUBRÓL -->
+             <img src="./dixie.png" style="width:45px; height:45px; object-fit:contain; background:var(--card); border-radius:4px; padding:2px; box-shadow:0 2px 5px rgba(0,0,0,0.1);" loading="lazy" alt="Dixie">
+             <div>
+                <a href="https://www.facebook.com/dixiegyorsetterem" target="_blank" class="venue-item-title">Dixie Gyorsétterem</a>
+                <div class="venue-item-address">Dobó krt. 1. <br><span style="color:var(--red); font-weight:700;">10% kedvezmény mindenre</span></div>
+             </div>
+          </div>
+          <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=46.90510848117024,19.68788751997593" target="_blank">📍 Útvonal</a>
         </div>
-        <a class="route-btn" href="#" target="_blank">📍 Útvonal</a>
+        <div style="margin-top:8px; font-size:10px; color:var(--muted); background:var(--surface); padding:8px; border-radius:4px;">
+           <strong style="display:block; margin-bottom:4px; color:var(--teal-dark);">Nyitvatartás:</strong>
+           Sz-V: Zárva | H-Cs: 9:00–16:00
+        </div>
       </div>
 
-      <!-- ÉTTEREM 3 -->
-      <div class="venue-item" style="padding: 10px 0; border-bottom: none;">
-        <div style="display:flex; align-items:center; gap:12px;">
-           <div style="width:45px; height:45px; background:var(--surface); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">🥪</div>
-           <div>
-              <div class="venue-item-title">Teszt Étterem 3.</div>
-              <div class="venue-item-address">Óbudai u. 3. <br><span style="color:var(--red); font-weight:700;">17,5% a szendvicsekből</span></div>
-           </div>
+      <!-- ÉTTEREM 3: Spaletta -->
+      <div class="venue-item" style="padding: 10px 0; border-bottom: none; display:flex; flex-direction:column;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
+          <div style="display:flex; align-items:center; gap:12px;">
+             <!-- RELATÍV LINK A GITHUBRÓL -->
+             <img src="./spaletta.png" style="width:45px; height:45px; object-fit:contain; background:var(--card); border-radius:4px; padding:2px; box-shadow:0 2px 5px rgba(0,0,0,0.1);" loading="lazy" alt="Spaletta">
+             <div>
+                <a href="https://spalettaetterem.com/hu" target="_blank" class="venue-item-title">Spaletta Étterem és Sörház</a>
+                <div class="venue-item-address">Jókai u. 15. <br><span style="color:var(--red); font-weight:700;">10% kedvezmény mindenre</span></div>
+             </div>
+          </div>
+          <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=46.912844426856566, 19.690101007902406" target="_blank">📍 Útvonal</a>
         </div>
-        <a class="route-btn" href="#" target="_blank">📍 Útvonal</a>
+        <div style="margin-top:8px; font-size:10px; color:var(--muted); background:var(--surface); padding:8px; border-radius:4px;">
+           <strong style="display:block; margin-bottom:4px; color:var(--teal-dark);">Nyitvatartás:</strong>
+           Sz-H: Zárva | K: 16:00-22:00 | Sz-Cs: 11:30-22:00
+        </div>
       </div>
-
-    </div>
-  </div>
-</div>
 
 <!-- ════════════════════════════════════
      SZOMBAT – jún. 13.
@@ -1779,7 +1794,7 @@
     </div>
     <div class="event-footer" style="justify-content: flex-end;">
       <a class="fb-event-btn" href="https://open.spotify.com/track/38MbUy2C0FLv6exayPlImu?si=ee86d5ce74634076" target="_blank">
-        <span style="font-size: 14px; margin-right: 4px;">🎵</span>
+        <span style="font-size: 14px; margin-right: 4px;">🎵</span> A Fesztivál Dala
       </a>
     </div>
   </div>
@@ -1904,10 +1919,10 @@
 <div class="sponsors-box" id="sponsorsBox">
   <div class="sponsors-title">Támogatóink és Partnereink</div>
   <div class="sponsors-grid">
-    <img src="https://via.placeholder.com/150x60/transparent/888?text=LOGO+1" class="sponsor-logo" alt="Támogató" loading="lazy">
-    <img src="https://via.placeholder.com/150x60/transparent/888?text=LOGO+2" class="sponsor-logo" alt="Támogató" loading="lazy">
-    <img src="https://via.placeholder.com/150x60/transparent/888?text=LOGO+3" class="sponsor-logo" alt="Támogató" loading="lazy">
-    <img src="https://via.placeholder.com/150x60/transparent/888?text=LOGO+4" class="sponsor-logo" alt="Támogató" loading="lazy">
+    <img src="./tamogato1.png" class="sponsor-logo" alt="Támogató" loading="lazy">
+    <img src="./tamogato2.png" class="sponsor-logo" alt="Támogató" loading="lazy">
+    <img src="./tamogato3.png" class="sponsor-logo" alt="Támogató" loading="lazy">
+    <img src="./tamogato4.png" class="sponsor-logo" alt="Támogató" loading="lazy">
   </div>
 </div>
 
@@ -2012,7 +2027,7 @@
       <div class="alert-card">
         ${showInfo}
         <div class="alert-time">${alert.timestamp}</div>
-        <div class="alert-msg">${alert.message}</div>
+        <div class="alert-msg">${window.escapeHTML(alert.message)}</div>
       </div>
     `;
     document.getElementById("alertsModal").classList.add("visible");
@@ -2032,7 +2047,7 @@
     } else {
       filteredAlerts.forEach(alert => {
         const showInfo = window.getShowTitleHTML(alert.targetId);
-        html += `<div class="alert-card">${showInfo}<div class="alert-time">${alert.timestamp}</div><div class="alert-msg">${alert.message}</div></div>`;
+        html += `<div class="alert-card">${showInfo}<div class="alert-time">${alert.timestamp}</div><div class="alert-msg">${window.escapeHTML(alert.message)}</div></div>`;
       });
     }
     document.getElementById("modalBody").innerHTML = html;
@@ -2043,13 +2058,205 @@
     document.getElementById("alertsModal").classList.remove("visible");
   };
 
-// ===============================
+  // ===============================
+  // BIZTONSÁGOS STRING FORMÁZÁS
+  // ===============================
+  window.escapeHTML = function(str) {
+    if (!str) return "";
+    return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag]));
+  }
+
+  // ===============================
+  // VIRTUALIS EMLÉKKÖNYV + POLAROID
+  // ===============================
+  const gbRef = ref(db, "guestbook");
+  
+  function renderGuestbook(dataObj, containerId) {
+    const list = document.getElementById(containerId);
+    if(!list) return;
+    list.innerHTML = "";
+    if(!dataObj) {
+       list.innerHTML = "<p style='font-size:12px; color:var(--muted); text-align:center; width:100%;'>Még nincs üzenet. Legyél te az első!</p>";
+       return;
+    }
+    const gbArr = Object.keys(dataObj).map(k => ({id: k, ...dataObj[k]})).sort((a,b) => b.timeRaw - a.timeRaw);
+    
+    gbArr.forEach(msg => {
+      const randRot = Math.random();
+      let content = "";
+      if (msg.photoUrl) {
+         let extraClass = msg.isWide ? 'wide' : '';
+         content = `
+           <div class="polaroid ${extraClass}" style="--rand: ${randRot};">
+             <div class="cellux"></div>
+             <img src="${msg.photoUrl}" alt="Kép" loading="lazy">
+             <div class="polaroid-text">${window.escapeHTML(msg.text)}</div>
+             <div class="polaroid-author">${window.escapeHTML(msg.name)}<br><span style="font-size:8px;color:#888;">${msg.dateStr}</span></div>
+           </div>
+         `;
+      } else {
+         content = `
+           <div class="gb-message" style="width:100%;">
+             <div class="gb-header">
+               <span class="gb-name">${window.escapeHTML(msg.name)}</span>
+               <span class="gb-date">${msg.dateStr}</span>
+             </div>
+             <div class="gb-text">${window.escapeHTML(msg.text)}</div>
+           </div>
+         `;
+      }
+      list.innerHTML += content;
+    });
+  }
+
+  onValue(gbRef, (snap) => {
+    const data = snap.exists() ? snap.val() : null;
+    renderGuestbook(data, "gbGridModal");
+    renderGuestbook(data, "gbGridPostFest"); 
+  });
+
+  window.openGuestbook = function() {
+    document.getElementById('guestbookModal').classList.add('visible');
+  }
+
+  window.handlePhotoSelect = function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+        window.showToast("Kérlek, csak képet válassz ki!");
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function(e) {
+      const img = new Image();
+      img.src = e.target.result;
+      
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 800; 
+        const MAX_HEIGHT = 800;
+        let width = img.width; 
+        let height = img.height;
+        
+        window.isPhotoWide = width > height;
+        
+        if (width > height) { 
+           if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } 
+        } else { 
+           if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } 
+        }
+        
+        canvas.width = width; 
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        window.resizedImageDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+        
+        const btn = document.getElementById('gbPhotoBtn');
+        document.getElementById('gbPhotoPreview').style.display = 'block';
+        btn.style.borderColor = 'var(--green)';
+        btn.style.color = 'var(--green)';
+        btn.innerText = '✓ FOTÓ CSATOLVA';
+      }
+      img.onerror = function() { window.showToast("Nem sikerült feldolgozni a képet. Próbálj meg egy másikat!"); }
+    }
+  };
+
+  function getDeviceUUID() {
+    let uuid = localStorage.getItem('deviceUUID');
+    if(!uuid) {
+      uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+          return v.toString(16);
+      });
+      localStorage.setItem('deviceUUID', uuid);
+    }
+    return uuid;
+  }
+
+  window.submitGuestbook = async function() {
+    const nowTime = Date.now();
+    const lastPost = localStorage.getItem('last_gb_post_time');
+    
+    // 10 másodperces SPAM védelem a teszteléshez
+    if(lastPost && (nowTime - parseInt(lastPost)) < 10000) {
+       window.showToast("Kérjük várj picit az újabb posztolásig!");
+       return;
+    }
+
+    const name = document.getElementById('gbName').value.trim();
+    const text = document.getElementById('gbText').value.trim();
+    if(!name || !text) { window.showToast("Kérjük, add meg a neved és az üzenetet is!"); return; }
+
+    const submitBtn = document.getElementById('gbSubmitBtn');
+    submitBtn.innerText = "Feltöltés folyamatban...";
+    submitBtn.disabled = true;
+
+    const dateStr = new Date().toLocaleDateString('hu-HU', {month:'short', day:'numeric'}) + " " + new Date().getHours().toString().padStart(2,'0') + ":" + new Date().getMinutes().toString().padStart(2,'0');
+
+    let photoUrl = "";
+    let photoUploadSuccess = true;
+
+    try {
+      if (window.resizedImageDataUrl) {
+        try {
+           const photoRef = sRef(storage, 'guestbook/' + Date.now() + '.jpg');
+           await uploadString(photoRef, window.resizedImageDataUrl, 'data_url');
+           photoUrl = await getDownloadURL(photoRef);
+        } catch (imgError) {
+           console.error("Képfeltöltési hiba:", imgError);
+           photoUploadSuccess = false; 
+        }
+      }
+
+      const newRef = push(gbRef);
+      await set(newRef, { 
+        name: name, 
+        text: text, 
+        timeRaw: Date.now(), 
+        dateStr: dateStr, 
+        photoUrl: photoUrl, 
+        isWide: window.isPhotoWide || false,
+        deviceId: getDeviceUUID() 
+      });
+
+      localStorage.setItem('last_gb_post_time', Date.now());
+
+      document.getElementById('gbText').value = "";
+      document.getElementById('gbPhotoInput').value = "";
+      document.getElementById('gbPhotoPreview').style.display = 'none';
+      const btn = document.getElementById('gbPhotoBtn');
+      btn.style.borderColor = 'var(--teal)';
+      btn.style.color = 'var(--teal)';
+      btn.innerText = '📸 FOTÓ KIVÁLASZTÁSA (Opcionális)';
+      window.resizedImageDataUrl = null;
+      
+      window.trackEvent('guestbook_upload'); 
+      
+      if(photoUploadSuccess) {
+         window.showToast("Üzenet sikeresen elküldve!");
+      } else {
+         window.showToast("Az üzenet elment, de a kép feltöltése sikertelen volt.");
+      }
+    } catch(err) {
+      console.error("Adatbázis hiba:", err);
+      window.showToast("Nem sikerült elküldeni! Hiba: " + err.code);
+    } finally {
+      submitBtn.innerText = "Fellövöm a falra!";
+      submitBtn.disabled = false;
+    }
+  }
+
+  // ===============================
   // ITT VAGYOK CHECK-IN (+ VISSZAVONÁS)
   // ===============================
   const checkinRef = ref(db, 'checkins');
   const venueNames = { 'ciroka': 'Ciróka Bábszínház', 'agora': 'Hírös Agóra', 'kelemen': 'Kelemen L. Kamaraszínház', 'ruszt': 'Ruszt J. Stúdió', 'ifjusagi': 'Ifjúsági Otthon', 'tmh': 'Tudomány és Művészetek Háza', 'bufe': '☕ Kávézóban / Büfében' };
 
-  // OLDAL BETÖLTÉSKOR UI HELYREÁLLÍTÁSA
   function restoreCheckinUI() {
     const savedVenue = localStorage.getItem('myCheckinVenue');
     const savedId = localStorage.getItem('myCheckinId');
@@ -2058,7 +2265,6 @@
 
     if (savedVenue && savedId && savedTime) {
       const now = Date.now();
-      // Ha 2 órán belüli a becsekkolás, helyreállítjuk a menüt
       if (now - parseInt(savedTime) < 2 * 60 * 60 * 1000) { 
         const myStatus = document.getElementById('myCheckinStatus');
         myStatus.style.display = 'block';
@@ -2067,7 +2273,6 @@
         if(savedName) document.getElementById('checkinNameInput').value = savedName;
         document.getElementById('ciVenue').value = savedVenue;
       } else {
-        // Lejárt (több mint 2 órája volt), töröljük a memóriából
         localStorage.removeItem('myCheckinName');
         localStorage.removeItem('myCheckinVenue');
         localStorage.removeItem('myCheckinId');
@@ -2076,7 +2281,6 @@
     }
   }
   
-  // Futtatás azonnal az oldal betöltésekor
   restoreCheckinUI();
 
   const urlParams = new URLSearchParams(window.location.search);
@@ -2085,6 +2289,8 @@
   if(checkinVenueId && venueNames[checkinVenueId]) {
     setTimeout(() => {
       document.getElementById('ciVenue').value = checkinVenueId;
+      const savedName = localStorage.getItem('myCheckinName');
+      if(savedName) document.getElementById('checkinNameInput').value = savedName;
       window.openCheckin();
       window.history.replaceState({}, document.title, window.location.pathname);
     }, 1000);
@@ -2100,12 +2306,9 @@
     
     const venueId = document.getElementById('ciVenue').value;
 
-    // Ha már volt aktív csekkolása, töröljük a régit, mielőtt kitesszük az újat (Módosítás)
     const oldVenue = localStorage.getItem('myCheckinVenue');
     const oldId = localStorage.getItem('myCheckinId');
-    if (oldVenue && oldId) {
-      remove(ref(db, `checkins/${oldVenue}/${oldId}`));
-    }
+    if (oldVenue && oldId) { remove(ref(db, `checkins/${oldVenue}/${oldId}`)); }
     
     const newRef = push(ref(db, 'checkins/' + venueId));
     
@@ -2114,13 +2317,13 @@
         localStorage.setItem('myCheckinName', nameInput);
         localStorage.setItem('myCheckinVenue', venueId);
         localStorage.setItem('myCheckinId', newRef.key);
-        localStorage.setItem('myCheckinTime', Date.now()); // Időbélyeg mentése!
+        localStorage.setItem('myCheckinTime', Date.now()); 
 
         document.getElementById('checkinModal').classList.remove('visible');
         window.trackEvent('check_in_used', { venue: venueId }); 
 
         window.showToast("Sikeres becsekkolás!");
-        restoreCheckinUI(); // UI frissítése azonnal
+        restoreCheckinUI(); 
       })
       .catch((err) => window.showToast("Hiba a mentésnél: " + err.message));
   };
@@ -2136,7 +2339,7 @@
           localStorage.removeItem('myCheckinId');
           localStorage.removeItem('myCheckinTime');
           document.getElementById('myCheckinStatus').style.display = 'none';
-          document.getElementById('checkinNameInput').value = ""; // Név törlése a dobozból
+          document.getElementById('checkinNameInput').value = ""; 
           window.showToast("Becsekkolás visszavonva!");
        });
     }
@@ -2174,16 +2377,13 @@
           }
           const span = document.createElement('span');
           span.className = 'checkin-bubble';
-          span.innerText = checkinData.name;
+          span.innerText = window.escapeHTML(checkinData.name);
           venueContainer.appendChild(span);
         }
       });
     }
   });
 
-  window.escapeHTML = function(str) {
-    return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag]));
-  }
 </script>
 
 <script>
@@ -2203,7 +2403,6 @@
     }
   };
 
-  // Debounce kereső logika optimalizálása
   window.doSearchDebounced = function() {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(window.doSearch, 300);
@@ -2212,7 +2411,6 @@
   window.addEventListener('DOMContentLoaded', () => {
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW hiba', err));
 
-    // Kártya nyitás
     document.querySelectorAll('.card-header').forEach(header => {
       header.addEventListener('click', function(e) {
         if(!e.target.closest('.header-actions') && !e.target.closest('.event-title')) {
@@ -2221,7 +2419,6 @@
       });
     });
 
-    // Kedvencek (Csillagok)
     document.querySelectorAll('.event-card').forEach(card => {
       const headerActions = card.querySelector('.header-actions');
       if (headerActions && card.id) {
@@ -2263,12 +2460,11 @@
       else jumpBtn.classList.remove('show');
     });
 
-    // Intersection Observer a támogatók analitikájához
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           window.trackEvent('sponsors_viewed');
-          observer.disconnect(); // Csak egyszer mérjük egy oldaltöltés alatt
+          observer.disconnect(); 
         }
       });
     });
@@ -2276,7 +2472,6 @@
     if (sponsorBox) observer.observe(sponsorBox);
   });
 
-  // FESZTIVÁL UTÁNI "EMLÉKKÖNYV" MÓD LOGIKA
   function initPostFestivalMode() {
     const postFestivalDate = new Date('2026-06-19T00:00:00+02:00').getTime();
     if (Date.now() > postFestivalDate) {
@@ -2294,7 +2489,6 @@
       
       document.getElementById('postFestivalView').style.display = 'block';
     } else {
-      // Normál fesztivál mód dátumválasztója
       const budapestTime = new Date(new Date().toLocaleString("en-US", {timeZone: "Europe/Budapest"}));
       if (budapestTime.getFullYear() === 2026 && budapestTime.getMonth() === 5 && budapestTime.getDate() >= 13 && budapestTime.getDate() <= 18) {
          const dIndex = budapestTime.getDate() - 13;
@@ -2314,7 +2508,6 @@
     }
   }
 
-  // NAPI MOTIVÁCIÓ GOMB LOGIKÁJA
   window.generateQuote = function() {
     const quotes = [
       "A báb nem utánozza az életet, hanem újat teremt.",
@@ -2329,7 +2522,6 @@
     document.getElementById('quoteModal').classList.add('visible');
   }
 
-  // HOL EGYEK GOMB KI/BE KAPCSOLÓ LOGIKÁJA
   window.toggleGastroCard = function() {
     isGastroMode = !isGastroMode;
     const btn = document.getElementById('btnHolEgyek');
@@ -2346,7 +2538,6 @@
       document.getElementById('secretBufeCard').style.display = 'none';
       document.getElementById('secretGastroCard').style.display = 'block';
       
-      // Szűrők inaktiválása vizuálisan
       currentTypeFilter = null;
       document.querySelectorAll('.filter-btn').forEach(el => el.classList.remove('active'));
       
@@ -2420,24 +2611,17 @@
   };
 
   window.toggleTypeFilter = function(type) {
-    // Ha a Hol egyek épp nyitva van, zárjuk be és menjünk vissza a programokhoz
     if (isGastroMode) {
         isGastroMode = false;
         document.getElementById('btnHolEgyek').classList.remove('active');
         document.getElementById('secretGastroCard').style.display = 'none';
     }
 
-    if (currentTypeFilter === type) {
-      currentTypeFilter = null;
-    } else {
-      currentTypeFilter = type;
-    }
+    if (currentTypeFilter === type) { currentTypeFilter = null; } 
+    else { currentTypeFilter = type; }
 
-    // CSS Gomb Kiemelések frissítése
     document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-    if (currentTypeFilter) {
-      document.getElementById('leg-' + currentTypeFilter).classList.add('active');
-    }
+    if (currentTypeFilter) { document.getElementById('leg-' + currentTypeFilter).classList.add('active'); }
 
     window.doSearch();
   };
@@ -2451,9 +2635,7 @@
     window.doSearch();
   }
 
-  window.toggleCard = function(el) {
-    el.closest('.event-card').classList.toggle('open');
-  }
+  window.toggleCard = function(el) { el.closest('.event-card').classList.toggle('open'); }
 
   window.showDay = function(index, btn) {
     document.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
@@ -2469,7 +2651,6 @@
     document.getElementById('favFilterBtn').innerHTML = '★ Kedvenceim';
     document.querySelectorAll('.filter-btn').forEach(el => el.classList.remove('active'));
     
-    // Ha a Gastro mód be volt kapcsolva, kapcsoljuk ki
     if (isGastroMode) {
         isGastroMode = false;
         document.getElementById('btnHolEgyek').classList.remove('active');
@@ -2488,7 +2669,6 @@
     const tabsWrap = document.getElementById('tabsWrap');
     const scrollHint = document.getElementById('scrollHint');
 
-    // 1. Vitéz László
     if(query === "laszlo") {
       const vitez = document.getElementById('vitezLaszlo');
       vitez.classList.add('show');
@@ -2501,7 +2681,6 @@
       return;
     }
 
-    // 2. Kritikus mód (javítva 5 mp-re)
     if(query === "kritika" || query === "kritikus") {
       document.body.style.transform = "rotate(180deg)";
       window.showToast("A kritikusok mindent másképp látnak!", true);
@@ -2514,7 +2693,6 @@
       return;
     }
 
-    // 3. Titkos Büfé (Rejtett szókeresés)
     if(['sor','bor','froccs','kave','bufe'].includes(query)) {
       tabsWrap.style.display = 'none';
       scrollHint.style.display = 'none';
@@ -2528,14 +2706,9 @@
       document.getElementById('secretBufeCard').style.display = 'none';
     }
 
-    // Ha a Hol egyek ki van kapcsolva manuálisan, győződjünk meg róla, hogy el van rejtve
-    if (!isGastroMode) {
-      document.getElementById('secretGastroCard').style.display = 'none';
-    } else {
-      return; // Ha aktív a Hol egyek gomb, a kereső vizuálisan ne csináljon semmit az alatta lévő tartalommal
-    }
+    if (!isGastroMode) { document.getElementById('secretGastroCard').style.display = 'none'; } 
+    else { return; }
 
-    // ALAP KERESŐ MÓD
     if (query === "" && !isFavoritesMode && !currentTypeFilter) {
       tabsWrap.style.display = 'flex';
       if (window.innerWidth <= 650) scrollHint.style.display = 'block';
@@ -2582,11 +2755,8 @@
         
         let isMatchType = true;
         if(currentTypeFilter) {
-          if(currentTypeFilter === 'public') {
-             isMatchType = card.querySelector('.badge-public') !== null;
-          } else {
-             isMatchType = card.classList.contains(currentTypeFilter);
-          }
+          if(currentTypeFilter === 'public') { isMatchType = card.querySelector('.badge-public') !== null; } 
+          else { isMatchType = card.classList.contains(currentTypeFilter); }
         }
 
         if(isMatchSearch && isMatchFav && isMatchType) {
@@ -2602,20 +2772,12 @@
         }
       });
 
-      if(hasMatchInDay) {
-        panel.style.display = 'block';
-        dayTitle.style.display = 'block';
-      } else {
-        panel.style.display = 'none';
-        dayTitle.style.display = 'none';
-      }
+      if(hasMatchInDay) { panel.style.display = 'block'; dayTitle.style.display = 'block'; } 
+      else { panel.style.display = 'none'; dayTitle.style.display = 'none'; }
     });
 
-    if(!hasAnyMatchTotal && query !== "") {
-      document.getElementById('noResultsMsg').style.display = 'block';
-    } else {
-      document.getElementById('noResultsMsg').style.display = 'none';
-    }
+    if(!hasAnyMatchTotal && query !== "") { document.getElementById('noResultsMsg').style.display = 'block'; } 
+    else { document.getElementById('noResultsMsg').style.display = 'none'; }
   }
 
   window.showToast = function(msg, upsideDown = false) {
