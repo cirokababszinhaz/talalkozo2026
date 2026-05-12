@@ -267,22 +267,33 @@
   .quote-text { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--teal-dark); font-style: italic; line-height: 1.4; margin-bottom: 15px; }
   .quote-author { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); font-weight: 700; }
 
- /* TÁMOGATÓI SZEKCIÓ (Új, animált és mobilon görgethető) */
-  .sponsors-box { background: var(--surface); padding: 40px 20px; text-align: center; border-top: 2px solid var(--border); }
+  /* TÁMOGATÓI SZEKCIÓ (Animált és Mobilon Csúsztatható) */
+  .sponsors-box { background: var(--surface); padding: 40px 20px; text-align: center; border-top: 2px solid var(--border); overflow: hidden; position: relative;}
   .sponsors-title { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 25px; font-weight: 700; }
-  .sponsors-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; align-items: center; max-width: 800px; margin: 0 auto; }
+  .sponsors-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; align-items: center; max-width: 800px; margin: 0 auto; transition: transform 0.5s linear;}
   .sponsor-logo { max-width: 130px; height: 60px; object-fit: contain; opacity: 0.6; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); filter: grayscale(100%); cursor: pointer; }
-  .sponsor-logo:hover, .sponsor-logo:active { opacity: 1; filter: grayscale(0%); transform: scale(1.25); z-index: 10; position: relative; }
+  .sponsor-logo:hover, .sponsor-logo.active-touch { opacity: 1; filter: grayscale(0%); transform: scale(1.25); z-index: 10; position: relative; }
 
+  /* GASTRO LOGÓK ANIMÁCIÓJA */
+  .gastro-logo { width: 45px; height: 45px; object-fit: contain; background: var(--card); border-radius: 4px; padding: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; flex-shrink: 0; }
+  .gastro-logo:hover, .gastro-logo.active-touch { transform: scale(1.5) rotate(-5deg); z-index: 10; position: relative; }
+
+  /* PC ANIMÁCIÓ A TÁMOGATÓKRA (Végtelen Csúszás) */
+  @media (min-width: 601px) {
+      .sponsors-grid { animation: slideLeft 20s linear infinite; flex-wrap: nowrap; width: max-content; }
+      .sponsors-box:hover .sponsors-grid { animation-play-state: paused; }
+      @keyframes slideLeft {
+          0% { transform: translateX(20%); }
+          100% { transform: translateX(-100%); }
+      }
+  }
+
+  /* MOBIL NÉZET A TÁMOGATÓKRA */
   @media (max-width: 600px) {
     .sponsors-grid { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 10px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
     .sponsors-grid::-webkit-scrollbar { display: none; }
     .sponsor-logo { flex: 0 0 45%; scroll-snap-align: center; max-width: none; }
   }
-
-  /* GASZTRO LOGÓK ANIMÁCIÓJA */
-  .gastro-logo { width: 45px; height: 45px; object-fit: contain; background: var(--card); border-radius: 4px; padding: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; flex-shrink: 0; }
-  .gastro-logo:hover, .gastro-logo:active { transform: scale(1.5) rotate(-5deg); z-index: 10; position: relative; }
 
   /* EASTER EGGS CSS */
   .vitez-laszlo { position: fixed; bottom: -400px; right: 20px; width: 250px; max-width: 60vw; z-index: 3000; transition: bottom 0.5s ease-out; }
@@ -557,7 +568,7 @@
                 <div class="venue-item-address">Jókai u. 15. <br><span style="color:var(--red); font-weight:700;">10% kedvezmény mindenre</span></div>
              </div>
           </div>
-          <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=46.912840912238266,19.69010232075282" target="_blank">📍 Útvonal</a>
+          <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=46.90510848117024,19.68788751997593" target="_blank">📍 Útvonal</a>
         </div>
         <div style="margin-top:8px; font-size:10px; color:var(--muted); background:var(--surface); padding:8px; border-radius:4px;">
            <strong style="display:block; margin-bottom:4px; color:var(--teal-dark);">Nyitvatartás:</strong>
@@ -2274,7 +2285,7 @@
   
   restoreCheckinUI();
 
-  const urlParams = newSearchParams(window.location.search);
+  const urlParams = new URLSearchParams(window.location.search);
   const checkinVenueId = urlParams.get('checkin');
 
   if(checkinVenueId && venueNames[checkinVenueId]) {
@@ -2394,8 +2405,20 @@
     searchTimeout = setTimeout(window.doSearch, 300);
   }
 
+  // Érintés animáció eltávolítása mobilra
+  function setupTouchLogos() {
+    document.querySelectorAll('.gastro-logo, .sponsor-logo').forEach(logo => {
+       logo.addEventListener('touchstart', function() {
+          this.classList.add('active-touch');
+          setTimeout(() => this.classList.remove('active-touch'), 1500);
+       });
+    });
+  }
+
   window.addEventListener('DOMContentLoaded', () => {
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW hiba', err));
+
+    setupTouchLogos();
 
     document.querySelectorAll('.card-header').forEach(header => {
       header.addEventListener('click', function(e) {
