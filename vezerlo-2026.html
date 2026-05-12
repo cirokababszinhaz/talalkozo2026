@@ -202,14 +202,23 @@
   });
 
   window.doLogin = function() {
-    const email = document.getElementById("emailInput").value;
-    const pwd = document.getElementById("pwdInput").value;
+    const email = document.getElementById("emailInput").value.trim();
+    const pwd = document.getElementById("pwdInput").value.trim();
+    const errBox = document.getElementById("loginError");
+    errBox.style.display = "none";
+
+    if(!email || !pwd) {
+      errBox.style.display = "block";
+      errBox.textContent = "Kérlek add meg az emailt és a jelszót is!";
+      return;
+    }
+
     signInWithEmailAndPassword(auth, email, pwd)
       .catch((error) => {
-        const errBox = document.getElementById("loginError");
         errBox.style.display = "block";
-        errBox.textContent = "Helytelen email vagy jelszó!";
-        setTimeout(() => errBox.style.display = "none", 3000);
+        // Ez fogja kiírni neked a pontos okot!
+        errBox.textContent = "Hiba: " + error.code; 
+        setTimeout(() => errBox.style.display = "none", 5000);
       });
   };
 
