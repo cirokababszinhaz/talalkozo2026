@@ -10,7 +10,6 @@
   :root { --teal: #1a5c58; --teal-dark: #113d3a; --gold: #c4913a; --gold-light: #d4a84a; --bg: #f0ece3; --card: #fff; --text: #1a1a1a; --muted: #6b6258; --border: rgba(26,92,88,0.18); --red: #c0392b; --green: #1a7a4a; }
   body { background: var(--bg); font-family: 'Montserrat', sans-serif; font-weight: 500; min-height: 100vh; display: flex; flex-direction: column; transition: transform 0.5s; }
   
-  /* Fejléc reszponzív javítása */
   header { background: var(--teal-dark); padding: 16px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
   header .logo { font-weight: 700; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-light); }
   .header-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
@@ -33,9 +32,10 @@
   input[type="email"], input[type="password"], textarea, select { width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 3px; font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 14px; color: var(--text); background: #fff; margin-bottom: 16px; outline: none; }
   textarea { min-height: 90px; resize: vertical; }
 
-  .btn { display: block; width: 100%; padding: 12px; font-family: 'Montserrat', sans-serif; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; font-weight: 700; border: none; border-radius: 3px; cursor: pointer; transition: .2s; margin-bottom: 10px; }
+  .btn { display: block; width: 100%; padding: 12px; font-family: 'Montserrat', sans-serif; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; font-weight: 700; border: none; border-radius: 3px; cursor: pointer; transition: .2s; margin-bottom: 10px; text-align: center; }
   .btn-primary { background: var(--red); color: #fff; }
   .btn-primary:hover { background: #a93226; }
+  .btn-outline { background: transparent; color: var(--teal); border: 2px solid var(--teal); }
   .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
 
   .feedback { font-size: 12px; padding: 10px 14px; border-radius: 3px; margin-top: 4px; display: none; font-weight: 600;}
@@ -146,7 +146,13 @@
   <label>Üzenet szövege</label>
   <textarea id="alertText" placeholder="Pl.: A Bambi előadás helyszíne megváltozott..."></textarea>
   
-  <button class="btn btn-primary" onclick="window.publishAlert()">🔔 Közzététel</button>
+  <input type="file" id="alertPhotoInput" accept="image/*" style="position: absolute; opacity: 0; width: 1px; height: 1px; z-index: -1;" onchange="window.handleAlertPhotoSelect(event)">
+  <label for="alertPhotoInput" class="btn btn-outline" id="alertPhotoBtn" style="cursor: pointer;">
+    📸 FOTÓ CSATOLÁSA (Opcionális)
+  </label>
+  <div id="alertPhotoPreview" style="font-size:10px; color:var(--green); text-align:center; margin-bottom:15px; font-weight:700; display:none;">✓ Fotó előkészítve!</div>
+
+  <button class="btn btn-primary" id="publishAlertBtn" onclick="window.publishAlert()">🔔 Közzététel</button>
   <div class="feedback" id="publishFeedback"></div>
 
   <div class="divider"></div>
@@ -169,6 +175,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getDatabase, ref, push, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
   import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getStorage, ref as sRef, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyB7BkU92oIK3H_01uX9hr8GatQyE_NXMyA",
@@ -183,6 +190,7 @@
   const app = initializeApp(firebaseConfig);
   const db  = getDatabase(app);
   const auth = getAuth(app);
+  const storage = getStorage(app);
   
   onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -216,7 +224,6 @@
     signInWithEmailAndPassword(auth, email, pwd)
       .catch((error) => {
         errBox.style.display = "block";
-        // Ez fogja kiírni neked a pontos okot!
         errBox.textContent = "Hiba: " + error.code; 
         setTimeout(() => errBox.style.display = "none", 5000);
       });
@@ -233,6 +240,40 @@
     return new Date().toLocaleString("hu-HU", {timeZone: "Europe/Budapest", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"});
   }
 
+  // --- KÉP KIVÁLASZTÁSA ÉRTESÍTÉSHEZ ---
+  window.handleAlertPhotoSelect = function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { alert("Kérlek, csak képet válassz ki!"); return; }
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function(e) {
+      const img = new Image();
+      img.src = e.target.result;
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 800; const MAX_HEIGHT = 800;
+        let width = img.width; let height = img.height;
+        
+        if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
+        else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
+        
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        window.alertResizedImage = canvas.toDataURL('image/jpeg', 0.7);
+        
+        const btn = document.getElementById('alertPhotoBtn');
+        document.getElementById('alertPhotoPreview').style.display = 'block';
+        btn.style.borderColor = 'var(--green)';
+        btn.style.color = 'var(--green)';
+        btn.innerText = '✓ FOTÓ CSATOLVA';
+      }
+    }
+  };
+
   function initAdmin() {
     onValue(ref(db, "alertsList"), (snap) => {
       const container = document.getElementById("activeAlertsContainer");
@@ -242,9 +283,15 @@
       const alertsArray = Object.keys(data).map(key => ({ id: key, ...data[key] })).sort((a,b) => b.timeRaw - a.timeRaw);
       alertsArray.forEach(alert => {
         let targetName = alert.targetId === "all" ? "Általános" : document.querySelector(`#alertTarget option[value="${alert.targetId}"]`).textContent;
+        let imgHtml = alert.photoUrl ? `<img src="${alert.photoUrl}" class="gb-photo" style="margin-bottom:8px;">` : '';
+        
         container.innerHTML += `
           <div class="alert-item">
-            <div><div class="alert-meta">${alert.timestamp} | Célpont: ${targetName}</div><div class="alert-text">${escapeHTML(alert.message)}</div></div>
+            <div>
+              <div class="alert-meta">${alert.timestamp} | Célpont: ${targetName}</div>
+              ${imgHtml}
+              <div class="alert-text">${escapeHTML(alert.message)}</div>
+            </div>
             <button class="del-btn" onclick="window.deleteAlert('${alert.id}')">Törlés</button>
           </div>`;
       });
@@ -271,17 +318,52 @@
     });
   }
 
+  // --- ÉRTESÍTÉS KÖZZÉTÉTELE FOTÓVAL ---
   window.publishAlert = async function() {
     const text = document.getElementById("alertText").value.trim();
     const target = document.getElementById("alertTarget").value;
     const fb = document.getElementById("publishFeedback");
-    if (!text) { showFeedback(fb, "Írj be egy üzenetet!", "err"); return; }
+    const btn = document.getElementById("publishAlertBtn");
+    
+    if (!text && !window.alertResizedImage) { showFeedback(fb, "Írj be egy üzenetet vagy csatolj fotót!", "err"); return; }
+    
+    btn.disabled = true;
+    btn.innerText = "Feltöltés...";
+
     try {
+      let photoUrl = "";
+      if (window.alertResizedImage) {
+         const photoRef = sRef(storage, 'alerts/' + Date.now() + '.jpg');
+         await uploadString(photoRef, window.alertResizedImage, 'data_url');
+         photoUrl = await getDownloadURL(photoRef);
+      }
+
       const newRef = push(ref(db, "alertsList"));
-      await set(newRef, { message: text, targetId: target, timestamp: getBudapestTimeStr(), timeRaw: Date.now() });
+      await set(newRef, { 
+        message: text, 
+        targetId: target, 
+        timestamp: getBudapestTimeStr(), 
+        timeRaw: Date.now(),
+        photoUrl: photoUrl 
+      });
+
+      // Űrlap nullázása
       document.getElementById("alertText").value = "";
+      document.getElementById("alertPhotoInput").value = "";
+      document.getElementById('alertPhotoPreview').style.display = 'none';
+      const pBtn = document.getElementById('alertPhotoBtn');
+      pBtn.style.borderColor = 'var(--teal)';
+      pBtn.style.color = 'var(--teal)';
+      pBtn.innerText = '📸 FOTÓ CSATOLÁSA (Opcionális)';
+      window.alertResizedImage = null;
+
       showFeedback(fb, "✓ Értesítés közzétéve!", "ok");
-    } catch(e) { showFeedback(fb, "Hiba: Nincs jogosultságod!", "err"); }
+    } catch(e) { 
+      showFeedback(fb, "Hiba: " + e.message, "err"); 
+    } finally {
+      btn.disabled = false;
+      btn.innerText = "🔔 Közzététel";
+    }
   };
 
   window.deleteAlert = async function(id) { if(confirm("Biztosan törlöd ezt az értesítést?")) await remove(ref(db, "alertsList/" + id)); };

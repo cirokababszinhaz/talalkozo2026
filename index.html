@@ -267,7 +267,7 @@
   .quote-text { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--teal-dark); font-style: italic; line-height: 1.4; margin-bottom: 15px; }
   .quote-author { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); font-weight: 700; }
 
-  /* TÁMOGATÓI SZEKCIÓ (Animált és Mobilon Csúsztatható) */
+  /* TÁMOGATÓI SZEKCIÓ */
   .sponsors-box { background: var(--surface); padding: 40px 20px; text-align: center; border-top: 2px solid var(--border); overflow: hidden; position: relative;}
   .sponsors-title { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 25px; font-weight: 700; }
   .sponsors-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; align-items: center; max-width: 800px; margin: 0 auto; transition: transform 0.5s linear;}
@@ -278,17 +278,7 @@
   .gastro-logo { width: 45px; height: 45px; object-fit: contain; background: var(--card); border-radius: 4px; padding: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; flex-shrink: 0; }
   .gastro-logo:hover, .gastro-logo.active-touch { transform: scale(1.5) rotate(-5deg); z-index: 10; position: relative; }
 
-  /* PC ANIMÁCIÓ A TÁMOGATÓKRA (Végtelen Csúszás) */
-  @media (min-width: 601px) {
-      .sponsors-grid { animation: slideLeft 20s linear infinite; flex-wrap: nowrap; width: max-content; }
-      .sponsors-box:hover .sponsors-grid { animation-play-state: paused; }
-      @keyframes slideLeft {
-          0% { transform: translateX(20%); }
-          100% { transform: translateX(-100%); }
-      }
-  }
-
-  /* MOBIL NÉZET A TÁMOGATÓKRA */
+  /* MOBIL NÉZET A TÁMOGATÓKRA (Swipe / Görgetős) */
   @media (max-width: 600px) {
     .sponsors-grid { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 10px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
     .sponsors-grid::-webkit-scrollbar { display: none; }
@@ -2048,9 +2038,14 @@
   window.showPopup = function(alert) {
     document.getElementById("modalTitle").textContent = "Új Értesítés!";
     const showInfo = window.getShowTitleHTML(alert.targetId);
+    
+    // FOTÓ megjelenítése az értesítésben (HA VAN)
+    let imgHtml = alert.photoUrl ? `<img src="${alert.photoUrl}" style="width:100%; border-radius:4px; margin-bottom:10px;">` : '';
+
     document.getElementById("modalBody").innerHTML = `
       <div class="alert-card">
         ${showInfo}
+        ${imgHtml}
         <div class="alert-time">${alert.timestamp}</div>
         <div class="alert-msg">${window.escapeHTML(alert.message)}</div>
       </div>
@@ -2072,7 +2067,8 @@
     } else {
       filteredAlerts.forEach(alert => {
         const showInfo = window.getShowTitleHTML(alert.targetId);
-        html += `<div class="alert-card">${showInfo}<div class="alert-time">${alert.timestamp}</div><div class="alert-msg">${window.escapeHTML(alert.message)}</div></div>`;
+        let imgHtml = alert.photoUrl ? `<img src="${alert.photoUrl}" style="width:100%; border-radius:4px; margin-bottom:10px;">` : '';
+        html += `<div class="alert-card">${showInfo}${imgHtml}<div class="alert-time">${alert.timestamp}</div><div class="alert-msg">${window.escapeHTML(alert.message)}</div></div>`;
       });
     }
     document.getElementById("modalBody").innerHTML = html;
@@ -2193,7 +2189,6 @@
     const nowTime = Date.now();
     const lastPost = localStorage.getItem('last_gb_post_time');
     
-    // SPAM VÉDELEM 10mp a teszteléshez
     if(lastPost && (nowTime - parseInt(lastPost)) < 10000) {
        window.showToast("Kérjük várj picit az újabb posztolásig!");
        return;
@@ -2282,21 +2277,6 @@
       }
     }
   }
-  
-  restoreCheckinUI();
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const checkinVenueId = urlParams.get('checkin');
-
-  if(checkinVenueId && venueNames[checkinVenueId]) {
-    setTimeout(() => {
-      document.getElementById('ciVenue').value = checkinVenueId;
-      const savedName = localStorage.getItem('myCheckinName');
-      if(savedName) document.getElementById('checkinNameInput').value = savedName;
-      window.openCheckin();
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }, 1000);
-  }
 
   window.openCheckin = function() { document.getElementById('checkinModal').classList.add('visible'); }
 
@@ -2323,7 +2303,7 @@
         window.trackEvent('check_in_used', { venue: venueId }); 
 
         window.showToast("Sikeres becsekkolás!");
-        restoreCheckinUI(); 
+        restoreCheckinUI(); // AZONNALI FRISSÍTÉS!
       })
       .catch((err) => window.showToast("Hiba a mentésnél: " + err.message));
   };
@@ -2384,6 +2364,23 @@
     }
   });
 
+  // INITIAL LOAD
+  restoreCheckinUI();
+  
+  // URL Paraméter feldolgozó javítva!
+  const urlParams = new URLSearchParams(window.location.search);
+  const checkinVenueId = urlParams.get('checkin');
+
+  if(checkinVenueId && venueNames[checkinVenueId]) {
+    setTimeout(() => {
+      document.getElementById('ciVenue').value = checkinVenueId;
+      const savedName = localStorage.getItem('myCheckinName');
+      if(savedName) document.getElementById('checkinNameInput').value = savedName;
+      window.openCheckin();
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }, 1000);
+  }
+
 </script>
 
 <script>
@@ -2405,7 +2402,7 @@
     searchTimeout = setTimeout(window.doSearch, 300);
   }
 
-  // Érintés animáció eltávolítása mobilra
+  // Érintés animáció mobilra (1.5 mp után visszaáll)
   function setupTouchLogos() {
     document.querySelectorAll('.gastro-logo, .sponsor-logo').forEach(logo => {
        logo.addEventListener('touchstart', function() {
