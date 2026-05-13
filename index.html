@@ -420,13 +420,17 @@
   <h1 id="heroTitle">17. <em>Találkozója</em></h1>
   <div class="hero-date" style="color:#fff;">2026. június 13–18. &nbsp;·&nbsp; Kecskemét</div>
   
-  <div class="hero-buttons" id="heroButtons">
+<div class="hero-buttons" id="heroButtons">
     <a href="https://drive.google.com/file/d/1eDwb5_U7Fy0et1VN9GWzLfthKv9j35Nm/view?usp=sharing" target="_blank" class="pdf-dl-btn">📄 Töltsd le a programot egyben (PDF)</a>
+    
+    <button id="installAppBtn" class="hero-btn" style="background: var(--gold); border-color: var(--gold); color: #000; display: none;">📲 Telepítsd a telefonodra!</button>
+    
     <a class="hero-btn" href="https://www.facebook.com/magyarorszagibabszinhazaktalalkozoja/" target="_blank">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
       A Találkozó FB-oldala
     </a>
   </div>
+
 </div>
 
 <div class="search-wrap" id="searchWrap">
@@ -558,7 +562,7 @@
                 <div class="venue-item-address">Jókai u. 15. <br><span style="color:var(--red); font-weight:700;">10% kedvezmény mindenre</span></div>
              </div>
           </div>
-          <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=46.90510848117024,19.68788751997593" target="_blank">📍 Útvonal</a>
+          <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=46.9129628157815,19.69007621420735" target="_blank">📍 Útvonal</a>
         </div>
         <div style="margin-top:8px; font-size:10px; color:var(--muted); background:var(--surface); padding:8px; border-radius:4px;">
            <strong style="display:block; margin-bottom:4px; color:var(--teal-dark);">Nyitvatartás:</strong>
@@ -692,13 +696,7 @@
         </div>
       </div>
     </div>
-    <div class="card-details"><div class="card-details-inner">
-      <div class="details-section">
-        <div class="details-label">Leírás</div>
-        <div class="details-text">
-          Hölgyeim és uraim, kedves gyerekek, engedjétek meg, hogy bemutatkozzam: Atanáznak hívnak. A foglalkozásom pedig: lámpaláz...
-        </div>
-      </div>
+   <div class="card-details"><div class="card-details-inner">
       <div class="details-section">
         <div class="details-label">Alkotók</div>
         <div class="details-text">
@@ -2249,19 +2247,23 @@
     }
   }
 
+  // ===============================
   // ITT VAGYOK CHECK-IN (+ VISSZAVONÁS)
+  // ===============================
   const checkinRef = ref(db, 'checkins');
   const venueNames = { 'ciroka': 'Ciróka Bábszínház', 'agora': 'Hírös Agóra', 'kelemen': 'Kelemen L. Kamaraszínház', 'ruszt': 'Ruszt J. Stúdió', 'ifjusagi': 'Ifjúsági Otthon', 'tmh': 'Tudomány és Művészetek Háza', 'bufe': '☕ Kávézóban / Büfében' };
 
-  function restoreCheckinUI() {
+  window.restoreCheckinUI = function() {
     const savedVenue = localStorage.getItem('myCheckinVenue');
     const savedId = localStorage.getItem('myCheckinId');
     const savedTime = localStorage.getItem('myCheckinTime');
     const savedName = localStorage.getItem('myCheckinName');
 
-    if (savedVenue && savedId && savedTime) {
+    // Csak akkor állítjuk vissza, ha minden adat megvan, ÉS nincs régebben 2 óránál
+    if (savedVenue && savedId) {
       const now = Date.now();
-      if (now - parseInt(savedTime) < 2 * 60 * 60 * 1000) { 
+      // Ha nincs mentett idő (régi hiba), vagy 2 órán belüli:
+      if (!savedTime || (now - parseInt(savedTime) < 2 * 60 * 60 * 1000)) { 
         const myStatus = document.getElementById('myCheckinStatus');
         myStatus.style.display = 'block';
         myStatus.innerHTML = `Most itt vagy:<br><span style="color:var(--gold-light); text-decoration:underline;" onclick="window.openCheckin()">`+venueNames[savedVenue]+`</span><br><div style="margin-top:4px;"><span style="font-size:9px; color:rgba(255,255,255,0.4); cursor:pointer;" onclick="window.openCheckin()">Módosítod?</span> &nbsp;|&nbsp; <span style="font-size:9px; color:var(--red); cursor:pointer;" onclick="window.revokeCheckin(event)">Visszavonod?</span></div>`;
@@ -2269,15 +2271,18 @@
         if(savedName) document.getElementById('checkinNameInput').value = savedName;
         document.getElementById('ciVenue').value = savedVenue;
       } else {
+        // Lejárt csekkolás törlése
         localStorage.removeItem('myCheckinName');
         localStorage.removeItem('myCheckinVenue');
         localStorage.removeItem('myCheckinId');
         localStorage.removeItem('myCheckinTime');
+        document.getElementById('myCheckinStatus').style.display = 'none';
       }
     }
-  }
+  };
   
-  restoreCheckinUI();
+  // Futtatjuk oldalbetöltéskor
+  window.restoreCheckinUI();
 
   const urlParams = new URLSearchParams(window.location.search);
   const checkinVenueId = urlParams.get('checkin');
@@ -2292,7 +2297,9 @@
     }, 1000);
   }
 
-  window.openCheckin = function() { document.getElementById('checkinModal').classList.add('visible'); }
+  window.openCheckin = function() { 
+    document.getElementById('checkinModal').classList.add('visible'); 
+  }
 
   window.submitCheckin = function() {
     const nameInput = document.getElementById('checkinNameInput').value.trim();
@@ -2300,6 +2307,7 @@
     
     const venueId = document.getElementById('ciVenue').value;
 
+    // Ha van régi csekkolás, töröljük a memóriából ÉS a Firebase-ből
     const oldVenue = localStorage.getItem('myCheckinVenue');
     const oldId = localStorage.getItem('myCheckinId');
     if (oldVenue && oldId) { remove(ref(db, `checkins/${oldVenue}/${oldId}`)); }
@@ -2308,16 +2316,19 @@
     
     set(newRef, { name: nameInput, timeRaw: Date.now() })
       .then(() => {
+        // Sikeres Firebase mentés után frissítjük a böngészőt
         localStorage.setItem('myCheckinName', nameInput);
         localStorage.setItem('myCheckinVenue', venueId);
         localStorage.setItem('myCheckinId', newRef.key);
-        localStorage.setItem('myCheckinTime', Date.now()); 
+        localStorage.setItem('myCheckinTime', Date.now().toString()); 
 
         document.getElementById('checkinModal').classList.remove('visible');
         window.trackEvent('check_in_used', { venue: venueId }); 
 
         window.showToast("Sikeres becsekkolás!");
-        restoreCheckinUI(); 
+        
+        // Kényszerített, azonnali felület-frissítés!
+        window.restoreCheckinUI();
       })
       .catch((err) => window.showToast("Hiba a mentésnél: " + err.message));
   };
@@ -2332,12 +2343,13 @@
           localStorage.removeItem('myCheckinVenue');
           localStorage.removeItem('myCheckinId');
           localStorage.removeItem('myCheckinTime');
+          
           document.getElementById('myCheckinStatus').style.display = 'none';
           document.getElementById('checkinNameInput').value = ""; 
           window.showToast("Becsekkolás visszavonva!");
        });
     }
-  }
+  };
 
   onValue(checkinRef, (snap) => {
     Object.keys(venueNames).forEach(id => {
@@ -2407,6 +2419,46 @@
        });
     });
   }
+
+// APP TELEPÍTÉS LOGIKÁJA
+  let deferredPrompt;
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Android/Chrome: Megfogjuk a hivatalos telepítő eseményt
+    e.preventDefault();
+    deferredPrompt = e;
+    // Megjelenítjük a saját gombunkat, ha még nincs telepítve
+    if(!isStandalone) {
+       document.getElementById('installAppBtn').style.display = 'inline-flex';
+    }
+  });
+
+  // Ha iOS eszközön vagyunk, ÉS még nincs telepítve, mutassuk a gombot
+  if (isIOS && !isStandalone) {
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById('installAppBtn').style.display = 'inline-flex';
+    });
+  }
+
+  // Telepítés gomb megnyomása
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById('installAppBtn').addEventListener('click', async () => {
+      if (deferredPrompt) {
+        // Android/Chrome telepítőablak feldobása
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          document.getElementById('installAppBtn').style.display = 'none';
+        }
+        deferredPrompt = null;
+      } else if (isIOS) {
+        // iPhone instrukciók a meglévő Toast üzenettel
+        window.showToast("Apple iOS: Lent a böngészőben bökj a [Megosztás ⬆] ikonra, majd a [Főképernyőhöz adás ➕] gombra!");
+      }
+    });
+  });
 
   window.addEventListener('DOMContentLoaded', () => {
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW hiba', err));
