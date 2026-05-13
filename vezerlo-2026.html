@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vezérlő – XVII. Találkozó</title>
+<title>Vezérlő – 17. Találkozó</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -67,7 +67,7 @@
 <body>
 
 <header>
-  <div class="logo">XVII. Találkozó</div>
+  <div class="logo">17. Találkozó</div>
   <div class="header-actions">
     <!-- Csak bejelentkezve jelennek meg -->
     <a href="https://drive.google.com/file/d/169T5cqGkVrjowQZXFdXqsY-2yZodyUHk/view?usp=drive_link" target="_blank" class="badge badge-gold" id="phonebookBtn" style="display: none;">
@@ -169,7 +169,7 @@
   <button class="btn btn-ghost" onclick="window.doLogout()">Kijelentkezés</button>
 </div>
 
-<footer>Vezérlőpult &nbsp;·&nbsp; XVII. Találkozó</footer>
+<footer>Vezérlőpult &nbsp;·&nbsp; 17. Találkozó</footer>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -359,7 +359,7 @@
 
       showFeedback(fb, "✓ Értesítés közzétéve!", "ok");
     } catch(e) { 
-      showFeedback(fb, "Hiba: " + e.message, "err"); 
+      showFeedback(fb, "Hiba: Nincs jogosultságod, vagy hiba a kapcsolatban!", "err"); 
     } finally {
       btn.disabled = false;
       btn.innerText = "🔔 Közzététel";

@@ -7,14 +7,14 @@
 <link rel="manifest" href="manifest.json">
 
 <!-- FB OPEN GRAPH META TAGEK -->
-<meta property="og:title" content="Magyarországi Bábszínházak XVII. Találkozója">
+<meta property="og:title" content="Magyarországi Bábszínházak 17. Találkozója">
 <meta property="og:description" content="2026. június 13-18. Kecskemét. Nézd meg a teljes programot!">
 <!-- IDE MAJD BE KELL TENNED A VÉGLEGES KÉP LINKJÉT! -->
 <meta property="og:image" content="https://cirokababszinhaz.github.io/talalkozo2026/assets/img/placeholder-banner.jpg"> 
 <meta property="og:url" content="https://cirokababszinhaz.github.io/talalkozo2026/">
 <meta property="og:type" content="website">
 
-<title>Magyarországi Bábszínházak XVII. Találkozója</title>
+<title>Magyarországi Bábszínházak 17. Találkozója</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <!-- GOOGLE ANALYTICS (GA4) -->
@@ -271,8 +271,8 @@
   .sponsors-box { background: var(--surface); padding: 40px 20px; text-align: center; border-top: 2px solid var(--border); overflow: hidden; position: relative;}
   .sponsors-title { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 25px; font-weight: 700; }
   .sponsors-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; align-items: center; max-width: 800px; margin: 0 auto; transition: transform 0.5s linear;}
-  .sponsor-logo { max-width: 130px; height: 60px; object-fit: contain; opacity: 0.6; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); filter: grayscale(100%); cursor: pointer; }
-  .sponsor-logo:hover, .sponsor-logo.active-touch { opacity: 1; filter: grayscale(0%); transform: scale(1.25); z-index: 10; position: relative; }
+  .sponsor-logo { max-width: 160px; height: auto; max-height: 70px; object-fit: contain; opacity: 0.6; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); filter: grayscale(100%); cursor: pointer; padding: 5px; }
+  .sponsor-logo:hover, .sponsor-logo.active-touch { opacity: 1; filter: grayscale(0%); transform: scale(1.15); z-index: 10; position: relative; }
 
   /* GASTRO LOGÓK ANIMÁCIÓJA */
   .gastro-logo { width: 45px; height: 45px; object-fit: contain; background: var(--card); border-radius: 4px; padding: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; flex-shrink: 0; }
@@ -417,7 +417,7 @@
 
 <div class="hero">
   <div class="hero-eyebrow" id="heroEyebrow">Magyarországi Bábszínházak</div>
-  <h1 id="heroTitle">XVII. <em>Találkozója</em></h1>
+  <h1 id="heroTitle">17. <em>Találkozója</em></h1>
   <div class="hero-date" style="color:#fff;">2026. június 13–18. &nbsp;·&nbsp; Kecskemét</div>
   
   <div class="hero-buttons" id="heroButtons">
@@ -579,7 +579,7 @@
   <div class="event-card type-social">
     <div class="card-header" onclick="window.toggleCard(this)">
       <div class="card-header-row">
-         <div><div class="event-title">🎉 Megnyitó</div><div class="event-company">Magyarországi Bábszínházak XVII. Találkozója</div></div>
+         <div><div class="event-title">🎉 Megnyitó</div><div class="event-company">Magyarországi Bábszínházak 17. Találkozója</div></div>
       </div>
     </div>
     <div class="event-footer">
@@ -1943,7 +1943,7 @@
 
 <footer>
   <a href="https://ciroka.hu" target="_blank">ciroka.hu</a>
-  &nbsp;·&nbsp; Magyarországi Bábszínházak XVII. Találkozója &nbsp;·&nbsp; 
+  &nbsp;·&nbsp; Magyarországi Bábszínházak 17. Találkozója &nbsp;·&nbsp; 
   
   <div class="easter-trigger">
     <span class="year-text" title="Nincs itt semmi látnivaló.">2026</span>
@@ -2039,7 +2039,6 @@
     document.getElementById("modalTitle").textContent = "Új Értesítés!";
     const showInfo = window.getShowTitleHTML(alert.targetId);
     
-    // FOTÓ megjelenítése az értesítésben (HA VAN)
     let imgHtml = alert.photoUrl ? `<img src="${alert.photoUrl}" style="width:100%; border-radius:4px; margin-bottom:10px;">` : '';
 
     document.getElementById("modalBody").innerHTML = `
@@ -2277,6 +2276,21 @@
       }
     }
   }
+  
+  restoreCheckinUI();
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const checkinVenueId = urlParams.get('checkin');
+
+  if(checkinVenueId && venueNames[checkinVenueId]) {
+    setTimeout(() => {
+      document.getElementById('ciVenue').value = checkinVenueId;
+      const savedName = localStorage.getItem('myCheckinName');
+      if(savedName) document.getElementById('checkinNameInput').value = savedName;
+      window.openCheckin();
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }, 1000);
+  }
 
   window.openCheckin = function() { document.getElementById('checkinModal').classList.add('visible'); }
 
@@ -2303,7 +2317,7 @@
         window.trackEvent('check_in_used', { venue: venueId }); 
 
         window.showToast("Sikeres becsekkolás!");
-        restoreCheckinUI(); // AZONNALI FRISSÍTÉS!
+        restoreCheckinUI(); 
       })
       .catch((err) => window.showToast("Hiba a mentésnél: " + err.message));
   };
@@ -2364,23 +2378,6 @@
     }
   });
 
-  // INITIAL LOAD
-  restoreCheckinUI();
-  
-  // URL Paraméter feldolgozó javítva!
-  const urlParams = new URLSearchParams(window.location.search);
-  const checkinVenueId = urlParams.get('checkin');
-
-  if(checkinVenueId && venueNames[checkinVenueId]) {
-    setTimeout(() => {
-      document.getElementById('ciVenue').value = checkinVenueId;
-      const savedName = localStorage.getItem('myCheckinName');
-      if(savedName) document.getElementById('checkinNameInput').value = savedName;
-      window.openCheckin();
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }, 1000);
-  }
-
 </script>
 
 <script>
@@ -2402,7 +2399,6 @@
     searchTimeout = setTimeout(window.doSearch, 300);
   }
 
-  // Érintés animáció mobilra (1.5 mp után visszaáll)
   function setupTouchLogos() {
     document.querySelectorAll('.gastro-logo, .sponsor-logo').forEach(logo => {
        logo.addEventListener('touchstart', function() {
@@ -2477,7 +2473,7 @@
   function initPostFestivalMode() {
     const postFestivalDate = new Date('2026-06-19T00:00:00+02:00').getTime();
     if (Date.now() > postFestivalDate) {
-      document.getElementById('heroEyebrow').innerText = "Magyarországi Bábszínházak XVII. Találkozója";
+      document.getElementById('heroEyebrow').innerText = "Magyarországi Bábszínházak 17. Találkozója";
       document.getElementById('heroTitle').innerHTML = "Köszönjük, hogy<br><em>velünk voltatok!</em>";
       
       document.getElementById('searchWrap').style.display = 'none';
