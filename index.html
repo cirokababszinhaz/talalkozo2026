@@ -2307,7 +2307,6 @@
     
     const venueId = document.getElementById('ciVenue').value;
 
-    // Ha van régi csekkolás, töröljük a memóriából ÉS a Firebase-ből
     const oldVenue = localStorage.getItem('myCheckinVenue');
     const oldId = localStorage.getItem('myCheckinId');
     if (oldVenue && oldId) { remove(ref(db, `checkins/${oldVenue}/${oldId}`)); }
@@ -2316,7 +2315,6 @@
     
     set(newRef, { name: nameInput, timeRaw: Date.now() })
       .then(() => {
-        // Sikeres Firebase mentés után frissítjük a böngészőt
         localStorage.setItem('myCheckinName', nameInput);
         localStorage.setItem('myCheckinVenue', venueId);
         localStorage.setItem('myCheckinId', newRef.key);
@@ -2327,8 +2325,10 @@
 
         window.showToast("Sikeres becsekkolás!");
         
-        // Kényszerített, azonnali felület-frissítés!
-        window.restoreCheckinUI();
+        // KÖZVETLEN, "ERŐSZAKOS" FELÜLET-FRISSÍTÉS A BIZTOS MEGJELENÉSHEZ:
+        const myStatus = document.getElementById('myCheckinStatus');
+        myStatus.style.display = 'block';
+        myStatus.innerHTML = `Most itt vagy:<br><span style="color:var(--gold-light); text-decoration:underline;" onclick="window.openCheckin()">`+venueNames[venueId]+`</span><br><div style="margin-top:4px;"><span style="font-size:9px; color:rgba(255,255,255,0.4); cursor:pointer;" onclick="window.openCheckin()">Módosítod?</span> &nbsp;|&nbsp; <span style="font-size:9px; color:var(--red); cursor:pointer;" onclick="window.revokeCheckin(event)">Visszavonod?</span></div>`;
       })
       .catch((err) => window.showToast("Hiba a mentésnél: " + err.message));
   };
