@@ -330,7 +330,15 @@ async function submitGuestbook() {
 // 📍 ITT VAGYOK CHECK-IN
 // ==========================================
 const checkinRef = ref(db, 'checkins');
-const venueNames = { 'ciroka': 'Ciróka Bábszínház', 'agora': 'Hírös Agóra', 'kelemen': 'Kelemen L. Kamaraszínház', 'ruszt': 'Ruszt J. Stúdió', 'ifjusagi': 'Ifjúsági Otthon', 'tmh': 'Tudomány és Művészetek Háza', 'bufe': '☕ Kávézóban / Büfében' };
+const venueNames = { 
+  'ciroka': 'Ciróka Bábszínház', 
+  'agora': 'Hírös Agóra', 
+  'kelemen': 'Kelemen L. Kamaraszínház', 
+  'ruszt': 'Ruszt J. Stúdió', 
+  'ifjusagi': 'Ifjúsági Otthon', 
+  'tmh': 'Tudomány és Művészetek Háza (Technika Háza)', 
+  'bufe': '☕ Kávézóban / Étteremben' 
+};
 
 function updateCheckinUI(venueId) {
     const myStatus = document.getElementById('myCheckinStatus');
@@ -457,7 +465,7 @@ onValue(checkinRef, (snap) => {
             if (now - checkinData.timeRaw < TWO_HOURS) {
                 if(!hasCheckin) {
                     if (venueId === 'bufe') {
-                        venueContainer.innerHTML = '<div style="font-size:10px; color:var(--muted); margin-bottom:5px; font-weight:600; width: 100%;">Frissítő beszerzés büfében/kávézóban:</div>';
+                        venueContainer.innerHTML = '<div style="font-size:10px; color:var(--muted); margin-bottom:5px; font-weight:600; width: 100%;">Frissítő beszerzés kávézóban/étteremben:</div>';
                     } else {
                         venueContainer.innerHTML = '<div style="font-size:10px; color:var(--muted); margin-bottom:5px; font-weight:600; width: 100%;">Akik itt vannak:</div>';
                     }

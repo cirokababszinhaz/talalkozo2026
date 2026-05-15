@@ -1,23 +1,26 @@
-// FIGYELEM: Átírtuk v2-re! Ez jelzi a telefonoknak, hogy frissíteniük kell a fájlokat!
+// FIGYELEM: Átírtuk v3-ra, mert lettek új támogatók és módosult a szöveg!
 const CACHE_NAME = 'talalkozo-cache-v3';
 
 // Ide be kell írni minden fájlt, amit offline is látni akarunk
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
-  './style.css',           // ÚJ: CSS fájl
-  './app.js',              // ÚJ: JS logika
+  './style.css',
+  './app.js',
   './manifest.json',
   './levesm.png',
   './dixie.png',
   './spaletta.png',
-  './babszinhaz.png',      // ÚJ: Babszínház logó
+  './babszinhaz.png',
   './tamogato1.png',
   './tamogato2.png',
   './tamogato3.png',
   './tamogato4.png',
-  './kacsinto-szem.gif'    // ÚJ: A kacsintós animációd (írd át a nevet, ha más a fájlnév!)
+  './tamogato5.png',       // ÚJ 5. Támogató
+  './tamogato6.png',       // ÚJ 6. Támogató
+  './kacsinto-szem.gif'
 ];
+
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
