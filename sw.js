@@ -1,5 +1,5 @@
-// FIGYELEM: Átírtuk v3-ra, mert lettek új támogatók és módosult a szöveg!
-const CACHE_NAME = 'talalkozo-cache-v3';
+// FIGYELEM: Átírtuk v4-re, mert lettek új támogatók és módosult a szöveg!
+const CACHE_NAME = 'talalkozo-cache-v4';
 
 // Ide be kell írni minden fájlt, amit offline is látni akarunk
 const ASSETS_TO_CACHE = [
