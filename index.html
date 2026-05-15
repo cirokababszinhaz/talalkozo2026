@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="hu">
 <head>
 <meta charset="UTF-8">
@@ -45,7 +46,7 @@
   opacity: 1; pointer-events: auto;
 }
 .pdf-overlay img {
-  width: 150px; /* Állítsd be a megfelelő méretre */
+  width: 150px; 
 }
 
   @media (prefers-color-scheme: dark) {
@@ -419,7 +420,7 @@
 
 <header class="site-header">
   <div class="header-logo">
-    <a href="https://ciroka.hu" target="_blank">
+    <a href="https://ciroka.hu" target="_blank" title="Örülünk, hogy itt vagytok!">
       <img src="https://ciroka.hu/wp-content/uploads/2024/05/Ciroka-logo-website-header-01.svg" alt="Ciróka Bábszínház">
     </a>
   </div>
@@ -532,7 +533,6 @@
       <div class="venue-item" style="padding: 10px 0; border-bottom: 1px solid var(--border); display:flex; flex-direction:column;">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
           <div style="display:flex; align-items:center; gap:12px;">
-             <!-- RELATÍV LINK A GITHUBRÓL -->
              <img src="./levesm.png" class="gastro-logo" loading="lazy" alt="Leves'M">
              <div>
                 <a href="https://levesm.hu/" target="_blank" class="venue-item-title">Leves’M Levesbár</a>
@@ -541,8 +541,8 @@
           </div>
           <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=46.90754647824104,19.690316931387255" target="_blank">📍 Útvonal</a>
         </div>
-        <div style="margin-top:8px; font-size:10px; color:var(--muted); background:var(--surface); padding:8px; border-radius:4px;">
-           <strong style="display:block; margin-bottom:4px; color:var(--teal-dark);">Nyitvatartás:</strong>
+        <div style="margin-top:8px; font-size:12px; color:var(--text); background:var(--surface); padding:8px; border-radius:4px; font-weight:600;">
+           <strong style="display:block; margin-bottom:4px; color:var(--teal-dark); font-size:11px;">Nyitvatartás:</strong>
            Sz: 10:00–15:00 | V: Zárva | H-Cs: 10:00–16:00
         </div>
       </div>
@@ -551,7 +551,6 @@
       <div class="venue-item" style="padding: 10px 0; border-bottom: 1px solid var(--border); display:flex; flex-direction:column;">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
           <div style="display:flex; align-items:center; gap:12px;">
-             <!-- RELATÍV LINK A GITHUBRÓL -->
              <img src="./dixie.png" class="gastro-logo" loading="lazy" alt="Dixie">
              <div>
                 <a href="https://www.facebook.com/dixiegyorsetterem" target="_blank" class="venue-item-title">Dixie Gyorsétterem</a>
@@ -560,17 +559,16 @@
           </div>
           <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=46.90510848117024,19.68788751997593" target="_blank">📍 Útvonal</a>
         </div>
-        <div style="margin-top:8px; font-size:10px; color:var(--muted); background:var(--surface); padding:8px; border-radius:4px;">
-           <strong style="display:block; margin-bottom:4px; color:var(--teal-dark);">Nyitvatartás:</strong>
+        <div style="margin-top:8px; font-size:12px; color:var(--text); background:var(--surface); padding:8px; border-radius:4px; font-weight:600;">
+           <strong style="display:block; margin-bottom:4px; color:var(--teal-dark); font-size:11px;">Nyitvatartás:</strong>
            Sz-V: Zárva | H-Cs: 9:00–16:00
         </div>
       </div>
 
       <!-- ÉTTEREM 3 -->
-      <div class="venue-item" style="padding: 10px 0; border-bottom: none; display:flex; flex-direction:column;">
+      <div class="venue-item" style="padding: 10px 0; border-bottom: 1px solid var(--border); display:flex; flex-direction:column;">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
           <div style="display:flex; align-items:center; gap:12px;">
-             <!-- RELATÍV LINK A GITHUBRÓL -->
              <img src="./spaletta.png" class="gastro-logo" loading="lazy" alt="Spaletta">
              <div>
                 <a href="https://spalettaetterem.com/hu" target="_blank" class="venue-item-title">Spaletta Étterem és Sörház</a>
@@ -579,9 +577,27 @@
           </div>
           <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=46.9129628157815,19.69007621420735" target="_blank">📍 Útvonal</a>
         </div>
-        <div style="margin-top:8px; font-size:10px; color:var(--muted); background:var(--surface); padding:8px; border-radius:4px;">
-           <strong style="display:block; margin-bottom:4px; color:var(--teal-dark);">Nyitvatartás:</strong>
+        <div style="margin-top:8px; font-size:12px; color:var(--text); background:var(--surface); padding:8px; border-radius:4px; font-weight:600;">
+           <strong style="display:block; margin-bottom:4px; color:var(--teal-dark); font-size:11px;">Nyitvatartás:</strong>
            Sz-H: Zárva | K: 16:00-22:00 | Sz-Cs: 11:30-22:00
+        </div>
+      </div>
+      
+      <!-- ÉTTEREM 4 -->
+      <div class="venue-item" style="padding: 10px 0; border-bottom: none; display:flex; flex-direction:column;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
+          <div style="display:flex; align-items:center; gap:12px;">
+             <img src="./babszinhaz.png" class="gastro-logo" loading="lazy" alt="Babszínház Kávézó">
+             <div>
+                <a href="https://www.facebook.com/babszinhaz.kavezo/" target="_blank" class="venue-item-title">Babszínház Kávézó</a>
+                <div class="venue-item-address">Deák Ferenc tér 6. <br><span style="color:var(--red); font-weight:700;">10% kedvezmény mindenre</span></div>
+             </div>
+          </div>
+          <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=46.9058610237233,19.689237933195738" target="_blank">📍 Útvonal</a>
+        </div>
+        <div style="margin-top:8px; font-size:12px; color:var(--text); background:var(--surface); padding:8px; border-radius:4px; font-weight:600;">
+           <strong style="display:block; margin-bottom:4px; color:var(--teal-dark); font-size:11px;">Nyitvatartás:</strong>
+           Sz: 9:00–13:00 | V: Zárva | H-Cs: 8:00–18:00
         </div>
       </div>
 
@@ -685,11 +701,34 @@
 
   <div class="slot-time">16:30 – 17:00</div>
   <div class="event-card type-social">
-    <div class="card-header" onclick="window.toggleCard(this)">
+    <div class="card-header clickable" onclick="window.toggleCard(this)">
       <div class="card-header-row">
         <div><div class="event-title">🖼️ MKE – MATE látványtervező hallgatók</div><div class="event-company">Kiállításmegnyitó</div></div>
+        <div class="header-actions">
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
       </div>
     </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">NYITÓKÉP</div>
+        <div class="details-text">
+          <strong>A Magyar Képzőművészeti Egyetem és a Rippl-Rónai Művészeti Intézet látványtervező szakos hallgatóinak közös kiállítása</strong><br><br>
+          A kiállításon a bábtervezői stilizációs feladatok mellett, hangulatfestéseket, sziluett és karakterképzéshez készült rajzokat, tárgybábokat, konkrét darabok bábterveit, a bábok köré gondolt díszlet-, jelmezkoncepciókat és terveket, valamint kivitelezett bábokat láthat a nagyközönség.<br><br>
+          A kiállításon bemutatott bábok olyan művek karaktereit jelenítik meg többek között, mint Bartók Béla A kékszakállú herceg vára, A fából faragott királyfi, William Shakespeare A makrancos hölgy, Arany János Rózsa és Ibolya vagy Molière Dandin György, avagy a megcsúfolt férj.<br><br>
+          A kiállítás anyaga továbbá betekintést nyújt a 2025/26-os tanév két szemeszterében a BA I, BA II, BAIII, MA I szakos hallgatók által készített vizsga- és diplomamunkákba. Csáth Géza: Janika, Tasnádi István: Farkas és Piroska, Moliere: Amphitryon, Vörösmarty Mihály: Csongor és Tünde, Spiró György: Koccanás, Csehov: Három nővér című művekhez készült díszlet-, jelmez- és bábterveket tekinthetik meg a látogatók.<br><br>
+          A kiállításmegnyitón a Magyar Képzőművészeti Egyetem MA I osztálya által tervezett és kivitelezett teatro lambe-lambe projekteket a Színház- és Filmművészeti Egyetem első éves színművész-bábszínész osztály hallgatói keltik életre.
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Infók</div>
+        <div class="details-text">
+          <strong>Helyszín:</strong> Tudomány és Művészetek Háza, Kecskemét, Rákóczi út 2.<br>
+          <strong>Megtekinthető:</strong> 2026. június 13 - június 21.<br>
+          <strong>Megnyitja:</strong> a Színház- és Filmművészeti Egyetem első éves színművész-bábszínész osztálya, valamint Varjas Zsófia, Kocsis Eszter, Palya Gábor és Hoffer Károly
+        </div>
+      </div>
+    </div></div>
     <div class="event-footer" style="padding-top: 10px;">
       <div class="event-meta"><span class="badge badge-venue" onclick="window.filterVenue(this, event)">Tudomány és Művészetek Háza</span></div>
       <a class="fb-event-btn" href="https://fb.me/e/5TBTJWJsS" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
@@ -1821,8 +1860,8 @@
       <div class="event-title">🎊 Fesztiválzáró buli</div>
     </div>
     <div class="event-footer" style="justify-content: flex-end;">
-      <a class="fb-event-btn" href="https://open.spotify.com/track/38MbUy2C0FLv6exayPlImu?si=ee86d5ce74634076" target="_blank">
-        <span style="font-size: 14px; margin-right: 4px;">🎵</span> A Fesztivál Dala
+      <a class="fb-event-btn" href="https://open.spotify.com/track/38MbUy2C0FLv6exayPlImu?si=ee86d5ce74634076" target="_blank" style="font-size: 18px; padding: 4px 10px;">
+        🎵
       </a>
     </div>
   </div>
@@ -2202,7 +2241,6 @@
     const nowTime = Date.now();
     const lastPost = localStorage.getItem('last_gb_post_time');
     
-    // 10 másodperces SPAM védelem a teszteléshez
     if(lastPost && (nowTime - parseInt(lastPost)) < 10000) {
        window.showToast("Kérjük várj picit az újabb posztolásig!");
        return;
@@ -2270,27 +2308,18 @@
   const checkinRef = ref(db, 'checkins');
   const venueNames = { 'ciroka': 'Ciróka Bábszínház', 'agora': 'Hírös Agóra', 'kelemen': 'Kelemen L. Kamaraszínház', 'ruszt': 'Ruszt J. Stúdió', 'ifjusagi': 'Ifjúsági Otthon', 'tmh': 'Tudomány és Művészetek Háza', 'bufe': '☕ Kávézóban / Büfében' };
 
-  // 1. ÚJ FÜGGVÉNY: A felület frissítése (Ezt hívjuk meg betöltéskor, mentéskor és visszavonáskor is)
   window.updateCheckinUI = function(venueId) {
     const myStatus = document.getElementById('myCheckinStatus');
-    // Megkeressük az "Itt vagyok!" gombot
     const checkinBtn = document.querySelector('button[onclick="window.openCheckin()"]'); 
     
     if (venueId && venueNames[venueId]) {
-      // AKTÍV ÁLLAPOT: A gomb szövege a helyszín lesz, és kap egy aktív színt
       if(checkinBtn) {
         checkinBtn.classList.add('active');
-        checkinBtn.innerHTML = "📍 " + venueNames[venueId];
+        checkinBtn.innerHTML = "📍 Itt vagyok!";
       }
       myStatus.style.display = 'block';
-      myStatus.innerHTML = `
-        <div style="margin-top:6px; display:flex; justify-content:center; gap:12px;">
-            <span style="color:var(--gold-light); cursor:pointer; font-size:10px; text-decoration:underline;" onclick="window.openCheckin()">Módosítás</span>
-            <span style="color:var(--red); cursor:pointer; font-size:10px; text-decoration:underline;" onclick="window.revokeCheckin(event)">Visszavonás</span>
-        </div>
-      `;
+      myStatus.innerHTML = `Most itt vagy:<br><span style="color:var(--gold-light); text-decoration:underline;" onclick="window.openCheckin()">`+venueNames[venueId]+`</span><br><div style="margin-top:4px;"><span style="font-size:10px; color:rgba(255,255,255,0.6); cursor:pointer;" onclick="window.openCheckin()">Módosítod?</span> &nbsp;|&nbsp; <span style="font-size:10px; color:var(--red); cursor:pointer;" onclick="window.revokeCheckin(event)">Visszavonod?</span></div>`;
     } else {
-      // ALAPÁLLAPOT (nincs check-in)
       if(checkinBtn) {
         checkinBtn.classList.remove('active');
         checkinBtn.innerHTML = "📍 Itt vagyok!";
@@ -2300,7 +2329,6 @@
     }
   };
 
-  // 2. OLDAL BETÖLTÉSKORI ELLENŐRZÉS
   window.restoreCheckinUI = function() {
     const savedVenue = localStorage.getItem('myCheckinVenue');
     const savedId = localStorage.getItem('myCheckinId');
@@ -2309,14 +2337,11 @@
 
     if (savedVenue && savedId) {
       const now = Date.now();
-      // Ha nem járt le a 2 óra
       if (!savedTime || (now - parseInt(savedTime) < 2 * 60 * 60 * 1000)) { 
         if(savedName) document.getElementById('checkinNameInput').value = savedName;
         document.getElementById('ciVenue').value = savedVenue;
-        // Meghívjuk a felület frissítőt!
         window.updateCheckinUI(savedVenue);
       } else {
-        // Lejárt az idő, törlünk mindent
         localStorage.removeItem('myCheckinName');
         localStorage.removeItem('myCheckinVenue');
         localStorage.removeItem('myCheckinId');
@@ -2328,7 +2353,6 @@
   
   window.restoreCheckinUI();
 
-  // URL PARAMÉTERES AUTOMATIKUS MEGNYITÁS
   const urlParams = new URLSearchParams(window.location.search);
   const checkinVenueId = urlParams.get('checkin');
 
@@ -2344,7 +2368,6 @@
 
   window.openCheckin = function() { document.getElementById('checkinModal').classList.add('visible'); }
 
-  // 3. MENTÉS A FIREBASE-BE
   window.submitCheckin = function() {
     const nameInput = document.getElementById('checkinNameInput').value.trim();
     if(nameInput.length < 2) { window.showToast('Légyszi adj meg egy nevet!'); return; }
@@ -2372,13 +2395,9 @@
         
         window.trackEvent('check_in_used', { venue: venueId }); 
 
-        // 1. Üzenet kiírása (most már létezik a függvény!)
         window.showToast("Sikeres becsekkolás!");
         
-        // 2. AZONNALI UI FRISSÍTÉS!
-        const myStatus = document.getElementById('myCheckinStatus');
-        myStatus.style.display = 'block';
-        myStatus.innerHTML = `Most itt vagy:<br><span style="color:var(--gold-light); text-decoration:underline;" onclick="window.openCheckin()">`+venueNames[venueId]+`</span><br><div style="margin-top:4px;"><span style="font-size:9px; color:rgba(255,255,255,0.4); cursor:pointer;" onclick="window.openCheckin()">Módosítod?</span> &nbsp;|&nbsp; <span style="font-size:9px; color:var(--red); cursor:pointer;" onclick="window.revokeCheckin(event)">Visszavonod?</span></div>`;
+        window.updateCheckinUI(venueId);
       })
       .catch((err) => {
          submitBtn.innerText = "Fellövöm a térképre!";
@@ -2386,7 +2405,6 @@
       });
   };
 
-  // 4. VISSZAVONÁS
   window.revokeCheckin = function(e) {
     if(e) e.stopPropagation();
     const venueId = localStorage.getItem('myCheckinVenue');
@@ -2402,13 +2420,11 @@
           document.getElementById('checkinNameInput').value = ""; 
           window.showToast("Becsekkolás visszavonva!");
           
-          // Visszaállítjuk a felületet alapállapotba
           window.updateCheckinUI(null);
        }).catch((err) => window.showToast("Nem sikerült törölni: " + err.message));
     }
   };
 
-  // KÁRTYÁK LISTÁJÁNAK FRISSÍTÉSE (A Helyszíneknél lent)
   onValue(checkinRef, (snap) => {
     Object.keys(venueNames).forEach(id => {
       const container = document.getElementById('checkins-' + id);
@@ -2464,7 +2480,6 @@
     }
   };
 
-// A HIÁNYZÓ TOAST FÜGGVÉNY
   window.showToast = function(msg) {
     const toast = document.getElementById('toastMsg');
     if (!toast) return;
@@ -2489,7 +2504,7 @@
     });
   }
 
-// APP TELEPÍTÉS LOGIKÁJA
+  // APP TELEPÍTÉS LOGIKÁJA
   let deferredPrompt;
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
@@ -2534,31 +2549,25 @@
       });
     });
 
-document.addEventListener("DOMContentLoaded", () => {
-  const pdfBtn = document.querySelector('.pdf-dl-btn');
-  const pdfOverlay = document.getElementById('pdfOverlay');
+    const pdfBtn = document.querySelector('.pdf-dl-btn');
+    const pdfOverlay = document.getElementById('pdfOverlay');
 
-  if(pdfBtn && pdfOverlay) {
-    pdfBtn.addEventListener('click', function(e) {
-      e.preventDefault(); // Megállítjuk a PDF azonnali megnyitását
-      const targetUrl = this.href;
-      
-      // Megjelenítjük a kacsintós réteget
-      pdfOverlay.classList.add('show');
+    if(pdfBtn && pdfOverlay) {
+      pdfBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetUrl = this.href;
+        
+        pdfOverlay.classList.add('show');
 
-      // Várunk 1.8 másodpercet (amíg kacsint), aztán nyitjuk a PDF-et
-      setTimeout(() => {
-         window.open(targetUrl, '_blank');
-         
-         // Fél másodperccel később eltüntetjük az overlayt, hogy az oldal használható maradjon
-         setTimeout(() => {
-            pdfOverlay.classList.remove('show');
-         }, 500);
-      }, 1800);
-    });
-  }
-});
-
+        setTimeout(() => {
+           window.open(targetUrl, '_blank');
+           
+           setTimeout(() => {
+              pdfOverlay.classList.remove('show');
+           }, 500);
+        }, 1800);
+      });
+    }
 
     document.querySelectorAll('.event-card').forEach(card => {
       const headerActions = card.querySelector('.header-actions');
