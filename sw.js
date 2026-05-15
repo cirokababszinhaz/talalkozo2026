@@ -1,17 +1,22 @@
-const CACHE_NAME = 'talalkozo-cache-v1';
+// FIGYELEM: Átírtuk v2-re! Ez jelzi a telefonoknak, hogy frissíteniük kell a fájlokat!
+const CACHE_NAME = 'talalkozo-cache-v2';
 
 // Ide be kell írni minden fájlt, amit offline is látni akarunk
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
+  './style.css',           // ÚJ: CSS fájl
+  './app.js',              // ÚJ: JS logika
   './manifest.json',
   './levesm.png',
   './dixie.png',
   './spaletta.png',
+  './babszinhaz.png',      // ÚJ: Babszínház logó
   './tamogato1.png',
   './tamogato2.png',
   './tamogato3.png',
-  './tamogato4.png'
+  './tamogato4.png',
+  './kacsinto-szem.gif'    // ÚJ: A kacsintós animációd (írd át a nevet, ha más a fájlnév!)
 ];
 
 self.addEventListener('install', (event) => {
@@ -29,7 +34,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
+            return caches.delete(cacheName); // Törli a régi v1-es cache-t
           }
         })
       );
@@ -52,7 +57,7 @@ self.addEventListener('fetch', (event) => {
     return; // Átengedjük a neten
   }
 
-  // Minden mást (HTML, képek) először a Cache-ből próbálunk betölteni (Offline elsőbbség)
+  // Minden mást (HTML, képek) először a Cache-ből próbálunk betölteni
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
