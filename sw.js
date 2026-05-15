@@ -1,5 +1,5 @@
 // FIGYELEM: Átírtuk v2-re! Ez jelzi a telefonoknak, hogy frissíteniük kell a fájlokat!
-const CACHE_NAME = 'talalkozo-cache-v2';
+const CACHE_NAME = 'talalkozo-cache-v3';
 
 // Ide be kell írni minden fájlt, amit offline is látni akarunk
 const ASSETS_TO_CACHE = [
