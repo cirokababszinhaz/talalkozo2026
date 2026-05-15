@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="hu">
 <head>
 <meta charset="UTF-8">
@@ -36,6 +35,18 @@
     --text: #111111; --muted: #4a443d; 
     --border: rgba(26,92,88,0.15); --red: #c0392b; --orange: #e67e22; 
   }
+
+.pdf-overlay {
+  position: fixed; inset: 0; background: var(--teal); z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
+}
+.pdf-overlay.show {
+  opacity: 1; pointer-events: auto;
+}
+.pdf-overlay img {
+  width: 150px; /* Állítsd be a megfelelő méretre */
+}
 
   @media (prefers-color-scheme: dark) {
     :root {
@@ -314,6 +325,11 @@
 </head>
 <body>
 
+<div id="pdfOverlay" class="pdf-overlay">
+  <!-- Ide jön a te kacsintó GIF/PNG képed -->
+  <img src="./kacsinto-szem.gif" alt="Kacsintás">
+</div>
+
 <div id="vitezLaszlo" class="vitez-laszlo">
   <div class="vitez-bubble">Szervusztok, Pajtikák!</div>
   <img src="https://www.hungarikum.hu/sites/default/files/vit%C3%A9zl3.jpg" alt="Vitéz László" style="width:100%; border-radius: 10px;">
@@ -420,7 +436,7 @@
   <h1 id="heroTitle">17. <em>Találkozója</em></h1>
   <div class="hero-date" style="color:#fff;">2026. június 13–18. &nbsp;·&nbsp; Kecskemét</div>
   
-<div class="hero-buttons" id="heroButtons">
+  <div class="hero-buttons" id="heroButtons">
     <a href="https://drive.google.com/file/d/1eDwb5_U7Fy0et1VN9GWzLfthKv9j35Nm/view?usp=sharing" target="_blank" class="pdf-dl-btn">📄 Töltsd le a programot egyben (PDF)</a>
     
     <button id="installAppBtn" class="hero-btn" style="background: var(--gold); border-color: var(--gold); color: #000; display: none;">📲 Telepítsd a telefonodra!</button>
@@ -430,7 +446,6 @@
       A Találkozó FB-oldala
     </a>
   </div>
-
 </div>
 
 <div class="search-wrap" id="searchWrap">
@@ -696,7 +711,7 @@
         </div>
       </div>
     </div>
-   <div class="card-details"><div class="card-details-inner">
+    <div class="card-details"><div class="card-details-inner">
       <div class="details-section">
         <div class="details-label">Alkotók</div>
         <div class="details-text">
@@ -2014,6 +2029,7 @@
 
     const newestAlert = window.globalAlerts[0];
     const lastSeenTime = sessionStorage.getItem("lastSeenAlertTime");
+    
     if (!lastSeenTime || parseInt(lastSeenTime) < newestAlert.timeRaw) {
       window.showPopup(newestAlert);
       sessionStorage.setItem("lastSeenAlertTime", newestAlert.timeRaw.toString());
@@ -2186,6 +2202,7 @@
     const nowTime = Date.now();
     const lastPost = localStorage.getItem('last_gb_post_time');
     
+    // 10 másodperces SPAM védelem a teszteléshez
     if(lastPost && (nowTime - parseInt(lastPost)) < 10000) {
        window.showToast("Kérjük várj picit az újabb posztolásig!");
        return;
@@ -2247,43 +2264,71 @@
     }
   }
 
-  // ===============================
+  // ==========================================
   // ITT VAGYOK CHECK-IN (+ VISSZAVONÁS)
-  // ===============================
+  // ==========================================
   const checkinRef = ref(db, 'checkins');
   const venueNames = { 'ciroka': 'Ciróka Bábszínház', 'agora': 'Hírös Agóra', 'kelemen': 'Kelemen L. Kamaraszínház', 'ruszt': 'Ruszt J. Stúdió', 'ifjusagi': 'Ifjúsági Otthon', 'tmh': 'Tudomány és Művészetek Háza', 'bufe': '☕ Kávézóban / Büfében' };
 
+  // 1. ÚJ FÜGGVÉNY: A felület frissítése (Ezt hívjuk meg betöltéskor, mentéskor és visszavonáskor is)
+  window.updateCheckinUI = function(venueId) {
+    const myStatus = document.getElementById('myCheckinStatus');
+    // Megkeressük az "Itt vagyok!" gombot
+    const checkinBtn = document.querySelector('button[onclick="window.openCheckin()"]'); 
+    
+    if (venueId && venueNames[venueId]) {
+      // AKTÍV ÁLLAPOT: A gomb szövege a helyszín lesz, és kap egy aktív színt
+      if(checkinBtn) {
+        checkinBtn.classList.add('active');
+        checkinBtn.innerHTML = "📍 " + venueNames[venueId];
+      }
+      myStatus.style.display = 'block';
+      myStatus.innerHTML = `
+        <div style="margin-top:6px; display:flex; justify-content:center; gap:12px;">
+            <span style="color:var(--gold-light); cursor:pointer; font-size:10px; text-decoration:underline;" onclick="window.openCheckin()">Módosítás</span>
+            <span style="color:var(--red); cursor:pointer; font-size:10px; text-decoration:underline;" onclick="window.revokeCheckin(event)">Visszavonás</span>
+        </div>
+      `;
+    } else {
+      // ALAPÁLLAPOT (nincs check-in)
+      if(checkinBtn) {
+        checkinBtn.classList.remove('active');
+        checkinBtn.innerHTML = "📍 Itt vagyok!";
+      }
+      myStatus.style.display = 'none';
+      myStatus.innerHTML = "";
+    }
+  };
+
+  // 2. OLDAL BETÖLTÉSKORI ELLENŐRZÉS
   window.restoreCheckinUI = function() {
     const savedVenue = localStorage.getItem('myCheckinVenue');
     const savedId = localStorage.getItem('myCheckinId');
     const savedTime = localStorage.getItem('myCheckinTime');
     const savedName = localStorage.getItem('myCheckinName');
 
-    // Csak akkor állítjuk vissza, ha minden adat megvan, ÉS nincs régebben 2 óránál
     if (savedVenue && savedId) {
       const now = Date.now();
-      // Ha nincs mentett idő (régi hiba), vagy 2 órán belüli:
+      // Ha nem járt le a 2 óra
       if (!savedTime || (now - parseInt(savedTime) < 2 * 60 * 60 * 1000)) { 
-        const myStatus = document.getElementById('myCheckinStatus');
-        myStatus.style.display = 'block';
-        myStatus.innerHTML = `Most itt vagy:<br><span style="color:var(--gold-light); text-decoration:underline;" onclick="window.openCheckin()">`+venueNames[savedVenue]+`</span><br><div style="margin-top:4px;"><span style="font-size:9px; color:rgba(255,255,255,0.4); cursor:pointer;" onclick="window.openCheckin()">Módosítod?</span> &nbsp;|&nbsp; <span style="font-size:9px; color:var(--red); cursor:pointer;" onclick="window.revokeCheckin(event)">Visszavonod?</span></div>`;
-        
         if(savedName) document.getElementById('checkinNameInput').value = savedName;
         document.getElementById('ciVenue').value = savedVenue;
+        // Meghívjuk a felület frissítőt!
+        window.updateCheckinUI(savedVenue);
       } else {
-        // Lejárt csekkolás törlése
+        // Lejárt az idő, törlünk mindent
         localStorage.removeItem('myCheckinName');
         localStorage.removeItem('myCheckinVenue');
         localStorage.removeItem('myCheckinId');
         localStorage.removeItem('myCheckinTime');
-        document.getElementById('myCheckinStatus').style.display = 'none';
+        window.updateCheckinUI(null);
       }
     }
   };
   
-  // Futtatjuk oldalbetöltéskor
   window.restoreCheckinUI();
 
+  // URL PARAMÉTERES AUTOMATIKUS MEGNYITÁS
   const urlParams = new URLSearchParams(window.location.search);
   const checkinVenueId = urlParams.get('checkin');
 
@@ -2297,10 +2342,9 @@
     }, 1000);
   }
 
-  window.openCheckin = function() { 
-    document.getElementById('checkinModal').classList.add('visible'); 
-  }
+  window.openCheckin = function() { document.getElementById('checkinModal').classList.add('visible'); }
 
+  // 3. MENTÉS A FIREBASE-BE
   window.submitCheckin = function() {
     const nameInput = document.getElementById('checkinNameInput').value.trim();
     if(nameInput.length < 2) { window.showToast('Légyszi adj meg egy nevet!'); return; }
@@ -2310,6 +2354,9 @@
     const oldVenue = localStorage.getItem('myCheckinVenue');
     const oldId = localStorage.getItem('myCheckinId');
     if (oldVenue && oldId) { remove(ref(db, `checkins/${oldVenue}/${oldId}`)); }
+    
+    const submitBtn = document.querySelector('.checkin-mode .modal-submit');
+    submitBtn.innerText = "Töltés...";
     
     const newRef = push(ref(db, 'checkins/' + venueId));
     
@@ -2321,22 +2368,30 @@
         localStorage.setItem('myCheckinTime', Date.now().toString()); 
 
         document.getElementById('checkinModal').classList.remove('visible');
+        submitBtn.innerText = "Fellövöm a térképre!";
+        
         window.trackEvent('check_in_used', { venue: venueId }); 
 
+        // 1. Üzenet kiírása (most már létezik a függvény!)
         window.showToast("Sikeres becsekkolás!");
         
-        // KÖZVETLEN, "ERŐSZAKOS" FELÜLET-FRISSÍTÉS A BIZTOS MEGJELENÉSHEZ:
+        // 2. AZONNALI UI FRISSÍTÉS!
         const myStatus = document.getElementById('myCheckinStatus');
         myStatus.style.display = 'block';
         myStatus.innerHTML = `Most itt vagy:<br><span style="color:var(--gold-light); text-decoration:underline;" onclick="window.openCheckin()">`+venueNames[venueId]+`</span><br><div style="margin-top:4px;"><span style="font-size:9px; color:rgba(255,255,255,0.4); cursor:pointer;" onclick="window.openCheckin()">Módosítod?</span> &nbsp;|&nbsp; <span style="font-size:9px; color:var(--red); cursor:pointer;" onclick="window.revokeCheckin(event)">Visszavonod?</span></div>`;
       })
-      .catch((err) => window.showToast("Hiba a mentésnél: " + err.message));
+      .catch((err) => {
+         submitBtn.innerText = "Fellövöm a térképre!";
+         window.showToast("Hiba a mentésnél: " + err.message);
+      });
   };
 
+  // 4. VISSZAVONÁS
   window.revokeCheckin = function(e) {
-    e.stopPropagation();
+    if(e) e.stopPropagation();
     const venueId = localStorage.getItem('myCheckinVenue');
     const checkinId = localStorage.getItem('myCheckinId');
+    
     if(venueId && checkinId) {
        remove(ref(db, `checkins/${venueId}/${checkinId}`)).then(() => {
           localStorage.removeItem('myCheckinName');
@@ -2344,13 +2399,16 @@
           localStorage.removeItem('myCheckinId');
           localStorage.removeItem('myCheckinTime');
           
-          document.getElementById('myCheckinStatus').style.display = 'none';
           document.getElementById('checkinNameInput').value = ""; 
           window.showToast("Becsekkolás visszavonva!");
-       });
+          
+          // Visszaállítjuk a felületet alapállapotba
+          window.updateCheckinUI(null);
+       }).catch((err) => window.showToast("Nem sikerült törölni: " + err.message));
     }
   };
 
+  // KÁRTYÁK LISTÁJÁNAK FRISSÍTÉSE (A Helyszíneknél lent)
   onValue(checkinRef, (snap) => {
     Object.keys(venueNames).forEach(id => {
       const container = document.getElementById('checkins-' + id);
@@ -2406,6 +2464,17 @@
     }
   };
 
+// A HIÁNYZÓ TOAST FÜGGVÉNY
+  window.showToast = function(msg) {
+    const toast = document.getElementById('toastMsg');
+    if (!toast) return;
+    toast.innerText = msg;
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3000);
+  };
+
   window.doSearchDebounced = function() {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(window.doSearch, 300);
@@ -2426,27 +2495,22 @@
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
   window.addEventListener('beforeinstallprompt', (e) => {
-    // Android/Chrome: Megfogjuk a hivatalos telepítő eseményt
     e.preventDefault();
     deferredPrompt = e;
-    // Megjelenítjük a saját gombunkat, ha még nincs telepítve
     if(!isStandalone) {
        document.getElementById('installAppBtn').style.display = 'inline-flex';
     }
   });
 
-  // Ha iOS eszközön vagyunk, ÉS még nincs telepítve, mutassuk a gombot
   if (isIOS && !isStandalone) {
     document.addEventListener("DOMContentLoaded", () => {
       document.getElementById('installAppBtn').style.display = 'inline-flex';
     });
   }
 
-  // Telepítés gomb megnyomása
   document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('installAppBtn').addEventListener('click', async () => {
       if (deferredPrompt) {
-        // Android/Chrome telepítőablak feldobása
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
         if (outcome === 'accepted') {
@@ -2454,7 +2518,6 @@
         }
         deferredPrompt = null;
       } else if (isIOS) {
-        // iPhone instrukciók a meglévő Toast üzenettel
         window.showToast("Apple iOS: Lent a böngészőben bökj a [Megosztás ⬆] ikonra, majd a [Főképernyőhöz adás ➕] gombra!");
       }
     });
@@ -2470,6 +2533,32 @@
         if(!e.target.closest('.header-actions') && !e.target.closest('.event-title')) { window.toggleCard(this); }
       });
     });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const pdfBtn = document.querySelector('.pdf-dl-btn');
+  const pdfOverlay = document.getElementById('pdfOverlay');
+
+  if(pdfBtn && pdfOverlay) {
+    pdfBtn.addEventListener('click', function(e) {
+      e.preventDefault(); // Megállítjuk a PDF azonnali megnyitását
+      const targetUrl = this.href;
+      
+      // Megjelenítjük a kacsintós réteget
+      pdfOverlay.classList.add('show');
+
+      // Várunk 1.8 másodpercet (amíg kacsint), aztán nyitjuk a PDF-et
+      setTimeout(() => {
+         window.open(targetUrl, '_blank');
+         
+         // Fél másodperccel később eltüntetjük az overlayt, hogy az oldal használható maradjon
+         setTimeout(() => {
+            pdfOverlay.classList.remove('show');
+         }, 500);
+      }, 1800);
+    });
+  }
+});
+
 
     document.querySelectorAll('.event-card').forEach(card => {
       const headerActions = card.querySelector('.header-actions');
