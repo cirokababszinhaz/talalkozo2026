@@ -4,11 +4,12 @@ import { getStorage, ref as sRef, uploadString, getDownloadURL } from "https://w
 
 // ==========================================
 // ⚙️ FESZTIVÁL KONFIGURÁCIÓ
-// Ezt az egy blokkot kell átírni jövőre!
 // ==========================================
 const FESTIVAL_CONFIG = {
     year: 2026,
     month: 5, // Figyelem! A JS-ben a hónapok 0-tól indulnak (5 = Június)
+    startDay: 13,
+    endDay: 18,
     postFestivalDate: new Date('2026-06-19T00:00:00+02:00').getTime(),
     timeZone: 'Europe/Budapest'
 };
@@ -362,6 +363,7 @@ function updateCheckinUI(venueId) {
         myStatus.innerHTML = "";
     }
 }
+
 function restoreCheckinUI() {
     const savedVenue = localStorage.getItem('myCheckinVenue');
     const savedId = localStorage.getItem('myCheckinId');
@@ -610,7 +612,7 @@ function toggleTypeFilter(type) {
     else { currentTypeFilter = type; }
 
     document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-    if (currentTypeFilter) { document.getElementById('leg-' + currentTypeFilter).classList.add('active'); }
+    if (currentTypeFilter) { document.querySelector(`.filter-btn[data-filter="${currentTypeFilter}"]`).classList.add('active'); }
 
     doSearch();
 }
@@ -677,6 +679,14 @@ function doSearch() {
             document.getElementById('searchInput').value = ""; 
             doSearch();
         }, 5000); 
+        return;
+    }
+
+    // IDŐJÁRÁS EASTER EGG
+    if(['eso', 'vihar', 'idojaras'].includes(query)) {
+        showToast("A bábok nem áznak el, de esernyőt azért hozz magaddal! ☔");
+        document.getElementById('searchInput').value = "";
+        doSearch();
         return;
     }
 
@@ -831,10 +841,9 @@ document.addEventListener("DOMContentLoaded", () => {
         btn.addEventListener('click', () => showDay(index, btn));
     });
 
-   // Kártya lenyitás (Javított, könnyen kattintható verzió)
+    // Kártya lenyitás (Javított, könnyen kattintható verzió)
     document.querySelectorAll('.card-header').forEach(header => {
         header.addEventListener('click', function(e) {
-            // CSAK akkor nem nyílik le, ha a csillagra vagy a piros "!" ikonra böktek
             if(!e.target.closest('.star-btn') && !e.target.closest('.mini-pulse-alert')) { 
                 toggleCard(this); 
             }
@@ -904,6 +913,25 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // Megosztás Gomb (Web Share API)
+    document.getElementById('btnShare').addEventListener('click', async () => {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: '17. Bábszínházi Találkozó',
+                    text: 'Kecskemét, 2026. június 13-18. Nézd meg a programot és gyere te is!',
+                    url: window.location.href
+                });
+                trackEvent('app_shared'); 
+            } catch (err) {
+                console.log('Megosztás megszakítva', err);
+            }
+        } else {
+            navigator.clipboard.writeText(window.location.href);
+            showToast('Link másolva a vágólapra!');
+        }
+    });
+
     // Checkin URL feldolgozása
     const urlParams = new URLSearchParams(window.location.search);
     const checkinVenueId = urlParams.get('checkin');
@@ -916,6 +944,15 @@ document.addEventListener("DOMContentLoaded", () => {
             window.history.replaceState({}, document.title, window.location.pathname);
         }, 1000);
     }
+
+    // Offline / Online állapot figyelése
+    function updateOnlineStatus() {
+        if (!navigator.onLine) { document.body.classList.add('is-offline'); } 
+        else { document.body.classList.remove('is-offline'); }
+    }
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    updateOnlineStatus();
 
     // Alap inicializálás
     restoreCheckinUI();
@@ -930,6 +967,13 @@ document.addEventListener("DOMContentLoaded", () => {
         else jumpBtn.classList.remove('show');
     });
 
+    // PWA Automatikus Újratöltés
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            window.location.reload();
+        });
+    }
+
     // Analytics observer
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -941,23 +985,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     const sponsorBox = document.getElementById('sponsorsBox');
     if (sponsorBox) observer.observe(sponsorBox);
-});
-
-document.getElementById('btnShare').addEventListener('click', async () => {
-    if (navigator.share) {
-        try {
-            await navigator.share({
-                title: '17. Bábszínházi Találkozó',
-                text: 'Kecskemét, 2026. június 13-18. Nézd meg a programot és gyere te is!',
-                url: window.location.href
-            });
-            trackEvent('app_shared'); // Ha akarod mérni GA4-ben
-        } catch (err) {
-            console.log('Megosztás megszakítva', err);
-        }
-    } else {
-        // Ha asztali gépen van, ahol nincs natív megosztás
-        navigator.clipboard.writeText(window.location.href);
-        showToast('Link másolva a vágólapra!');
-    }
 });

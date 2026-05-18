@@ -306,6 +306,11 @@ h1 em { color: var(--gold-light); font-style: italic; }
 .hidden-svg { display: none; }
 .text-white { color: #fff; }
 
+/* OFFLINE MAP MSG */
+.offline-map-msg { display: none; background: var(--surface); padding: 20px; text-align: center; border-radius: 4px; border: 1px dashed var(--border); color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; margin-top: 20px;}
+body.is-offline .map-iframe { display: none; }
+body.is-offline .offline-map-msg { display: block; }
+
 /* LÁBLÉC */
 footer { position: relative; background: var(--teal-dark); text-align: center; padding: 30px 20px 80px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4); font-weight: 600; z-index: 1;}
 footer a { color: var(--gold-light); text-decoration: none; }

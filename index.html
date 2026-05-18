@@ -6,6 +6,10 @@
 <meta name="theme-color" content="#1a5c58">
 <link rel="manifest" href="manifest.json">
 
+<!-- KÖTELEZŐ IKONOK BÖNGÉSZŐHÖZ ÉS APPLE KÉSZÜLÉKEKHEZ -->
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+
 <!-- FB OPEN GRAPH META TAGEK -->
 <meta property="og:title" content="Magyarországi Bábszínházak 17. Találkozója">
 <meta property="og:description" content="2026. június 13-18. Kecskemét. Nézd meg a teljes programot!">
@@ -29,7 +33,6 @@
 <body>
 
 <div id="pdfOverlay" class="pdf-overlay">
-  <!-- Ide jön a te kacsintó GIF/PNG képed -->
   <img src="./kacsinto-szem.gif" alt="Kacsintás">
 </div>
 
@@ -51,7 +54,6 @@
   </div>
 </div>
 
-<!-- VIRTUALIS EMLÉKKÖNYV MODAL -->
 <div class="overlay" id="guestbookModal">
   <div class="modal-box modal-box-guestbook">
     <div class="modal-header modal-header-teal">
@@ -79,7 +81,6 @@
   </div>
 </div>
 
-<!-- CHECKIN MODAL -->
 <div class="overlay" id="checkinModal">
   <div class="modal-box checkin-mode">
     <div class="modal-header modal-header-gold">
@@ -106,7 +107,6 @@
   </div>
 </div>
 
-<!-- QUOTE MODAL -->
 <div class="overlay" id="quoteModal">
   <div class="modal-box modal-box-gold">
     <div class="modal-header modal-header-gold">
@@ -162,7 +162,7 @@
     <div class="ql-wrapper"><button class="ql-btn" id="favFilterBtn">★ Kedvenceim</button></div>
     <div class="ql-wrapper"><button class="ql-btn" id="btnGuestbook">📖 Emlékkönyv</button></div>
     <div class="ql-wrapper"><button class="ql-btn" id="btnQuote">🎭 Napi motiváció</button></div>
-<div class="ql-wrapper"><button class="ql-btn" id="btnShare">🚀 Oszd meg a programot!</button></div>
+    <div class="ql-wrapper"><button class="ql-btn" id="btnShare">🚀 Oszd meg a programot!</button></div>
     <div class="ql-wrapper"><button class="ql-btn" id="btnHolEgyek">🍔 Hol egyek?</button></div>
     <div class="ql-wrapper">
        <button class="ql-btn" id="btnCheckin">📍 Itt vagyok!</button>
@@ -239,7 +239,7 @@
              <img src="./levesm.png" class="gastro-logo" loading="lazy" alt="Leves'M">
              <div>
                 <a href="https://levesm.hu/" target="_blank" class="venue-item-title">Leves’M Levesbár</a>
-                <div class="venue-item-address">Csányi u. 1-3. <br><span class="text-red-bold">10% kedvezmény mindenre</span></div>
+                <div class="venue-item-address">Csányi u. 1-3. <br><span class="text-red-bold">10% kedvezmény a menüből</span></div>
              </div>
           </div>
           <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=46.90754647824104,19.690316931387255" target="_blank">📍 Útvonal</a>
@@ -256,14 +256,14 @@
              <img src="./dixie.png" class="gastro-logo" loading="lazy" alt="Dixie">
              <div>
                 <a href="https://www.facebook.com/dixiegyorsetterem" target="_blank" class="venue-item-title">Dixie Gyorsétterem</a>
-                <div class="venue-item-address">Dobó krt. 1. <br><span class="text-red-bold">10% kedvezmény mindenre</span></div>
+                <div class="venue-item-address">Dobó krt. 1. <br><span class="text-red-bold">10% kedvezmény a menüből</span></div>
              </div>
           </div>
           <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=46.90510848117024,19.68788751997593" target="_blank">📍 Útvonal</a>
         </div>
         <div class="gastro-open-hours">
            <strong class="gastro-open-title">Nyitvatartás:</strong>
-           Sz-V: Zárva | H-Cs: 9:00–16:00
+           H-P: 11:00-14:00 | Sz-V: Zárva
         </div>
       </div>
 
@@ -273,7 +273,7 @@
              <img src="./spaletta.png" class="gastro-logo" loading="lazy" alt="Spaletta">
              <div>
                 <a href="https://spalettaetterem.com/hu" target="_blank" class="venue-item-title">Spaletta Étterem és Sörház</a>
-                <div class="venue-item-address">Jókai u. 15. <br><span class="text-red-bold">10% kedvezmény mindenre</span></div>
+                <div class="venue-item-address">Jókai u. 15. <br><span class="text-red-bold">10% kedvezmény a menüből</span></div>
              </div>
           </div>
           <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=46.9129628157815,19.69007621420735" target="_blank">📍 Útvonal</a>
@@ -290,7 +290,7 @@
              <img src="./babszinhaz.png" class="gastro-logo" loading="lazy" alt="Babszínház Kávézó">
              <div>
                 <a href="https://www.facebook.com/babszinhaz.kavezo/" target="_blank" class="venue-item-title">Babszínház Kávézó</a>
-                <div class="venue-item-address">Deák Ferenc tér 6. <br><span class="text-red-bold">10% kedvezmény mindenre</span></div>
+                <div class="venue-item-address">Deák Ferenc tér 6. <br><span class="text-red-bold">10% kedvezmény a menüből</span></div>
              </div>
           </div>
           <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=46.9058610237233,19.689237933195738" target="_blank">📍 Útvonal</a>
@@ -450,13 +450,28 @@
     </div>
     <div class="card-details"><div class="card-details-inner">
       <div class="details-section">
+        <div class="details-label">Leírás</div>
+        <div class="details-text">
+          Hölgyeim és uraim, kedves gyerekek, engedjétek meg, hogy bemutatkozzam: Atanáznak hívnak. A foglalkozásom pedig: lámpaláz. Talán többen ismertek, mint hinnétek. Ha volt már veled olyan, hogy sok ember előtt kellett beszélned, zenélned, táncolnod, vagy akár csak bemutatkoznod – de hirtelen képtelen voltál megmozdulni, remegett a lábad, remegett a hangod és hirtelen még a nevedet is elfelejtetted – az azt jelenti, hogy már találkoztál velem. Ebben az előadásban én leszek a főszereplő. Meg egy kicsit te is. De nem kell izgulnod. És ha mégis izgulsz, az is oké. Van egy-két trükk a zsebemben, ami neked is segíteni fog.
+        </div>
+      </div>
+      <div class="details-section">
         <div class="details-label">Alkotók</div>
         <div class="details-text">
           Író: Varsányi Péter<br>
           Dramaturg: Patonay Anita<br>
           Látványtervező: Lázár Helga<br>
+          Zeneszerző: Szászi Petra és Bartokos Botond<br>
+          Koreográfus: Dányi Viktória<br>
+          Szcenikus: Grosschmid Erik<br>
+          Rendezőasszisztens: Szabó Nóra<br>
           Rendező: Varsányi Péter<br><br>
-          Szereplők: Szekeres Máté, Horgas Ráhel, Lendváczky Zoltán, Dupák Fanni, Kedves Csaba
+          Szereplők:<br>
+          Atanáz – Szekeres Máté<br>
+          Hella – Horgas Ráhel<br>
+          Zoli – Lendváczky Zoltán<br>
+          Fanni – Dupák Fanni<br>
+          Csabi – Kedves Csaba
         </div>
       </div>
       <div class="details-section">
@@ -520,7 +535,7 @@
       <div class="card-header-row">
         <div>
           <div class="event-title">Szakmai fórum</div>
-          <div class="event-company">Igazgatók – zártkörű megbeszélés</div>
+          <div class="event-company">UNIMA / Bábművész Szövetség / Igazgatók – zártkörű megbeszélés</div>
         </div>
       </div>
     </div>
@@ -550,6 +565,10 @@
         <div class="details-label">Alkotók</div>
         <div class="details-text">
           Adaptáció, dramaturg: Hámor Anna Csillag<br>
+          Látványtervező: Fülöpp Réka<br>
+          Tervezőasszisztens: Osgyányi Zsófi<br>
+          Zeneszerző: Frank Tamás<br>
+          Asszisztens, ügyelő: Soó Gyöngyvér<br>
           Rendező: Siflis Anna<br><br>
           Szereplők: Mészáros Pancsa, Szabados Böbe, Bencze Mónika, Bankó Bence, Zádori Szilárd
         </div>
@@ -592,7 +611,12 @@
       <div class="details-section">
         <div class="details-label">Alkotók</div>
         <div class="details-text">
+          Szerző: Rab Viki-Szabó Attila<br>
           Író-dramaturg: Szabó Attila<br>
+          Látvány: Rofusz Kinga<br>
+          Zeneszerző: Rab Viki<br>
+          Koreográfus: Markó-Valentyik Anna<br>
+          Korrepetítor: Kovács Kata<br>
           Rendező: Bartal Kiss Rita (Blattner Géza-díjas)<br><br>
           Szereplők: Dénes Emőke, Stekbauer-Hanzi Réka, Matola Norbert
         </div>
@@ -627,7 +651,9 @@
       <div class="details-section">
         <div class="details-label">Alkotók</div>
         <div class="details-text">
-          Írta és rendezte: Markó Róbert<br><br>
+          Írta és rendezte: Markó Róbert<br>
+          Tervező: Boráros Szilárd<br>
+          Zeneszerző: Cseri Hanna<br><br>
           Szereplők: Papp Melinda, Szalai Barbara, Arató Máté, Matta Lóránt, Rácz Attila
         </div>
       </div>
@@ -661,8 +687,12 @@
       <div class="details-section">
         <div class="details-label">Alkotók</div>
         <div class="details-text">
-          Szerző, Rendező: Veres András<br><br>
-          Szereplők: Pfeiffer Zsófia, Varga Péter Róbert
+          Szerző: Veres András<br>
+          Tervező: Rumi Zsófia<br>
+          Zeneszerző: Kiss Dávid<br>
+          Rendező: Veres András<br>
+          Készítette: Sipos Katalin, Balogh Mihály, Szigeti Árpád, Bischoff Henrik Max <br><br>
+          Szereplők: Pfeifer Zsófia, Varga Péter Róbert
         </div>
       </div>
       <div class="details-section">
@@ -690,6 +720,43 @@
     <div class="card-header"><div class="event-title">💬 Szakmai megbeszélés</div></div>
   </div>
 
+  <div class="slot-time">23:00 – 0:15</div>
+  <div class="event-card type-show" id="show-liselotte" data-start="2026-06-14T23:00:00+02:00" data-end="2026-06-15T00:15:00+02:00">
+    <div class="card-header">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Liselotte és a május<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">SZFE - Kiss Dorina</div>
+        </div>
+        <div class="header-actions">
+          <div class="star-container"><span class="star-btn">☆</span></div>
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Szerző: Pozsgai Zsolt<br>
+          Tervező: Horváth Márk<br>
+          Koreográfus: Puha Bernadett<br>
+          Dramaturg, rendező: Kiss Dorina<br><br>
+          Szereplők: Gyöngyössy Csenge, Lajhó Máté
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály</div>
+        <div class="details-text">14+</div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
+      <a class="fb-event-btn" href="https://fb.me/e/6XWjRK3Z7" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
   <div class="slot-time">23:00 – 23:45</div>
   <div class="event-card type-show" id="show-frida" data-start="2026-06-14T23:00:00+02:00" data-end="2026-06-14T23:45:00+02:00">
     <div class="card-header">
@@ -709,7 +776,12 @@
       <div class="details-section">
         <div class="details-label">Alkotók</div>
         <div class="details-text">
-          Szerző, rendező, játssza: Barabás Bíborka
+          Szerző, rendező: Barabás Bíborka<br>
+          Maszk, báb: Ágfay Míra<br>
+          Zene: Hegedűs Dániel<br>
+          Díszlet: Mayer Gábor<br>
+          Jelmez: Csoboth Viktória<br><br>
+          Játssza: Barabás Bíborka
         </div>
       </div>
       <div class="details-section">
@@ -762,8 +834,12 @@
         <div class="details-label">Alkotók</div>
         <div class="details-text">
           Író: Madách Imre, Nádasdy Ádám<br>
+          Zeneszerző: Móser Ádám<br>
+          Tervező: Boráros Szilárd<br>
+          Rendezőasszisztens: Sipos Berta Őszike<br>
           Rendező: Kocsis Pál (Jászai Mari-díjas)<br><br>
-          Játsszák: Czéh Dániel, Gidófalvi Imola, Horváth Márk, Markó-Valentyik Anna (Junior Prima-díjas), Szakács Nadin e.h., Zöldi Ákos Tamás e.h.
+          Játsszák: Czéh Dániel, Gidófalvi Imola, Horváth Márk, Markó-Valentyik Anna (Junior Prima-díjas), Szakács Nadin e.h., Zöldi Ákos Tamás e.h.<br><br>
+          <em>Az előadásban elhangzik Kiss Judit Ágnes Éva monológja című verse.</em>
         </div>
       </div>
       <div class="details-section">
@@ -838,7 +914,11 @@
       <div class="details-section">
         <div class="details-label">Alkotók</div>
         <div class="details-text">
-          Julia Donaldson és Axel Scheffler meséi nyomán bábszínpadra írta és rendezte: Szilner Olivér<br><br>
+          Julia Donaldson és Axel Scheffler meséi nyomán bábszínpadra írta: Szilner Olivér<br>
+          Zeneszerző: Romhányi Áron<br>
+          Látvány: Osgyányi Zsófia<br>
+          Koreográfus: Bábinszki Ágnes<br>
+          Rendező: Szilner Olivér<br><br>
           Szereplők: Cservenka Ferenc, Sipos Áron, Bablena Vanda, Mónus Szonja, Romhányi Réka
         </div>
       </div>
@@ -873,6 +953,9 @@
         <div class="details-label">Alkotók</div>
         <div class="details-text">
           Felix Salten meséje alapján írta: Nagy Orsolya<br>
+          Dramaturg: Nagy Orsolya<br>
+          Látvány: Kárpáti Panna<br>
+          Zene: Tarr Bernadett<br>
           Rendező-koreográfus: Kovács Domokos<br><br>
           Szereplők: Bársonyosi Dávid, Bánky Sára, Vitányi-Juhász István, Ragán Edit, Dunai Julia, Sebestény Bernát, Darvas Emőke, Urszinyi Ádám, Rab Viki, Szukenyik Tamás
         </div>
@@ -911,8 +994,12 @@
         <div class="details-label">Alkotók</div>
         <div class="details-text">
           Író: Madách Imre, Nádasdy Ádám<br>
+          Zeneszerző: Móser Ádám<br>
+          Tervező: Boráros Szilárd<br>
+          Rendezőasszisztens: Sipos Berta Őszike<br>
           Rendező: Kocsis Pál (Jászai Mari-díjas)<br><br>
-          Játsszák: Czéh Dániel, Gidófalvi Imola, Horváth Márk, Markó-Valentyik Anna (Junior Prima-díjas), Szakács Nadin e.h., Zöldi Ákos Tamás e.h.
+          Játsszák: Czéh Dániel, Gidófalvi Imola, Horváth Márk, Markó-Valentyik Anna (Junior Prima-díjas), Szakács Nadin e.h., Zöldi Ákos Tamás e.h.<br><br>
+          <em>Az előadásban elhangzik Kiss Judit Ágnes Éva monológja című verse.</em>
         </div>
       </div>
       <div class="details-section">
@@ -1013,7 +1100,12 @@
         <div class="details-label">Alkotók</div>
         <div class="details-text">
           Szerző: Marta Gusniowska<br>
-          Rendező: Kenéz Ágoston<br><br>
+          Rendező: Kenéz Ágoston<br>
+          Dramaturg: Szauer Lilla<br>
+          Látványtervező: Veronika Keresztesova<br>
+          Dalszerző: Cseri Hanna<br>
+          A rendező munkatársa: Bali V. Gergely<br>
+          Asszisztens gyakornok: László Júlia<br><br>
           Szereplők: Podlovics Laura, Vizi Dávid, Messaoudi Emina, Georgita Máté Dezső, Hrisztov Toma
         </div>
       </div>
@@ -1055,8 +1147,14 @@
       <div class="details-section">
         <div class="details-label">Alkotók</div>
         <div class="details-text">
+          Szerző: Nagy Orsolya, Kovács Domokos, Nagy Petra<br>
           Rendező-dramaturg: Nagy Orsolya<br>
-          Koreográfus: Kovács Domokos<br><br>
+          Koreográfus: Kovács Domokos<br>
+          Zeneszerző: Bogárdi Aliz, Jankó Mátyás<br>
+          Tervező: Maróthy Anna Zorka, Lengyel Viola<br>
+          Textilmunkák: Bárány Judit<br>
+          Fénytervező: Váradi András<br>
+          Rendezőasszisztens: Szirtes Lili Lujza<br><br>
           Szereplők: Kovács Domokos, Nagy Petra
         </div>
       </div>
@@ -1090,7 +1188,8 @@
       <div class="details-section">
         <div class="details-label">Alkotók</div>
         <div class="details-text">
-          John Fowles regénye alapján a szövegkönyvet írta: Reiter Zita és Simon András<br><br>
+          John Fowles regénye alapján a szövegkönyvet írta: Reiter Zita és Simon András<br>
+          Alkotók: Antal Csaba, Vass Gergely, Reiter Zita, Simon András<br><br>
           Szereplők: Reiter Zita, Simon András
         </div>
       </div>
@@ -1125,7 +1224,16 @@
         <div class="details-label">Alkotók</div>
         <div class="details-text">
           Szerző: Nagy Orsolya<br>
-          Rendező-koreográfus: Kovács Domokos<br><br>
+          Rendezőasszisztens: Treitl-Vári Bettina<br>
+          Világítástervező: Nánási Barnabás<br>
+          A díszletet és a bábokat készítették: Oláh Richárd, Kissné Kati, Nádasiné Szegedi Éva<br>
+          Szcenikai tanácsadó: Grosschmid Erik<br>
+          Látványtervező: Kárpáti Panna<br>
+          Zeneszerző: Tarr Bernadett<br>
+          Dramaturg: Nagy Orsolya<br>
+          Rendező-koreográfus: Kovács Domokos<br>
+          Fény: Nánási Barnabás, Ágh András<br>
+          Hang: Gara Ákos, Szemán Bence<br><br>
           Szereplők: Baditz Dávid, Csiky Csongor Ábel e.h., Hell Krisztina, Mercs Máté Péter, Nagy Mónika, Telenkó-Oláh Tímea
         </div>
       </div>
@@ -1179,6 +1287,8 @@
         <div class="details-label">Alkotók</div>
         <div class="details-text">
           Szerző: Markó Róbert<br>
+          Tervező: Boráros Szilárd<br>
+          Zeneszerző: Takács Dániel<br>
           Rendező: Boráros Milada<br><br>
           Szereplők: Horváth Márk, Markó-Valentyik Anna (Junior Príma-díjas)
         </div>
@@ -1222,7 +1332,10 @@
         <div class="details-label">Alkotók</div>
         <div class="details-text">
           Szerző: Lázár Ervin<br>
-          Rendező: Csató Kata<br><br>
+          Bábszínpadra írta: Nagy Orsolya<br>
+          Rendező: Csató Kata<br>
+          Zeneszerző: Ádám Rita és Darvas Benedek<br>
+          Tervező: Mátravölgyi Ákos<br><br>
           Szereplők: Berekméri Réka, Csörögi Gábor, Farkas Dóra, Józsa Anna, Nagy Máté, Nyitrai Hédi, Stoian Antónia
         </div>
       </div>
@@ -1256,7 +1369,11 @@
       <div class="details-section">
         <div class="details-label">Alkotók</div>
         <div class="details-text">
-          Szerző: Kolozsi Angéla<br>
+          Szerző: Kolozsi Angéla (Szegedi Katalin Lenka illetve Palkó című művének felhasználásával)<br>
+          Zeneszerző: Podlovics Laura<br>
+          Bábtervező, bábkészítő: Szegedi Katalin rajzai alapján: Palya Gábor<br>
+          Fénytervező: Szondi György<br>
+          Hangfelvételek: Mészáros Gábor, Nagy Gábor<br>
           Rendező: Kovács Judit<br><br>
           Szereplők: Karádi Borbála, Kovács Judit
         </div>
@@ -1292,6 +1409,11 @@
         <div class="details-label">Alkotók</div>
         <div class="details-text">
           Szerző: Kovács Domokos, L. Nagy Attila<br>
+          Dramaturg: Nagy Orsolya<br>
+          Tervező: Kárpáti Panna<br>
+          Zeneszerző: Vranik Krisztián, Jankó Mátyás<br>
+          Fénytervező: Váradi András, Selmeczi Mercédesz<br>
+          Konzulens: Fejes Kitty<br>
           Rendező: Kovács Domokos<br><br>
           Szereplők: Kovács Domokos, L. Nagy Attila
         </div>
@@ -1326,7 +1448,14 @@
       <div class="details-section">
         <div class="details-label">Alkotók</div>
         <div class="details-text">
-          Írta és rendezte: Varsányi Péter<br><br>
+          Írta és rendezte: Varsányi Péter<br>
+          Látványtervező: Jeli Sára Luca<br>
+          Hang és videó: Labus Gida<br>
+          Dramaturg: Hajós Zsuzsa<br>
+          Rendezőasszisztens: Nikodémusz Hajnalka<br>
+          Készítették: Tóth Andrea, Tóth Eszter, Kiss Attila Etele, Kalácska Gábor, Kisgyörgy Balázs, Tímári Blanka<br>
+          Hang, fény: Bujdosó Zoltán, Patkós Péter<br><br>
+          Hangban közreműködnek: Szegedi Rókusi Általános Iskola énekkara<br><br>
           Szereplők: Balasi Jolán, Presits Tamás, Schneider Jankó, Nikodémusz Hajnalka
         </div>
       </div>
@@ -1355,6 +1484,47 @@
     <div class="card-header"><div class="event-title">💬 Szakmai megbeszélés</div></div>
   </div>
 </div>
+<div class="slot-time">23:00 – 0:30</div>
+  <div class="event-card type-show" id="show-anyad" data-start="2026-06-16T23:00:00+02:00" data-end="2026-06-17T00:30:00+02:00">
+    <div class="card-header clickable">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Kár, hogy anyádat nem hoztuk el<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">Budapest Bábszínház</div>
+        </div>
+        <div class="header-actions">
+          <div class="star-container"><span class="star-btn">☆</span></div>
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Koreográfus: Widder Kristóf<br>
+          Jelmez- és bábtervező: Juhos-Kiss Csenge<br>
+          Bábszínházi adaptáció: Hársing Hilda<br>
+          Dramaturg: Gimesi Dóra<br>
+          Zenei szerkesztő: Deák-Volom Dávid<br>
+          Díszlet- és bábtervező: Fülöpp Réka<br>
+          Fénytervező: Szondi György<br>
+          Rendező: Gardenö Klaudia<br><br>
+          Szereplők: Bartha Bendegúz, Krucsó Rita, L. Nagy Attila, Podlovics Laura, Spiegl Anna, Tatai Zsolt<br>
+          Zenészek: Deák-Volom Dávid, Böröcz Ákos, Curteanu Ion
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály / Web</div>
+        <div class="details-text">18+ | <a href="http://www.budapestbabszinhaz.hu" target="_blank">www.budapestbabszinhaz.hu</a></div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
+      <a class="fb-event-btn" href="https://fb.me/e/4phbbMCOO" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
 
 <!-- CSÜTÖRTÖK – jún. 18. -->
 <div class="day-panel" id="day-5">
@@ -1377,7 +1547,18 @@
       <div class="details-section">
         <div class="details-label">Alkotók</div>
         <div class="details-text">
-          Írta és rendezte: Fodor Orsolya, Varsányi Péter<br><br>
+          Írta és rendezte: Fodor Orsolya, Varsányi Péter<br>
+          Zeneszerző: Szászi Petra, Bartokos Botond<br>
+          Rendezőasszisztens: Szirtes Lujza<br>
+          Látványtervező, kivitelező: Pajor Patrícia<br>
+          Vágó: Farkas Áron<br>
+          Operatőr: Farkas Áron, Sipos Bence<br>
+          Világítástervező, technikus: Lengyel Ákos Papa<br>
+          Produkciós vezető: Mayer Dániel<br>
+          Színházi konzulens: Czirák Ádám<br>
+          Színházi nevelési konzulens: Patonay Anita<br>
+          Gazdasági konzulens: Király Júlia, Simor Máté<br>
+          Dramaturg gyakornok: Bozsaky Boglárka<br><br>
           Szereplők: Fodor Orsolya, Varsányi Péter
         </div>
       </div>
@@ -1411,6 +1592,9 @@
       <div class="details-section">
         <div class="details-label">Alkotók</div>
         <div class="details-text">
+          Arany János műve és népgyűjtések nyomán: Fabók Mariann<br>
+          Bábok: Mészáros Gábor, Plés Péter<br>
+          Zene: Navratil Andrea, Fejér Simon Pál, Keresztes- Nagy Árpád<br>
           Rendező: Fabók Mariann<br><br>
           Szereplők: Bíró Eszter, Daróczi Klarissza, Dávid Péter, Nagy Lázár József
         </div>
@@ -1445,7 +1629,11 @@
       <div class="details-section">
         <div class="details-label">Alkotók</div>
         <div class="details-text">
-          Szerző: Kolozsi Angéla<br>
+          Szerző: Kolozsi Angéla (Szegedi Katalin Lenka illetve Palkó című művének felhasználásával)<br>
+          Zeneszerző: Podlovics Laura<br>
+          Bábtervező, bábkészítő: Szegedi Katalin rajzai alapján: Palya Gábor<br>
+          Fénytervező: Szondi György<br>
+          Hangfelvételek: Mészáros Gábor, Nagy Gábor<br>
           Rendező: Kovács Judit<br><br>
           Szereplők: Karádi Borbála, Kovács Judit
         </div>
@@ -1457,7 +1645,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Ciróka kisterem</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://fb.me/e/9zPdzLzA5" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -1481,6 +1669,11 @@
         <div class="details-label">Alkotók</div>
         <div class="details-text">
           Szerző: Kovács Domokos, L. Nagy Attila<br>
+          Dramaturg: Nagy Orsolya<br>
+          Tervező: Kárpáti Panna<br>
+          Zeneszerző: Vranik Krisztián, Jankó Mátyás<br>
+          Fénytervező: Váradi András, Selmeczi Mercédesz<br>
+          Konzulens: Fejes Kitty<br>
           Rendező: Kovács Domokos<br><br>
           Szereplők: Kovács Domokos, L. Nagy Attila
         </div>
@@ -1492,7 +1685,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Ruszt J. Stúdiószínház</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://fb.me/e/7yrhzpeiV" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -1515,7 +1708,10 @@
       <div class="details-section">
         <div class="details-label">Alkotók</div>
         <div class="details-text">
-          Rendező-színpadi adaptáció: Fábián Péter<br><br>
+          Rendező-színpadi adaptáció: Fábián Péter<br>
+          Tervező: Boráros Szilárd<br>
+          Zeneszerző: Horváth Szabolcs<br>
+          Zenei közreműködő: Kiss Dávid<br><br>
           Szereplők: Kolozsi Angéla, Gyurkovics Zsófia, Varga Bori, Kovács Bálint, Lukács Gábor, Kőmíves Csongor
         </div>
       </div>
@@ -1526,7 +1722,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Kelemen L. Kamaraszínház</span></div>
-      <a class="fb-event-btn" href="#" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://fb.me/e/6QBxzINC1" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -1668,6 +1864,7 @@
     </div>
     
     <iframe src="https://maps.google.com/maps?q=6000%20Kecskem%C3%A9t%20Budai%20utca%2015&t=&z=15&ie=UTF8&iwloc=&output=embed" class="map-iframe" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    <div class="offline-map-msg">Térkép betöltéséhez internetkapcsolat szükséges! 🦖</div>
   </div>
 </div>
 
@@ -1689,7 +1886,7 @@
   &nbsp;·&nbsp; Magyarországi Bábszínházak 17. Találkozója &nbsp;·&nbsp; 
   
   <div class="easter-trigger">
-    <span class="year-text" title="Nincs itt semmi látnivaló.">2026</span>
+    <span class="year-text" title="Nincs itt semmi látnivaló!">2026</span>
     <div class="easter-content">
       <div class="easter-text">A weboldalt elkövette:<br>Harkai György</div>
       <img src="https://ciroka.hu/wp-content/uploads/2025/08/Harkai_Gyorgy_marketing-munkatars-2048x2048.jpg" class="easter-photo" alt="Harkai György" loading="lazy">
