@@ -350,7 +350,9 @@ function updateCheckinUI(venueId) {
             checkinBtn.innerHTML = "📍 Itt vagyok!";
         }
         myStatus.style.display = 'block';
-        myStatus.innerHTML = `Most itt vagy:<br><span class="checkin-status-link checkin-action-modify">${venueNames[venueId]}</span><br><div class="checkin-status-box"><span class="checkin-status-link checkin-action-modify">Módosítod?</span> &nbsp;|&nbsp; <span class="checkin-status-revoke checkin-action-revoke">Visszavonod?</span></div>`;
+        myStatus.innerHTML = `Most itt vagy:<br><span class="checkin-status-link checkin-action-modify">${venueNames[venueId]}</span><br>
+        <div class="checkin-status-box"><span class="checkin-status-link checkin-action-modify">Módosítod?</span> &nbsp;|&nbsp; <span class="checkin-status-revoke checkin-action-revoke">Visszavonod?</span></div>
+        <div style="margin-top:12px;"><span class="jump-to-map" style="background:rgba(255,255,255,0.15); color:#fff; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; padding:6px 12px; border-radius:12px; cursor:pointer;">👀 Kik vannak még itt?</span></div>`;
     } else {
         if(checkinBtn) {
             checkinBtn.classList.remove('active');
@@ -360,7 +362,6 @@ function updateCheckinUI(venueId) {
         myStatus.innerHTML = "";
     }
 }
-
 function restoreCheckinUI() {
     const savedVenue = localStorage.getItem('myCheckinVenue');
     const savedId = localStorage.getItem('myCheckinId');
@@ -830,10 +831,13 @@ document.addEventListener("DOMContentLoaded", () => {
         btn.addEventListener('click', () => showDay(index, btn));
     });
 
-    // Kártya lenyitás
+   // Kártya lenyitás (Javított, könnyen kattintható verzió)
     document.querySelectorAll('.card-header').forEach(header => {
         header.addEventListener('click', function(e) {
-            if(!e.target.closest('.header-actions') && !e.target.closest('.event-title')) { toggleCard(this); }
+            // CSAK akkor nem nyílik le, ha a csillagra vagy a piros "!" ikonra böktek
+            if(!e.target.closest('.star-btn') && !e.target.closest('.mini-pulse-alert')) { 
+                toggleCard(this); 
+            }
         });
     });
 
@@ -862,10 +866,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Delegált esemény a módosítás/visszavonás gombokra
+    // Delegált esemény a módosítás/visszavonás/térképhez ugrás gombokra
     document.getElementById('myCheckinStatus').addEventListener('click', (e) => {
         if(e.target.matches('.checkin-action-modify')) { openCheckin(); } 
         else if (e.target.matches('.checkin-action-revoke')) { revokeCheckin(e); }
+        else if (e.target.closest('.jump-to-map')) { document.getElementById('infoBoxBottom').scrollIntoView({behavior: 'smooth'}); }
     });
 
     // Kacsintós PDF letöltés
@@ -936,4 +941,23 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     const sponsorBox = document.getElementById('sponsorsBox');
     if (sponsorBox) observer.observe(sponsorBox);
+});
+
+document.getElementById('btnShare').addEventListener('click', async () => {
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: '17. Bábszínházi Találkozó',
+                text: 'Kecskemét, 2026. június 13-18. Nézd meg a programot és gyere te is!',
+                url: window.location.href
+            });
+            trackEvent('app_shared'); // Ha akarod mérni GA4-ben
+        } catch (err) {
+            console.log('Megosztás megszakítva', err);
+        }
+    } else {
+        // Ha asztali gépen van, ahol nincs natív megosztás
+        navigator.clipboard.writeText(window.location.href);
+        showToast('Link másolva a vágólapra!');
+    }
 });

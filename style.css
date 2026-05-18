@@ -142,7 +142,7 @@ h1 em { color: var(--gold-light); font-style: italic; }
 .star-btn { font-size: 24px; cursor: pointer; color: var(--border); transition: .2s; user-select: none; line-height: 1; display: flex; align-items: center; justify-content: center;}
 .star-btn.active { color: var(--gold-light); }
 .star-btn:hover { transform: scale(1.15); }
-.expand-icon { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; transition: transform .25s; color: var(--teal); pointer-events: none;}
+.expand-icon { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; transition: transform .25s; color: var(--teal);}
 .event-card.open .expand-icon { background: var(--teal); color: #fff; transform: rotate(180deg); border-color: var(--teal); }
 
 .mini-pulse-alert { display: none; width: 22px; height: 22px; background: var(--red); color: white; border-radius: 50%; font-weight: bold; font-size: 14px; text-align: center; line-height: 22px; animation: pulse 1.5s infinite; cursor: pointer; z-index: 10;}
@@ -187,7 +187,7 @@ h1 em { color: var(--gold-light); font-style: italic; }
 .gastro-venue-row { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; }
 .gastro-venue-left { display: flex; align-items: center; gap: 12px; }
 .text-red-bold { color: var(--red); font-weight: 700; }
-.gastro-open-hours { margin-top: 8px; font-size: 14px; color: var(--text); background: var(--surface); padding: 8px; border-radius: 4px; font-weight: 600; }
+.gastro-open-hours { margin-top: 8px; font-size: 12px; color: var(--text); background: var(--surface); padding: 8px; border-radius: 4px; font-weight: 600; }
 .gastro-open-title { display: block; margin-bottom: 4px; color: var(--teal-dark); font-size: 11px; }
 .gastro-logo { width: 45px; height: 45px; object-fit: contain; background: var(--card); border-radius: 4px; padding: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; flex-shrink: 0; }
 .gastro-logo:hover, .gastro-logo.active-touch { transform: scale(1.5) rotate(-5deg); z-index: 10; position: relative; }
