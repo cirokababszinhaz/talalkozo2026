@@ -107,7 +107,6 @@ h1 em { color: var(--gold-light); font-style: italic; }
 .tab-btn .day-date { display: block; font-weight: 500; font-size: 10px; letter-spacing: 1px; margin-top: 2px; }
 .tab-btn.active { color: var(--teal); border-bottom-color: var(--gold); }
 .tab-btn.active .day-date { color: var(--teal); }
-
 .scroll-hint { display: none; text-align: center; font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; padding: 4px 0 8px; font-weight: 700; background: var(--surface); border-bottom: 2px solid var(--border); }
 @media (max-width: 650px) { .scroll-hint { display: block; } .tabs-wrap { border-bottom: none; } }
 
@@ -172,7 +171,7 @@ h1 em { color: var(--gold-light); font-style: italic; }
 .podcast-promo a { color: var(--teal); text-decoration: none; border-bottom: 1px solid var(--teal); padding-bottom:1px;}
 .section-divider { height: 2px; background: var(--border); margin: 32px 0 10px; }
 
-/* UTILITY CLASSES FOR JS INJECTED CARDS */
+/* GASTRO CARDS */
 .secret-card-container { display: none; margin-bottom: 10px; }
 .secret-bufe-card { border-left-color: var(--gold-light); }
 .secret-gastro-card { border-left-color: var(--orange); }
@@ -325,4 +324,3 @@ footer a { color: var(--gold-light); text-decoration: none; }
 .easter-trigger-flex { padding: 0; display: flex; align-items: center; }
 .music-btn { font-size: 11px; padding: 6px 12px; }
 .music-btn span { font-size: 16px; margin-right: 4px; vertical-align: middle; }
-.music-icon { font-size: 14px; margin-right: 4px; }

@@ -7,7 +7,7 @@ import { getStorage, ref as sRef, uploadString, getDownloadURL } from "https://w
 // ==========================================
 const FESTIVAL_CONFIG = {
     year: 2026,
-    month: 5, // Figyelem! A JS-ben a hónapok 0-tól indulnak (5 = Június)
+    month: 5, // A JS-ben a hónapok 0-tól indulnak (5 = Június)
     startDay: 13,
     endDay: 18,
     postFestivalDate: new Date('2026-06-19T00:00:00+02:00').getTime(),
@@ -59,7 +59,7 @@ function showToast(msg) {
     setTimeout(() => { toast.classList.remove('show'); }, 3000);
 }
 
-// DEBOUNCE FÜGGVÉNY (KERESŐHÖZ)
+// DEBOUNCE FÜGGVÉNY
 function debounce(func, wait) {
     let timeout;
     return function(...args) {
@@ -77,18 +77,19 @@ onValue(ref(db, "alertsList"), (snap) => {
     const tabsWrap = document.getElementById("tabsWrap");
 
     if (!snap.exists()) {
-        topBar.style.display = "none";
-        tabsWrap.style.top = "0px";
+        if(topBar) topBar.style.display = "none";
+        if(tabsWrap) tabsWrap.style.top = "0px";
         globalAlerts = [];
         return;
     }
     const data = snap.val();
     globalAlerts = Object.keys(data).map(key => ({ id: key, ...data[key] })).sort((a,b) => b.timeRaw - a.timeRaw);
     
-    topBar.textContent = `🔔 Értesítések (${globalAlerts.length})`;
-    topBar.style.display = "block";
-
-    setTimeout(() => { tabsWrap.style.top = topBar.offsetHeight + "px"; }, 50);
+    if(topBar) {
+        topBar.textContent = `🔔 Értesítések (${globalAlerts.length})`;
+        topBar.style.display = "block";
+        setTimeout(() => { if(tabsWrap) tabsWrap.style.top = topBar.offsetHeight + "px"; }, 50);
+    }
 
     globalAlerts.forEach(alert => {
         if (alert.targetId && alert.targetId !== "all") {
@@ -120,11 +121,16 @@ function getShowTitleHTML(targetId) {
 }
 
 function showPopup(alert) {
-    document.getElementById("modalTitle").textContent = "Új Értesítés!";
+    const modalTitle = document.getElementById("modalTitle");
+    const modalBody = document.getElementById("modalBody");
+    const alertsModal = document.getElementById("alertsModal");
+    if(!modalTitle || !modalBody || !alertsModal) return;
+
+    modalTitle.textContent = "Új Értesítés!";
     const showInfo = getShowTitleHTML(alert.targetId);
     let imgHtml = alert.photoUrl ? `<img src="${alert.photoUrl}" style="width:100%; border-radius:4px; margin-bottom:10px;">` : '';
 
-    document.getElementById("modalBody").innerHTML = `
+    modalBody.innerHTML = `
       <div class="alert-card">
         ${showInfo}
         ${imgHtml}
@@ -132,16 +138,21 @@ function showPopup(alert) {
         <div class="alert-msg">${escapeHTML(alert.message)}</div>
       </div>
     `;
-    document.getElementById("alertsModal").classList.add("visible");
+    alertsModal.classList.add("visible");
 }
 
 function openAlertsModal(targetId = null) {
+    const modalTitle = document.getElementById("modalTitle");
+    const modalBody = document.getElementById("modalBody");
+    const alertsModal = document.getElementById("alertsModal");
+    if(!modalTitle || !modalBody || !alertsModal) return;
+
     let filteredAlerts = globalAlerts;
     if (targetId) {
         filteredAlerts = globalAlerts.filter(a => a.targetId === targetId);
-        document.getElementById("modalTitle").textContent = "Értesítés a programhoz";
+        modalTitle.textContent = "Értesítés a programhoz";
     } else {
-        document.getElementById("modalTitle").textContent = "Összes Értesítés";
+        modalTitle.textContent = "Összes Értesítés";
     }
     let html = "";
     if(filteredAlerts.length === 0) {
@@ -153,12 +164,13 @@ function openAlertsModal(targetId = null) {
             html += `<div class="alert-card">${showInfo}${imgHtml}<div class="alert-time">${alert.timestamp}</div><div class="alert-msg">${escapeHTML(alert.message)}</div></div>`;
         });
     }
-    document.getElementById("modalBody").innerHTML = html;
-    document.getElementById("alertsModal").classList.add("visible");
+    modalBody.innerHTML = html;
+    alertsModal.classList.add("visible");
 }
 
 function closeAlertsModal() {
-    document.getElementById("alertsModal").classList.remove("visible");
+    const alertsModal = document.getElementById("alertsModal");
+    if(alertsModal) alertsModal.classList.remove("visible");
 }
 
 // ==========================================
@@ -211,7 +223,8 @@ onValue(gbRef, (snap) => {
 });
 
 function openGuestbook() {
-    document.getElementById('guestbookModal').classList.add('visible');
+    const guestbookModal = document.getElementById('guestbookModal');
+    if(guestbookModal) guestbookModal.classList.add('visible');
 }
 
 function handlePhotoSelect(event) {
@@ -241,10 +254,13 @@ function handlePhotoSelect(event) {
             resizedImageDataUrl = canvas.toDataURL('image/jpeg', 0.7);
             
             const btn = document.getElementById('gbPhotoBtn');
-            document.getElementById('gbPhotoPreview').style.display = 'block';
-            btn.style.borderColor = 'var(--green)';
-            btn.style.color = 'var(--green)';
-            btn.innerText = '✓ FOTÓ CSATOLVA';
+            const preview = document.getElementById('gbPhotoPreview');
+            if(btn && preview) {
+                preview.style.display = 'block';
+                btn.style.borderColor = 'var(--green)';
+                btn.style.color = 'var(--green)';
+                btn.innerText = '✓ FOTÓ CSATOLVA';
+            }
         }
         img.onerror = function() { showToast("Nem sikerült feldolgozni a képet. Próbálj meg egy másikat!"); }
     }
@@ -271,13 +287,19 @@ async function submitGuestbook() {
         return;
     }
 
-    const name = document.getElementById('gbName').value.trim();
-    const text = document.getElementById('gbText').value.trim();
+    const nameEl = document.getElementById('gbName');
+    const textEl = document.getElementById('gbText');
+    if(!nameEl || !textEl) return;
+
+    const name = nameEl.value.trim();
+    const text = textEl.value.trim();
     if(!name || !text) { showToast("Kérjük, add meg a neved és az üzenetet is!"); return; }
 
     const submitBtn = document.getElementById('gbSubmitBtn');
-    submitBtn.innerText = "Feltöltés folyamatban...";
-    submitBtn.disabled = true;
+    if(submitBtn) {
+        submitBtn.innerText = "Feltöltés folyamatban...";
+        submitBtn.disabled = true;
+    }
 
     const dateStr = new Date().toLocaleDateString('hu-HU', {month:'short', day:'numeric'}) + " " + new Date().getHours().toString().padStart(2,'0') + ":" + new Date().getMinutes().toString().padStart(2,'0');
 
@@ -305,13 +327,20 @@ async function submitGuestbook() {
 
         localStorage.setItem('last_gb_post_time', Date.now());
 
-        document.getElementById('gbText').value = "";
-        document.getElementById('gbPhotoInput').value = "";
-        document.getElementById('gbPhotoPreview').style.display = 'none';
+        nameEl.value = "";
+        textEl.value = "";
+        const photoInput = document.getElementById('gbPhotoInput');
+        if(photoInput) photoInput.value = "";
+        
+        const preview = document.getElementById('gbPhotoPreview');
+        if(preview) preview.style.display = 'none';
+        
         const btn = document.getElementById('gbPhotoBtn');
-        btn.style.borderColor = 'var(--teal)';
-        btn.style.color = 'var(--teal)';
-        btn.innerText = '📸 FOTÓ KIVÁLASZTÁSA (Opcionális)';
+        if(btn) {
+            btn.style.borderColor = 'var(--teal)';
+            btn.style.color = 'var(--teal)';
+            btn.innerText = '📸 FOTÓ KIVÁLASZTÁSA (Opcionális)';
+        }
         resizedImageDataUrl = null;
         
         trackEvent('guestbook_upload'); 
@@ -322,8 +351,10 @@ async function submitGuestbook() {
         console.error("Adatbázis hiba:", err);
         showToast("Nem sikerült elküldeni! Hiba: " + err.code);
     } finally {
-        submitBtn.innerText = "Fellövöm a falra!";
-        submitBtn.disabled = false;
+        if(submitBtn) {
+            submitBtn.innerText = "Fellövöm a falra!";
+            submitBtn.disabled = false;
+        }
     }
 }
 
@@ -350,17 +381,21 @@ function updateCheckinUI(venueId) {
             checkinBtn.classList.add('active');
             checkinBtn.innerHTML = "📍 Itt vagyok!";
         }
-        myStatus.style.display = 'block';
-        myStatus.innerHTML = `Most itt vagy:<br><span class="checkin-status-link checkin-action-modify">${venueNames[venueId]}</span><br>
-        <div class="checkin-status-box"><span class="checkin-status-link checkin-action-modify">Módosítod?</span> &nbsp;|&nbsp; <span class="checkin-status-revoke checkin-action-revoke">Visszavonod?</span></div>
-        <div style="margin-top:12px;"><span class="jump-to-map" style="background:rgba(255,255,255,0.15); color:#fff; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; padding:6px 12px; border-radius:12px; cursor:pointer;">👀 Kik vannak még itt?</span></div>`;
+        if(myStatus) {
+            myStatus.style.display = 'block';
+            myStatus.innerHTML = `Most itt vagy:<br><span class="checkin-status-link checkin-action-modify">${venueNames[venueId]}</span><br>
+            <div class="checkin-status-box"><span class="checkin-status-link checkin-action-modify">Módosítod?</span> &nbsp;|&nbsp; <span class="checkin-status-revoke checkin-action-revoke">Visszavonod?</span></div>
+            <div style="margin-top:12px;"><span class="jump-to-map" style="background:rgba(255,255,255,0.15); color:#fff; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; padding:6px 12px; border-radius:12px; cursor:pointer;">👀 Kik vannak még itt?</span></div>`;
+        }
     } else {
         if(checkinBtn) {
             checkinBtn.classList.remove('active');
             checkinBtn.innerHTML = "📍 Itt vagyok!";
         }
-        myStatus.style.display = 'none';
-        myStatus.innerHTML = "";
+        if(myStatus) {
+            myStatus.style.display = 'none';
+            myStatus.innerHTML = "";
+        }
     }
 }
 
@@ -373,8 +408,12 @@ function restoreCheckinUI() {
     if (savedVenue && savedId) {
         const now = Date.now();
         if (!savedTime || (now - parseInt(savedTime) < 2 * 60 * 60 * 1000)) { 
-            if(savedName) document.getElementById('checkinNameInput').value = savedName;
-            document.getElementById('ciVenue').value = savedVenue;
+            const nameInput = document.getElementById('checkinNameInput');
+            if(savedName && nameInput) nameInput.value = savedName;
+            
+            const venueInput = document.getElementById('ciVenue');
+            if(venueInput) venueInput.value = savedVenue;
+            
             updateCheckinUI(savedVenue);
         } else {
             localStorage.removeItem('myCheckinName');
@@ -387,21 +426,26 @@ function restoreCheckinUI() {
 }
 
 function openCheckin() { 
-    document.getElementById('checkinModal').classList.add('visible'); 
+    const modal = document.getElementById('checkinModal');
+    if(modal) modal.classList.add('visible'); 
 }
 
 function submitCheckin() {
-    const nameInput = document.getElementById('checkinNameInput').value.trim();
+    const nameEl = document.getElementById('checkinNameInput');
+    const venueEl = document.getElementById('ciVenue');
+    if(!nameEl || !venueEl) return;
+
+    const nameInput = nameEl.value.trim();
     if(nameInput.length < 2) { showToast('Légyszi adj meg egy nevet!'); return; }
     
-    const venueId = document.getElementById('ciVenue').value;
+    const venueId = venueEl.value;
 
     const oldVenue = localStorage.getItem('myCheckinVenue');
     const oldId = localStorage.getItem('myCheckinId');
     if (oldVenue && oldId) { remove(ref(db, `checkins/${oldVenue}/${oldId}`)); }
     
     const submitBtn = document.getElementById('ciSubmitBtn');
-    submitBtn.innerText = "Töltés...";
+    if(submitBtn) submitBtn.innerText = "Töltés...";
     
     const newRef = push(ref(db, 'checkins/' + venueId));
     
@@ -412,15 +456,17 @@ function submitCheckin() {
             localStorage.setItem('myCheckinId', newRef.key);
             localStorage.setItem('myCheckinTime', Date.now().toString()); 
 
-            document.getElementById('checkinModal').classList.remove('visible');
-            submitBtn.innerText = "Fellövöm a térképre!";
+            const modal = document.getElementById('checkinModal');
+            if(modal) modal.classList.remove('visible');
+            
+            if(submitBtn) submitBtn.innerText = "Fellövöm a térképre!";
             
             trackEvent('check_in_used', { venue: venueId }); 
             showToast("Sikeres becsekkolás!");
             updateCheckinUI(venueId);
         })
         .catch((err) => {
-            submitBtn.innerText = "Fellövöm a térképre!";
+            if(submitBtn) submitBtn.innerText = "Fellövöm a térképre!";
             showToast("Hiba a mentésnél: " + err.message);
         });
 }
@@ -437,7 +483,9 @@ function revokeCheckin(e) {
             localStorage.removeItem('myCheckinId');
             localStorage.removeItem('myCheckinTime');
             
-            document.getElementById('checkinNameInput').value = ""; 
+            const nameEl = document.getElementById('checkinNameInput');
+            if(nameEl) nameEl.value = ""; 
+            
             showToast("Becsekkolás visszavonva!");
             updateCheckinUI(null);
         }).catch((err) => showToast("Nem sikerült törölni: " + err.message));
@@ -489,30 +537,32 @@ onValue(checkinRef, (snap) => {
 
 function initPostFestivalMode() {
     if (Date.now() > FESTIVAL_CONFIG.postFestivalDate) {
-        document.getElementById('heroEyebrow').innerText = "Magyarországi Bábszínházak 17. Találkozója";
-        document.getElementById('heroTitle').innerHTML = "Köszönjük, hogy<br><em>velünk voltatok!</em>";
+        const ey = document.getElementById('heroEyebrow');
+        if(ey) ey.innerText = "Magyarországi Bábszínházak 17. Találkozója";
         
-        document.getElementById('searchWrap').style.display = 'none';
-        document.getElementById('legendBar').style.display = 'none';
-        document.getElementById('tabsWrap').style.display = 'none';
-        document.getElementById('scrollHint').style.display = 'none';
-        document.getElementById('mainContent').style.display = 'none';
-        document.getElementById('topAlertBar').style.display = 'none';
-        document.getElementById('heroButtons').style.display = 'none';
-        document.getElementById('infoBoxBottom').style.display = 'none';
-        document.getElementById('postFestivalView').style.display = 'block';
+        const ht = document.getElementById('heroTitle');
+        if(ht) ht.innerHTML = "Köszönjük, hogy<br><em>velünk voltatok!</em>";
+        
+        ['searchWrap', 'legendBar', 'tabsWrap', 'scrollHint', 'mainContent', 'topAlertBar', 'heroButtons', 'infoBoxBottom'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.style.display = 'none';
+        });
+        
+        const pf = document.getElementById('postFestivalView');
+        if(pf) pf.style.display = 'block';
     } else {
         const budapestTime = new Date(new Date().toLocaleString("en-US", {timeZone: FESTIVAL_CONFIG.timeZone}));
         if (budapestTime.getFullYear() === FESTIVAL_CONFIG.year && budapestTime.getMonth() === FESTIVAL_CONFIG.month && budapestTime.getDate() >= FESTIVAL_CONFIG.startDay && budapestTime.getDate() <= FESTIVAL_CONFIG.endDay) {
             const dIndex = budapestTime.getDate() - FESTIVAL_CONFIG.startDay;
-            showDay(dIndex, document.querySelectorAll('.tab-btn')[dIndex]);
+            const btns = document.querySelectorAll('.tab-btn');
+            if(btns[dIndex]) showDay(dIndex, btns[dIndex]);
         } else {
-            showDay(0, document.querySelectorAll('.tab-btn')[0]);
+            const btns = document.querySelectorAll('.tab-btn');
+            if(btns[0]) showDay(0, btns[0]);
         }
     }
 }
 
-// Bombabiztos "MOST ZAJLIK" ellenőrző
 function checkLiveEvents() {
     const now = new Date(new Date().toLocaleString("en-US", {timeZone: FESTIVAL_CONFIG.timeZone}));
     if (now.getFullYear() !== FESTIVAL_CONFIG.year || now.getMonth() !== FESTIVAL_CONFIG.month) return;
@@ -531,10 +581,10 @@ function checkLiveEvents() {
         }
     });
 
-    if (document.querySelector('.day-panel.active .is-live')) {
-        document.getElementById('jumpBtn').classList.add('show');
-    } else {
-        document.getElementById('jumpBtn').classList.remove('show');
+    const jumpBtn = document.getElementById('jumpBtn');
+    if (jumpBtn) {
+        if (document.querySelector('.day-panel.active .is-live')) jumpBtn.classList.add('show');
+        else jumpBtn.classList.remove('show');
     }
 }
 
@@ -548,7 +598,10 @@ function scrollToCurrent() {
 }
 
 function toggleCard(el) { 
-    el.closest('.event-card').classList.toggle('open'); 
+    if(el && el.closest) {
+        const card = el.closest('.event-card');
+        if(card) card.classList.toggle('open'); 
+    }
 }
 
 function toggleGastroCard() {
@@ -556,131 +609,98 @@ function toggleGastroCard() {
     const btn = document.getElementById('btnHolEgyek');
     const tabsWrap = document.getElementById('tabsWrap');
     const scrollHint = document.getElementById('scrollHint');
+    const searchInput = document.getElementById('searchInput');
 
     if (isGastroMode) {
-        btn.classList.add('active');
-        document.getElementById('searchInput').value = "";
-        tabsWrap.style.display = 'none';
-        scrollHint.style.display = 'none';
+        if(btn) btn.classList.add('active');
+        if(searchInput) searchInput.value = "";
+        if(tabsWrap) tabsWrap.style.display = 'none';
+        if(scrollHint) scrollHint.style.display = 'none';
+        
         document.querySelectorAll('.day-panel').forEach(p => p.style.display = 'none');
-        document.getElementById('noResultsMsg').style.display = 'none';
-        document.getElementById('secretBufeCard').style.display = 'none';
-        document.getElementById('secretGastroCard').style.display = 'block';
+        
+        const noRes = document.getElementById('noResultsMsg');
+        if(noRes) noRes.style.display = 'none';
+        
+        const secBufe = document.getElementById('secretBufeCard');
+        if(secBufe) secBufe.style.display = 'none';
+        
+        const secGastro = document.getElementById('secretGastroCard');
+        if(secGastro) secGastro.style.display = 'block';
         
         currentTypeFilter = null;
         document.querySelectorAll('.filter-btn').forEach(el => el.classList.remove('active'));
         
         trackEvent('restaurants_viewed');
     } else {
-        btn.classList.remove('active');
-        document.getElementById('secretGastroCard').style.display = 'none';
+        if(btn) btn.classList.remove('active');
+        const secGastro = document.getElementById('secretGastroCard');
+        if(secGastro) secGastro.style.display = 'none';
         doSearch();
     }
-    // Finom görgetés a keresősávhoz (hogy mobilon rögtön lássa a kártyát)
-    document.getElementById('searchWrap').scrollIntoView({ behavior: 'smooth' });
+    
+    // Gördítünk a keresősávhoz
+    const wrap = document.getElementById('searchWrap');
+    if(wrap) wrap.scrollIntoView({ behavior: 'smooth' });
 }
 
 function generateQuote() {
     const quotes = [
+        "A báb nem utánozza az életet, hanem újat teremt.",
+        "Ami a bábbal történik, az varázslat.",
+        "Minden báb lelke a mozgatója kezében van.",
         "A színház ott kezdődik, ahol a mindennapok véget érnek.",
-        "A mese a gyerekek egyetlen komoly dolga.",
-„A báb hallgat, de mindent elmond. Te meg próbálj nem belebeszélni!”,
- „A paraván mögött mindenki egyenlő. Kivéve aki tudja, hol a hosszabbító.”,
-„Ha elszakad a zsinór, az még nem tragédia. Ha elszáll a hangosítás is, az már költészet.”,
- „Egy Találkozó nem attól jó, hogy mit látsz, hanem hogy kivel beszéled ki utána.”,
- „A legjobb jelenetek néha a színpadon kívül történnek. Például a harmadik fröccs után.”,
-„A báb súlya nem kilóban mérhető. Hanem a vastapsokban.”,
-„Ha minden működik, az gyanús. Valami biztos kimaradt.”,
-„A közönség nem lát mindent. Szerencsére!”,
- „A bábok nem fáradnak el. De te igen, szóval igyál még egy kávét.”,
-„Egy jó Találkozón nem csak előadásokat gyűjtesz, hanem történeteket is.”,
- „A báb akkor él, amikor elfelejted, hogy te mozgatod.”,
- „Minden előadás egy kicsit más. Akkor is, ha ugyanaz.”,
-„A kötetlen beszélgetés a Találkozó szíve. A színpad csak a dobbanás.”,
- „A fröccs dramaturgiája egyszerű: első felvonás – beszélgetés, második – őszinteség.”,
-„A kávézóban dőlnek el a szakmai viták. És néha a székek is.”,
-„A legjobb kritikák nem íródnak le. Csak elhangzanak két korty között.”,
- „A legőszintébb beszélgetések nem a szakmai programon, hanem utána kezdődnek.”,
-„A kávézó nem szünet. Az a második felvonás.”,
- „Aki az esti beszélgetéseket kihagyja, a történet felét sem érti.”,
- „Egy Találkozó addig tart, amíg van mit inni és kivel megbeszélni.”,
- „A rendezői koncepció addig tiszta, amíg meg nem érkezik a díszlet.”,
-„Nem az a kérdés, hogy működik-e. Hanem hogy elhisszük-e, hogy működik.”,
-„Ha valamit háromszor kell megmagyarázni, az már biztosan szándékos.”,
-„A próbán még keresed a megoldást. A Találkozón már magyarázod.”,
-„Ez nem hiba, hanem stiláris döntés. Csak még nem döntöttük el.”,
-„A dramaturg akkor nyugodt, ha mindenki más ideges.”,
-„A minimalizmus ott kezdődik, ahol elfogyott a költségvetés.”,
-„Ha nem érted, az valószínűleg mély.”,
-„A báb akkor működik jól, ha nem esik szét. Minden más már esztétika.”,
-„A színész mindent megold. Ha nem, akkor azt is megoldja.”,
-„A technika mindig akkor romlik el, amikor végre működne.”,
-„Ez egy tudatos csend. Csak kicsit hosszabb lett.”,
- „Ha improvizáció, akkor szabad. Ha nem működik, akkor kísérlet.”,
- „Ezt majd a fény megoldja.”Spoiler: „A fény nem oldja meg.”,
-„A próbafolyamat vége: amikor már nincs több idő új ötletekre.”,
- „A kompromisszum az a hely, ahol mindenki egy kicsit elégedetlen.”,
-„Ha mindenki érti, akkor valamit biztosan túlegyszerűsítettünk.”,
-„A produkció kész van. Csak még dolgozunk rajta.”,
-„A bemutató után mindenki fáradt. Kivéve azt, akinek még bontania kell.”,
-„A Találkozó harmadik napján már mindenki tegez mindenkit. Néha saját magát is.”,
-„Az előadás hossza relatív. A pakolásé nem.”,
-„A legjobb beszélgetés ott kezdődik, ahol elfogyott a hivatalos program.”,
-„Minden Találkozón van egy ember, aki tudja, hol van a hosszabbító. Ő a valódi főszereplő.”,
-„A kávézó-záróra után születnek a legnagyobb esztétikai felismerések.”,
-„A technikai rider egy kívánságlista. A valóság pedig performansz.”,
-„A negyedik kávé már nem élénkít. Az egy segélykiáltás.”,
-„A díszlet addig könnyű, amíg fel nem kell vinni a harmadikra lift nélkül.”,
-„A Találkozó-barátságok intenzitása vetekszik a turnébusz légkondijának kiszámíthatatlanságával.”,
-„Az igazi szakmai elismerés: amikor valaki kölcsönad egy gaffer szalagot.”,
-„Mindenki kísérletezik. Van, aki nyilvánosan.”,
- „A legnagyobb hazugság a színházban: ‘öt perc és kész vagyunk.’”,
-„A Találkozó végére minden telefontöltő közkinccsé válik.”,
-„A bábos szakma fele művészet, fele logisztika.”,
-„Az előadás akkor igazán kortárs, ha a technikus sem tudja pontosan, mi történik.”,
-„Az éjszakai szakmázás reggelre rendszerint filozófiává nemesedik.”,
- „A színház varázslat. A Találkozó túlélőtúra.”,
-„A legnagyobb szakmai bizalom: amikor valaki rád bízza a saját bábját.”,
-„Minden Találkozó végén elhangzik: ‘legközelebb kevesebbet vállalunk.’”,
-„A művészet örök. A catering viszont elfogy.”,
-„Az alternatív megoldás általában azt jelenti, hogy eltört valami.”,
+        "A lécnek nincs saját akarata, de a bábos lelket lehel belé.",
+        "A mese a gyermek egyetlen komoly dolga."
     ];
     const q = quotes[Math.floor(Math.random() * quotes.length)];
-    document.getElementById('quoteText').innerText = q;
-    document.getElementById('quoteModal').classList.add('visible');
+    const qText = document.getElementById('quoteText');
+    if(qText) qText.innerText = q;
+    
+    const modal = document.getElementById('quoteModal');
+    if(modal) modal.classList.add('visible');
 }
 
 function toggleFavoritesView() {
     isFavoritesMode = !isFavoritesMode;
     const btn = document.getElementById('favFilterBtn');
-    if (isFavoritesMode) { btn.classList.add('active'); btn.innerHTML = '★ Csak a kedvenceim'; } 
-    else { btn.classList.remove('active'); btn.innerHTML = '★ Kedvenceim'; }
+    if(btn) {
+        if (isFavoritesMode) { btn.classList.add('active'); btn.innerHTML = '★ Csak a kedvenceim'; } 
+        else { btn.classList.remove('active'); btn.innerHTML = '★ Kedvenceim'; }
+    }
     doSearch();
-    // Finom görgetés a keresősávhoz
-    document.getElementById('searchWrap').scrollIntoView({ behavior: 'smooth' });
+    const wrap = document.getElementById('searchWrap');
+    if(wrap) wrap.scrollIntoView({ behavior: 'smooth' });
 }
 
 function toggleTypeFilter(type) {
     if (isGastroMode) {
         isGastroMode = false;
-        document.getElementById('btnHolEgyek').classList.remove('active');
-        document.getElementById('secretGastroCard').style.display = 'none';
+        const b = document.getElementById('btnHolEgyek');
+        if(b) b.classList.remove('active');
+        const sg = document.getElementById('secretGastroCard');
+        if(sg) sg.style.display = 'none';
     }
 
     if (currentTypeFilter === type) { currentTypeFilter = null; } 
     else { currentTypeFilter = type; }
 
     document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-    if (currentTypeFilter) { document.querySelector(`.filter-btn[data-filter="${currentTypeFilter}"]`).classList.add('active'); }
+    if (currentTypeFilter) { 
+        const targetBtn = document.querySelector(`.filter-btn[data-filter="${currentTypeFilter}"]`);
+        if(targetBtn) targetBtn.classList.add('active'); 
+    }
 
     doSearch();
-    // Finom görgetés a keresősávhoz
-    document.getElementById('searchWrap').scrollIntoView({ behavior: 'smooth' });
+    const wrap = document.getElementById('searchWrap');
+    if(wrap) wrap.scrollIntoView({ behavior: 'smooth' });
 }
 
 function filterVenue(badgeElement, event) {
     if(event) event.stopPropagation();
     const input = document.getElementById('searchInput');
+    if(!input || !badgeElement) return;
+    
     const venueName = badgeElement.innerText.trim();
     if(input.value === venueName) { input.value = ""; } 
     else { input.value = venueName; }
@@ -690,21 +710,34 @@ function filterVenue(badgeElement, event) {
 function showDay(index, btn) {
     document.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('day-' + index).classList.add('active');
+    
+    const targetDay = document.getElementById('day-' + index);
+    if(targetDay) targetDay.classList.add('active');
+    
     if(btn) btn.classList.add('active');
     activeTabBeforeSearch = index;
     
-    document.getElementById('searchInput').value = "";
+    const sInput = document.getElementById('searchInput');
+    if(sInput) sInput.value = "";
+    
     isFavoritesMode = false;
     currentTypeFilter = null;
-    document.getElementById('favFilterBtn').classList.remove('active');
-    document.getElementById('favFilterBtn').innerHTML = '★ Kedvenceim';
+    
+    const fBtn = document.getElementById('favFilterBtn');
+    if(fBtn) {
+        fBtn.classList.remove('active');
+        fBtn.innerHTML = '★ Kedvenceim';
+    }
+    
     document.querySelectorAll('.filter-btn').forEach(el => el.classList.remove('active'));
     
     if (isGastroMode) {
         isGastroMode = false;
-        document.getElementById('btnHolEgyek').classList.remove('active');
-        document.getElementById('secretGastroCard').style.display = 'none';
+        const bHol = document.getElementById('btnHolEgyek');
+        if(bHol) bHol.classList.remove('active');
+        
+        const sGast = document.getElementById('secretGastroCard');
+        if(sGast) sGast.style.display = 'none';
     }
     
     doSearch();
@@ -712,7 +745,10 @@ function showDay(index, btn) {
 }
 
 function doSearch() {
-    let queryRaw = document.getElementById('searchInput').value.toLowerCase().trim();
+    const searchInput = document.getElementById('searchInput');
+    if(!searchInput) return;
+    
+    let queryRaw = searchInput.value.toLowerCase().trim();
     const query = queryRaw.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); 
     
     const dayPanels = document.querySelectorAll('.day-panel');
@@ -721,11 +757,11 @@ function doSearch() {
 
     if(query === "laszlo") {
         const vitez = document.getElementById('vitezLaszlo');
-        vitez.classList.add('show');
+        if(vitez) vitez.classList.add('show');
         trackEvent('easter_egg_found', { type: 'vitez_laszlo' });
         setTimeout(() => { 
-            vitez.classList.remove('show'); 
-            document.getElementById('searchInput').value = ""; 
+            if(vitez) vitez.classList.remove('show'); 
+            searchInput.value = ""; 
             doSearch();
         }, 5000);
         return;
@@ -737,57 +773,78 @@ function doSearch() {
         trackEvent('easter_egg_found', { type: 'kritika' });
         setTimeout(() => { 
             document.body.style.transform = "none"; 
-            document.getElementById('searchInput').value = ""; 
+            searchInput.value = ""; 
             doSearch();
         }, 5000); 
         return;
     }
 
     // IDŐJÁRÁS EASTER EGG
-    if(['eso', 'vihar', 'idojaras', 'szeles', 'zivatar', 'esik'].includes(query)) {
-        showToast("A program esőálló, de esernyőt azért hozz magaddal! ☔");
-        document.getElementById('searchInput').value = "";
+    if(['eso', 'vihar', 'idojaras'].includes(query)) {
+        showToast("A bábok nem áznak el, de esernyőt azért hozz magaddal! ☔");
+        searchInput.value = "";
         doSearch();
         return;
     }
 
-    if(['sor','bor','froccs','kave','bufe','szendvics','palinka'].includes(query)) {
-        tabsWrap.style.display = 'none';
-        scrollHint.style.display = 'none';
+    if(['sor','bor','froccs','kave','bufe'].includes(query)) {
+        if(tabsWrap) tabsWrap.style.display = 'none';
+        if(scrollHint) scrollHint.style.display = 'none';
         document.querySelectorAll('.day-panel').forEach(p => p.style.display = 'none');
-        document.getElementById('noResultsMsg').style.display = 'none';
-        document.getElementById('secretGastroCard').style.display = 'none';
-        document.getElementById('secretBufeCard').style.display = 'block';
+        
+        const nRm = document.getElementById('noResultsMsg');
+        if(nRm) nRm.style.display = 'none';
+        
+        const sGc = document.getElementById('secretGastroCard');
+        if(sGc) sGc.style.display = 'none';
+        
+        const sBc = document.getElementById('secretBufeCard');
+        if(sBc) sBc.style.display = 'block';
+        
         trackEvent('easter_egg_found', { type: 'titkos_bufe' });
         return;
     } else {
-        document.getElementById('secretBufeCard').style.display = 'none';
+        const sBc = document.getElementById('secretBufeCard');
+        if(sBc) sBc.style.display = 'none';
     }
 
-// ÚJ: Titkos Gasztro Kártya (Éhes) Easter Egg
-    if(['éhes','ehes','leves','tészta','teszta','szendvics','étterem','etterem','kaja', 'pizza', 'hamburger'].includes(query)) {
-        tabsWrap.style.display = 'none';
-        scrollHint.style.display = 'none';
+    // GASZTRO EASTER EGG
+    if(['ehes','leves','teszta','szendvics','etterem','kaja', 'pizza', 'hamburger'].includes(query)) {
+        if(tabsWrap) tabsWrap.style.display = 'none';
+        if(scrollHint) scrollHint.style.display = 'none';
         document.querySelectorAll('.day-panel').forEach(p => p.style.display = 'none');
-        document.getElementById('noResultsMsg').style.display = 'none';
-        document.getElementById('secretBufeCard').style.display = 'none';
-        document.getElementById('secretGastroCard').style.display = 'block';
+        
+        const nRm = document.getElementById('noResultsMsg');
+        if(nRm) nRm.style.display = 'none';
+        
+        const sBc = document.getElementById('secretBufeCard');
+        if(sBc) sBc.style.display = 'none';
+        
+        const sGc = document.getElementById('secretGastroCard');
+        if(sGc) sGc.style.display = 'block';
+        
         trackEvent('easter_egg_found', { type: 'titkos_gastro' });
         return;
     } else {
-        // Ha nem éhes szóra keresett, elrejtjük
-        if (!isGastroMode) {
-           document.getElementById('secretGastroCard').style.display = 'none';
+        if (!isGastroMode) { 
+            const sGc = document.getElementById('secretGastroCard');
+            if(sGc) sGc.style.display = 'none'; 
         }
     }
 
-    if (!isGastroMode) { document.getElementById('secretGastroCard').style.display = 'none'; } 
+    if (!isGastroMode) { 
+        const sGc = document.getElementById('secretGastroCard');
+        if(sGc) sGc.style.display = 'none'; 
+    } 
     else { return; }
 
     if (query === "" && !isFavoritesMode && !currentTypeFilter) {
-        tabsWrap.style.display = 'flex';
-        if (window.innerWidth <= 650) scrollHint.style.display = 'block';
-        document.getElementById('noResultsMsg').style.display = 'none';
+        if(tabsWrap) tabsWrap.style.display = 'flex';
+        if (window.innerWidth <= 650 && scrollHint) scrollHint.style.display = 'block';
+        
+        const nRm = document.getElementById('noResultsMsg');
+        if(nRm) nRm.style.display = 'none';
+        
         dayPanels.forEach(panel => {
             panel.style.display = '';
             const dayTitle = panel.querySelector('.search-day-title');
@@ -796,13 +853,15 @@ function doSearch() {
             panel.querySelectorAll('.event-card').forEach(card => card.style.display = 'block');
             panel.querySelectorAll('.slot-time').forEach(time => time.style.display = 'block');
         });
+        
         document.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
-        document.getElementById('day-' + activeTabBeforeSearch).classList.add('active');
+        const activePanel = document.getElementById('day-' + activeTabBeforeSearch);
+        if(activePanel) activePanel.classList.add('active');
         return;
     }
 
-    tabsWrap.style.display = 'none';
-    scrollHint.style.display = 'none';
+    if(tabsWrap) tabsWrap.style.display = 'none';
+    if(scrollHint) scrollHint.style.display = 'none';
     let hasAnyMatchTotal = false;
     
     dayPanels.forEach((panel, index) => {
@@ -813,9 +872,12 @@ function doSearch() {
         if(!dayTitle) {
             dayTitle = document.createElement('h3');
             dayTitle.className = 'search-day-title';
-            const btnText = document.querySelectorAll('.tab-btn')[index].getAttribute('data-day-name');
-            dayTitle.innerText = btnText;
-            panel.prepend(dayTitle);
+            const tb = document.querySelectorAll('.tab-btn')[index];
+            if(tb) {
+                const btnText = tb.getAttribute('data-day-name');
+                dayTitle.innerText = btnText;
+                panel.prepend(dayTitle);
+            }
         }
         
         const cards = panel.querySelectorAll('.event-card');
@@ -847,12 +909,21 @@ function doSearch() {
             }
         });
 
-        if(hasMatchInDay) { panel.style.display = 'block'; dayTitle.style.display = 'block'; } 
-        else { panel.style.display = 'none'; dayTitle.style.display = 'none'; }
+        if(hasMatchInDay) { 
+            panel.style.display = 'block'; 
+            if(dayTitle) dayTitle.style.display = 'block'; 
+        } else { 
+            panel.style.display = 'none'; 
+            if(dayTitle) dayTitle.style.display = 'none'; 
+        }
     });
 
-    if(!hasAnyMatchTotal && query !== "") { document.getElementById('noResultsMsg').style.display = 'block'; } 
-    else { document.getElementById('noResultsMsg').style.display = 'none'; }
+    const nRm = document.getElementById('noResultsMsg');
+    if(!hasAnyMatchTotal && query !== "") { 
+        if(nRm) nRm.style.display = 'block'; 
+    } else { 
+        if(nRm) nRm.style.display = 'none'; 
+    }
 }
 
 // APP TELEPÍTÉS LOGIKÁJA
@@ -864,50 +935,104 @@ window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
     if(!isStandalone) {
-        document.getElementById('installAppBtn').style.display = 'inline-flex';
+        const btn = document.getElementById('installAppBtn');
+        if(btn) btn.style.display = 'inline-flex';
     }
 });
 
-// ==========================================
-// 🛠 DOM BETÖLTÉSE UTÁNI ESEMÉNYEK (BINDING)
-// ==========================================
-document.addEventListener("DOMContentLoaded", () => {
-    
+
+// 🛠 DOM BETÖLTÉSE UTÁNI FŐ FÜGGVÉNY (Eseménykezelők)
+function initApp() {
     // Service Worker
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW hiba', err));
 
     // Telepítés gomb iPhone fallback
-    if (isIOS && !isStandalone) { document.getElementById('installAppBtn').style.display = 'inline-flex'; }
+    if (isIOS && !isStandalone) { 
+        const btn = document.getElementById('installAppBtn');
+        if(btn) btn.style.display = 'inline-flex'; 
+    }
 
-    // Eseménykezelők rákötése a gombokra (Nincsenek többé onClick-ek a HTML-ben!)
-    document.getElementById('installAppBtn').addEventListener('click', async () => {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') { document.getElementById('installAppBtn').style.display = 'none'; }
-            deferredPrompt = null;
-        } else if (isIOS) {
-            showToast("Apple iOS: Lent a böngészőben bökj a [Megosztás ⬆] ikonra, majd a [Főképernyőhöz adás ➕] gombra!");
-        }
-    });
+    const installBtn = document.getElementById('installAppBtn');
+    if(installBtn) {
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') { installBtn.style.display = 'none'; }
+                deferredPrompt = null;
+            } else if (isIOS) {
+                showToast("Apple iOS: Lent a böngészőben bökj a [Megosztás ⬆] ikonra, majd a [Főképernyőhöz adás ➕] gombra!");
+            }
+        });
+    }
 
-    document.getElementById('searchInput').addEventListener('keyup', debounce(doSearch, 300));
-    document.getElementById('jumpBtn').addEventListener('click', scrollToCurrent);
-    document.getElementById('topAlertBar').addEventListener('click', () => openAlertsModal());
-    document.getElementById('closeAlertsBtn').addEventListener('click', closeAlertsModal);
-    document.getElementById('gbSubmitBtn').addEventListener('click', submitGuestbook);
-    document.getElementById('gbPhotoInput').addEventListener('change', handlePhotoSelect);
-    document.getElementById('closeGuestbookBtn').addEventListener('click', () => { document.getElementById('guestbookModal').classList.remove('visible'); });
-    document.getElementById('ciSubmitBtn').addEventListener('click', submitCheckin);
-    document.getElementById('ciCloseBtn').addEventListener('click', () => { document.getElementById('checkinModal').classList.remove('visible'); });
-    document.getElementById('quoteCloseBtn').addEventListener('click', () => { document.getElementById('quoteModal').classList.remove('visible'); });
+    const searchInput = document.getElementById('searchInput');
+    if(searchInput) searchInput.addEventListener('keyup', debounce(doSearch, 300));
+    
+    const jumpBtn = document.getElementById('jumpBtn');
+    if(jumpBtn) jumpBtn.addEventListener('click', scrollToCurrent);
+    
+    const topAlertBar = document.getElementById('topAlertBar');
+    if(topAlertBar) topAlertBar.addEventListener('click', () => openAlertsModal());
+    
+    const closeAlertsBtn = document.getElementById('closeAlertsBtn');
+    if(closeAlertsBtn) closeAlertsBtn.addEventListener('click', closeAlertsModal);
+    
+    const gbSubmitBtn = document.getElementById('gbSubmitBtn');
+    if(gbSubmitBtn) gbSubmitBtn.addEventListener('click', submitGuestbook);
+    
+    const gbPhotoInput = document.getElementById('gbPhotoInput');
+    if(gbPhotoInput) gbPhotoInput.addEventListener('change', handlePhotoSelect);
+    
+    const closeGuestbookBtn = document.getElementById('closeGuestbookBtn');
+    if(closeGuestbookBtn) closeGuestbookBtn.addEventListener('click', () => { document.getElementById('guestbookModal').classList.remove('visible'); });
+    
+    const ciSubmitBtn = document.getElementById('ciSubmitBtn');
+    if(ciSubmitBtn) ciSubmitBtn.addEventListener('click', submitCheckin);
+    
+    const ciCloseBtn = document.getElementById('ciCloseBtn');
+    if(ciCloseBtn) ciCloseBtn.addEventListener('click', () => { document.getElementById('checkinModal').classList.remove('visible'); });
+    
+    const quoteCloseBtn = document.getElementById('quoteCloseBtn');
+    if(quoteCloseBtn) quoteCloseBtn.addEventListener('click', () => { document.getElementById('quoteModal').classList.remove('visible'); });
     
     // Gyorslinkek
-    document.getElementById('favFilterBtn').addEventListener('click', toggleFavoritesView);
-    document.getElementById('btnGuestbook').addEventListener('click', openGuestbook);
-    document.getElementById('btnQuote').addEventListener('click', generateQuote);
-    document.getElementById('btnHolEgyek').addEventListener('click', toggleGastroCard);
-    document.getElementById('btnCheckin').addEventListener('click', openCheckin);
+    const favFilterBtn = document.getElementById('favFilterBtn');
+    if(favFilterBtn) favFilterBtn.addEventListener('click', toggleFavoritesView);
+    
+    const btnGuestbook = document.getElementById('btnGuestbook');
+    if(btnGuestbook) btnGuestbook.addEventListener('click', openGuestbook);
+    
+    const btnQuote = document.getElementById('btnQuote');
+    if(btnQuote) btnQuote.addEventListener('click', generateQuote);
+    
+    const btnHolEgyek = document.getElementById('btnHolEgyek');
+    if(btnHolEgyek) btnHolEgyek.addEventListener('click', toggleGastroCard);
+    
+    const btnCheckin = document.getElementById('btnCheckin');
+    if(btnCheckin) btnCheckin.addEventListener('click', openCheckin);
+
+    // Megosztás Gomb (Web Share API)
+    const btnShare = document.getElementById('btnShare');
+    if(btnShare) {
+        btnShare.addEventListener('click', async () => {
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: '17. Bábszínházi Találkozó',
+                        text: 'Kecskemét, 2026. június 13-18. Nézd meg a programot és gyere te is!',
+                        url: window.location.href
+                    });
+                    trackEvent('app_shared'); 
+                } catch (err) {
+                    console.log('Megosztás megszakítva', err);
+                }
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                showToast('Link másolva a vágólapra!');
+            }
+        });
+    }
 
     // Szűrők
     document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -919,48 +1044,66 @@ document.addEventListener("DOMContentLoaded", () => {
         btn.addEventListener('click', () => showDay(index, btn));
     });
 
-    // Kártya lenyitás (Javított, könnyen kattintható verzió)
+   // Kártya lenyitás (Javított, könnyen kattintható verzió)
     document.querySelectorAll('.card-header').forEach(header => {
         header.addEventListener('click', function(e) {
+            // CSAK akkor nem nyílik le, ha a csillagra vagy a piros "!" ikonra böktek
             if(!e.target.closest('.star-btn') && !e.target.closest('.mini-pulse-alert')) { 
                 toggleCard(this); 
             }
         });
     });
 
-    // Delegált eseménykezelők (Helyszín szűrés, Nyilvános szűrés, Kis riasztó ikonok, Kedvencek csillag)
-    document.getElementById('mainContent').addEventListener('click', (e) => {
-        if(e.target.matches('.badge-venue')) {
-            filterVenue(e.target, e);
-        } else if(e.target.matches('.badge-public')) {
-            e.stopPropagation();
-            toggleTypeFilter('public');
-        } else if (e.target.matches('.mini-pulse-alert')) {
-            e.stopPropagation();
-            openAlertsModal(e.target.closest('.event-card').id);
-        } else if (e.target.matches('.star-btn')) {
-            e.stopPropagation();
-            const card = e.target.closest('.event-card');
-            if (localStorage.getItem('fav_' + card.id)) {
-                localStorage.removeItem('fav_' + card.id);
-                e.target.classList.remove('active');
-            } else {
-                localStorage.setItem('fav_' + card.id, 'true');
-                e.target.classList.add('active');
-                trackEvent('added_to_favorites', { show_id: card.id });
+    // Delegált eseménykezelők 
+    const mainContent = document.getElementById('mainContent');
+    if(mainContent) {
+        mainContent.addEventListener('click', (e) => {
+            const fbBtn = e.target.closest('.fb-event-btn');
+            if (fbBtn) {
+                const url = fbBtn.getAttribute('href');
+                if (!url || url === '#' || url === '') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showToast("Ehhez a programhoz jelenleg nincs Facebook esemény!");
+                }
+                return; 
             }
-            if (isFavoritesMode) doSearch();
-        }
-    });
+
+            if(e.target.matches('.badge-venue')) {
+                filterVenue(e.target, e);
+            } else if(e.target.matches('.badge-public')) {
+                e.stopPropagation();
+                toggleTypeFilter('public');
+            } else if (e.target.matches('.mini-pulse-alert')) {
+                e.stopPropagation();
+                openAlertsModal(e.target.closest('.event-card').id);
+            } else if (e.target.matches('.star-btn')) {
+                e.stopPropagation();
+                const card = e.target.closest('.event-card');
+                if (localStorage.getItem('fav_' + card.id)) {
+                    localStorage.removeItem('fav_' + card.id);
+                    e.target.classList.remove('active');
+                } else {
+                    localStorage.setItem('fav_' + card.id, 'true');
+                    e.target.classList.add('active');
+                    trackEvent('added_to_favorites', { show_id: card.id });
+                }
+                if (isFavoritesMode) doSearch();
+            }
+        });
+    }
 
     // Delegált esemény a módosítás/visszavonás/térképhez ugrás gombokra
-    document.getElementById('myCheckinStatus').addEventListener('click', (e) => {
-        if(e.target.matches('.checkin-action-modify')) { openCheckin(); } 
-        else if (e.target.matches('.checkin-action-revoke')) { revokeCheckin(e); }
-        else if (e.target.closest('.jump-to-map')) { document.getElementById('infoBoxBottom').scrollIntoView({behavior: 'smooth'}); }
-    });
+    const myCheckinStatus = document.getElementById('myCheckinStatus');
+    if(myCheckinStatus) {
+        myCheckinStatus.addEventListener('click', (e) => {
+            if(e.target.matches('.checkin-action-modify')) { openCheckin(); } 
+            else if (e.target.matches('.checkin-action-revoke')) { revokeCheckin(e); }
+            else if (e.target.closest('.jump-to-map')) { document.getElementById('infoBoxBottom').scrollIntoView({behavior: 'smooth'}); }
+        });
+    }
 
-    // Kacsintós PDF letöltés
+    // Kacsintós PDF letöltés (Javítva PC-re)
     const pdfBtn = document.querySelector('.pdf-dl-btn');
     const pdfOverlay = document.getElementById('pdfOverlay');
     if(pdfBtn && pdfOverlay) {
@@ -969,8 +1112,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const targetUrl = this.href;
             pdfOverlay.classList.add('show');
             setTimeout(() => {
-                window.open(targetUrl, '_blank');
-                setTimeout(() => { pdfOverlay.classList.remove('show'); }, 500);
+                pdfOverlay.classList.remove('show');
+                window.location.href = targetUrl; // Ezzel kikerüli a pop-up blokkolókat!
             }, 1800);
         });
     }
@@ -991,33 +1134,18 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Megosztás Gomb (Web Share API)
-    document.getElementById('btnShare').addEventListener('click', async () => {
-        if (navigator.share) {
-            try {
-                await navigator.share({
-                    title: '17. Bábszínházi Találkozó',
-                    text: 'Kecskemét, 2026. június 13-18. Nézd meg a programot és gyere te is!',
-                    url: window.location.href
-                });
-                trackEvent('app_shared'); 
-            } catch (err) {
-                console.log('Megosztás megszakítva', err);
-            }
-        } else {
-            navigator.clipboard.writeText(window.location.href);
-            showToast('Link másolva a vágólapra!');
-        }
-    });
-
     // Checkin URL feldolgozása
     const urlParams = new URLSearchParams(window.location.search);
     const checkinVenueId = urlParams.get('checkin');
     if(checkinVenueId && venueNames[checkinVenueId]) {
         setTimeout(() => {
-            document.getElementById('ciVenue').value = checkinVenueId;
+            const cV = document.getElementById('ciVenue');
+            if(cV) cV.value = checkinVenueId;
+            
             const savedName = localStorage.getItem('myCheckinName');
-            if(savedName) document.getElementById('checkinNameInput').value = savedName;
+            const ciName = document.getElementById('checkinNameInput');
+            if(savedName && ciName) ciName.value = savedName;
+            
             openCheckin();
             window.history.replaceState({}, document.title, window.location.pathname);
         }, 1000);
@@ -1041,8 +1169,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // Görgertés figyelése a gombhoz
     window.addEventListener('scroll', () => {
         const jumpBtn = document.getElementById('jumpBtn');
-        if (document.querySelector('.day-panel.active .is-live')) jumpBtn.classList.add('show');
-        else jumpBtn.classList.remove('show');
+        if(jumpBtn) {
+            if (document.querySelector('.day-panel.active .is-live')) jumpBtn.classList.add('show');
+            else jumpBtn.classList.remove('show');
+        }
     });
 
     // PWA Automatikus Újratöltés
@@ -1063,4 +1193,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     const sponsorBox = document.getElementById('sponsorsBox');
     if (sponsorBox) observer.observe(sponsorBox);
-});
+}
+
+// BIZTOSÍTJUK A BETÖLTÉST
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+} else {
+    initApp();
+}
