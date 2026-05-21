@@ -323,5 +323,6 @@ footer a { color: var(--gold-light); text-decoration: none; }
 .easter-text { background: #fff; color: var(--teal-dark); font-size: 10px; font-weight: 700; letter-spacing: 1px; padding: 6px 12px; border-radius: 20px; margin-bottom: -15px; position: relative; z-index: 53; box-shadow: 0 4px 10px rgba(0,0,0,0.3); white-space: normal; line-height: 1.4; text-align: center;}
 .easter-trigger:hover .easter-content, .easter-trigger:active .easter-content { opacity: 1; transform: translateX(-50%) translateY(0); }
 .easter-trigger-flex { padding: 0; display: flex; align-items: center; }
-.music-btn { font-size: 18px; padding: 4px 10px; }
+.music-btn { font-size: 11px; padding: 6px 12px; }
+.music-btn span { font-size: 16px; margin-right: 4px; vertical-align: middle; }
 .music-icon { font-size: 14px; margin-right: 4px; }

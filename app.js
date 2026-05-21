@@ -571,22 +571,79 @@ function toggleGastroCard() {
         document.querySelectorAll('.filter-btn').forEach(el => el.classList.remove('active'));
         
         trackEvent('restaurants_viewed');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
         btn.classList.remove('active');
         document.getElementById('secretGastroCard').style.display = 'none';
         doSearch();
     }
+    // Finom görgetés a keresősávhoz (hogy mobilon rögtön lássa a kártyát)
+    document.getElementById('searchWrap').scrollIntoView({ behavior: 'smooth' });
 }
 
 function generateQuote() {
     const quotes = [
-        "A báb nem utánozza az életet, hanem újat teremt.",
-        "Ami a bábbal történik, az varázslat.",
-        "Minden báb lelke a mozgatója kezében van.",
         "A színház ott kezdődik, ahol a mindennapok véget érnek.",
-        "A lécnek nincs saját akarata, de a bábos lelket lehel belé.",
-        "A mese a gyermek egyetlen komoly dolga."
+        "A mese a gyerekek egyetlen komoly dolga.",
+„A báb hallgat, de mindent elmond. Te meg próbálj nem belebeszélni!”,
+ „A paraván mögött mindenki egyenlő. Kivéve aki tudja, hol a hosszabbító.”,
+„Ha elszakad a zsinór, az még nem tragédia. Ha elszáll a hangosítás is, az már költészet.”,
+ „Egy Találkozó nem attól jó, hogy mit látsz, hanem hogy kivel beszéled ki utána.”,
+ „A legjobb jelenetek néha a színpadon kívül történnek. Például a harmadik fröccs után.”,
+„A báb súlya nem kilóban mérhető. Hanem a vastapsokban.”,
+„Ha minden működik, az gyanús. Valami biztos kimaradt.”,
+„A közönség nem lát mindent. Szerencsére!”,
+ „A bábok nem fáradnak el. De te igen, szóval igyál még egy kávét.”,
+„Egy jó Találkozón nem csak előadásokat gyűjtesz, hanem történeteket is.”,
+ „A báb akkor él, amikor elfelejted, hogy te mozgatod.”,
+ „Minden előadás egy kicsit más. Akkor is, ha ugyanaz.”,
+„A kötetlen beszélgetés a Találkozó szíve. A színpad csak a dobbanás.”,
+ „A fröccs dramaturgiája egyszerű: első felvonás – beszélgetés, második – őszinteség.”,
+„A kávézóban dőlnek el a szakmai viták. És néha a székek is.”,
+„A legjobb kritikák nem íródnak le. Csak elhangzanak két korty között.”,
+ „A legőszintébb beszélgetések nem a szakmai programon, hanem utána kezdődnek.”,
+„A kávézó nem szünet. Az a második felvonás.”,
+ „Aki az esti beszélgetéseket kihagyja, a történet felét sem érti.”,
+ „Egy Találkozó addig tart, amíg van mit inni és kivel megbeszélni.”,
+ „A rendezői koncepció addig tiszta, amíg meg nem érkezik a díszlet.”,
+„Nem az a kérdés, hogy működik-e. Hanem hogy elhisszük-e, hogy működik.”,
+„Ha valamit háromszor kell megmagyarázni, az már biztosan szándékos.”,
+„A próbán még keresed a megoldást. A Találkozón már magyarázod.”,
+„Ez nem hiba, hanem stiláris döntés. Csak még nem döntöttük el.”,
+„A dramaturg akkor nyugodt, ha mindenki más ideges.”,
+„A minimalizmus ott kezdődik, ahol elfogyott a költségvetés.”,
+„Ha nem érted, az valószínűleg mély.”,
+„A báb akkor működik jól, ha nem esik szét. Minden más már esztétika.”,
+„A színész mindent megold. Ha nem, akkor azt is megoldja.”,
+„A technika mindig akkor romlik el, amikor végre működne.”,
+„Ez egy tudatos csend. Csak kicsit hosszabb lett.”,
+ „Ha improvizáció, akkor szabad. Ha nem működik, akkor kísérlet.”,
+ „Ezt majd a fény megoldja.”Spoiler: „A fény nem oldja meg.”,
+„A próbafolyamat vége: amikor már nincs több idő új ötletekre.”,
+ „A kompromisszum az a hely, ahol mindenki egy kicsit elégedetlen.”,
+„Ha mindenki érti, akkor valamit biztosan túlegyszerűsítettünk.”,
+„A produkció kész van. Csak még dolgozunk rajta.”,
+„A bemutató után mindenki fáradt. Kivéve azt, akinek még bontania kell.”,
+„A Találkozó harmadik napján már mindenki tegez mindenkit. Néha saját magát is.”,
+„Az előadás hossza relatív. A pakolásé nem.”,
+„A legjobb beszélgetés ott kezdődik, ahol elfogyott a hivatalos program.”,
+„Minden Találkozón van egy ember, aki tudja, hol van a hosszabbító. Ő a valódi főszereplő.”,
+„A kávézó-záróra után születnek a legnagyobb esztétikai felismerések.”,
+„A technikai rider egy kívánságlista. A valóság pedig performansz.”,
+„A negyedik kávé már nem élénkít. Az egy segélykiáltás.”,
+„A díszlet addig könnyű, amíg fel nem kell vinni a harmadikra lift nélkül.”,
+„A Találkozó-barátságok intenzitása vetekszik a turnébusz légkondijának kiszámíthatatlanságával.”,
+„Az igazi szakmai elismerés: amikor valaki kölcsönad egy gaffer szalagot.”,
+„Mindenki kísérletezik. Van, aki nyilvánosan.”,
+ „A legnagyobb hazugság a színházban: ‘öt perc és kész vagyunk.’”,
+„A Találkozó végére minden telefontöltő közkinccsé válik.”,
+„A bábos szakma fele művészet, fele logisztika.”,
+„Az előadás akkor igazán kortárs, ha a technikus sem tudja pontosan, mi történik.”,
+„Az éjszakai szakmázás reggelre rendszerint filozófiává nemesedik.”,
+ „A színház varázslat. A Találkozó túlélőtúra.”,
+„A legnagyobb szakmai bizalom: amikor valaki rád bízza a saját bábját.”,
+„Minden Találkozó végén elhangzik: ‘legközelebb kevesebbet vállalunk.’”,
+„A művészet örök. A catering viszont elfogy.”,
+„Az alternatív megoldás általában azt jelenti, hogy eltört valami.”,
     ];
     const q = quotes[Math.floor(Math.random() * quotes.length)];
     document.getElementById('quoteText').innerText = q;
@@ -599,6 +656,8 @@ function toggleFavoritesView() {
     if (isFavoritesMode) { btn.classList.add('active'); btn.innerHTML = '★ Csak a kedvenceim'; } 
     else { btn.classList.remove('active'); btn.innerHTML = '★ Kedvenceim'; }
     doSearch();
+    // Finom görgetés a keresősávhoz
+    document.getElementById('searchWrap').scrollIntoView({ behavior: 'smooth' });
 }
 
 function toggleTypeFilter(type) {
@@ -615,6 +674,8 @@ function toggleTypeFilter(type) {
     if (currentTypeFilter) { document.querySelector(`.filter-btn[data-filter="${currentTypeFilter}"]`).classList.add('active'); }
 
     doSearch();
+    // Finom görgetés a keresősávhoz
+    document.getElementById('searchWrap').scrollIntoView({ behavior: 'smooth' });
 }
 
 function filterVenue(badgeElement, event) {
@@ -683,14 +744,14 @@ function doSearch() {
     }
 
     // IDŐJÁRÁS EASTER EGG
-    if(['eso', 'vihar', 'idojaras'].includes(query)) {
-        showToast("A bábok nem áznak el, de esernyőt azért hozz magaddal! ☔");
+    if(['eso', 'vihar', 'idojaras', 'szeles', 'zivatar', 'esik'].includes(query)) {
+        showToast("A program esőálló, de esernyőt azért hozz magaddal! ☔");
         document.getElementById('searchInput').value = "";
         doSearch();
         return;
     }
 
-    if(['sor','bor','froccs','kave','bufe'].includes(query)) {
+    if(['sor','bor','froccs','kave','bufe','szendvics','palinka'].includes(query)) {
         tabsWrap.style.display = 'none';
         scrollHint.style.display = 'none';
         document.querySelectorAll('.day-panel').forEach(p => p.style.display = 'none');
@@ -701,6 +762,23 @@ function doSearch() {
         return;
     } else {
         document.getElementById('secretBufeCard').style.display = 'none';
+    }
+
+// ÚJ: Titkos Gasztro Kártya (Éhes) Easter Egg
+    if(['éhes','ehes','leves','tészta','teszta','szendvics','étterem','etterem','kaja', 'pizza', 'hamburger'].includes(query)) {
+        tabsWrap.style.display = 'none';
+        scrollHint.style.display = 'none';
+        document.querySelectorAll('.day-panel').forEach(p => p.style.display = 'none');
+        document.getElementById('noResultsMsg').style.display = 'none';
+        document.getElementById('secretBufeCard').style.display = 'none';
+        document.getElementById('secretGastroCard').style.display = 'block';
+        trackEvent('easter_egg_found', { type: 'titkos_gastro' });
+        return;
+    } else {
+        // Ha nem éhes szóra keresett, elrejtjük
+        if (!isGastroMode) {
+           document.getElementById('secretGastroCard').style.display = 'none';
+        }
     }
 
     if (!isGastroMode) { document.getElementById('secretGastroCard').style.display = 'none'; } 
