@@ -837,7 +837,7 @@ function doSearch() {
 
     // IDŐJÁRÁS EASTER EGG
     if(['eso', 'vihar', 'idojaras'].includes(query)) {
-        showToast("A bábok nem áznak el, de esernyőt azért hozz magaddal! ☔");
+        showToast("A program vízálló, de esernyőt azért hozz magaddal! ☔");
         searchInput.value = "";
         doSearch();
         return;
