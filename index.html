@@ -29,6 +29,17 @@
   gtag('js', new Date());
   gtag('config', 'G-BSSY6FZ7TK'); 
 </script>
+
+<!-- PWA TELEPÍTÉS AZONNALI ELKAPÁSA MOBILON -->
+<script>
+  window.deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      window.deferredPrompt = e;
+      const btn = document.getElementById('installAppBtn');
+      if (btn) btn.style.display = 'inline-flex';
+  });
+</script>
 </head>
 <body>
 
@@ -226,7 +237,7 @@
   <div class="event-card type-social secret-gastro-card">
     <div class="card-header pointer-events-none">
       <div class="event-title">🍔 Hol egyek?</div>
-      <div class="event-company">Fesztiválkedvezményes helyek</div>
+      <div class="event-company">Fesztivál kedvezményes helyek</div>
     </div>
     <div class="card-details-inner pt-0">
       <div class="details-text gastro-details-text">
@@ -239,14 +250,14 @@
              <img src="./levesm.png" class="gastro-logo" loading="lazy" alt="Leves'M">
              <div>
                 <a href="https://levesm.hu/" target="_blank" class="venue-item-title">Leves’M Levesbár</a>
-                <div class="venue-item-address">Csányi u. 1-3. <br><span class="text-red-bold">10% kedvezmény mindenre</span></div>
+                <div class="venue-item-address">Csányi u. 1-3. <br><span class="text-red-bold">10% kedvezmény a menüből</span></div>
              </div>
           </div>
           <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=46.90754647824104,19.690316931387255" target="_blank">📍 Útvonal</a>
         </div>
         <div class="gastro-open-hours">
            <strong class="gastro-open-title">Nyitvatartás:</strong>
-           Szo: 10:00–15:00 | V: Zárva | H-Cs: 10:00–16:00
+           Sz: 10:00–15:00 | V: Zárva | H-Cs: 10:00–16:00
         </div>
       </div>
 
@@ -263,7 +274,7 @@
         </div>
         <div class="gastro-open-hours">
            <strong class="gastro-open-title">Nyitvatartás:</strong>
-           Szo-V: Zárva | H-P: 11:00-14:00 
+           H-P: 11:00-14:00 | Sz-V: Zárva
         </div>
       </div>
 
@@ -273,14 +284,14 @@
              <img src="./spaletta.png" class="gastro-logo" loading="lazy" alt="Spaletta">
              <div>
                 <a href="https://spalettaetterem.com/hu" target="_blank" class="venue-item-title">Spaletta Étterem és Sörház</a>
-                <div class="venue-item-address">Jókai u. 15. <br><span class="text-red-bold">10% kedvezmény mindenre</span></div>
+                <div class="venue-item-address">Jókai u. 15. <br><span class="text-red-bold">10% kedvezmény a menüből</span></div>
              </div>
           </div>
           <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=46.9129628157815,19.69007621420735" target="_blank">📍 Útvonal</a>
         </div>
         <div class="gastro-open-hours">
            <strong class="gastro-open-title">Nyitvatartás:</strong>
-           Szo-H: Zárva | K: 16:00-22:00 | Sze-Cs: 11:30-22:00
+           Sz-H: Zárva | K: 16:00-22:00 | Sz-Cs: 11:30-22:00
         </div>
       </div>
       
@@ -290,7 +301,7 @@
              <img src="./babszinhaz.png" class="gastro-logo" loading="lazy" alt="Babszínház Kávézó">
              <div>
                 <a href="https://www.facebook.com/babszinhaz.kavezo/" target="_blank" class="venue-item-title">Babszínház Kávézó</a>
-                <div class="venue-item-address">Deák Ferenc tér 6. <br><span class="text-red-bold">10% kedvezmény mindenre</span></div>
+                <div class="venue-item-address">Deák Ferenc tér 6. <br><span class="text-red-bold">10% kedvezmény a menüből</span></div>
              </div>
           </div>
           <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=46.9058610237233,19.689237933195738" target="_blank">📍 Útvonal</a>
