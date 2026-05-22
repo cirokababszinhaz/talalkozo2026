@@ -29,17 +29,6 @@
   gtag('js', new Date());
   gtag('config', 'G-BSSY6FZ7TK'); 
 </script>
-
-<!-- PWA TELEPÍTÉS AZONNALI ELKAPÁSA MOBILON -->
-<script>
-  window.deferredPrompt = null;
-  window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      window.deferredPrompt = e;
-      const btn = document.getElementById('installAppBtn');
-      if (btn) btn.style.display = 'inline-flex';
-  });
-</script>
 </head>
 <body>
 

@@ -1110,24 +1110,23 @@ function initApp() {
         });
     });
 
-    // Delegált eseménykezelők 
+  // Delegált eseménykezelők 
     const mainContent = document.getElementById('mainContent');
     if(mainContent) {
         mainContent.addEventListener('click', (e) => {
             
-            // Facebook gombok mobil megnyitás javítása
+            // Facebook gombok megnyitása
             const fbBtn = e.target.closest('.fb-event-btn');
             if (fbBtn) {
                 const url = fbBtn.getAttribute('href');
+                // Ha nincs valódi link, letiltjuk a kattintást és szólunk
                 if (!url || url === '#' || url === '') {
                     e.preventDefault();
                     e.stopPropagation();
                     showToast("Ehhez a programhoz jelenleg nincs Facebook esemény!");
-                } else {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    window.open(url, '_blank', 'noopener,noreferrer');
                 }
+                // HA VAN VALÓDI LINK, NEM CSINÁLUNK SEMMIT! 
+                // Így a böngésző a normál működése szerint, tiltás nélkül megnyitja.
                 return; 
             }
 
