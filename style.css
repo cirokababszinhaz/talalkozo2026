@@ -40,9 +40,24 @@
   .scroll-hint { background: var(--surface); }
 }
 
-body { background: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; font-weight: 500; min-height: 100vh; overflow-x: hidden; transition: transform 0.5s ease; overscroll-behavior-y: contain; }
-a { color: var(--teal); text-decoration: none; font-weight: 600; }
-a:hover { text-decoration: underline; }
+body { 
+  background: var(--bg); 
+  color: var(--text); 
+  font-family: 'Montserrat', sans-serif; 
+  font-weight: 500; 
+  min-height: 100vh; 
+  overflow-x: hidden; 
+  transition: transform 0.5s ease; 
+  overscroll-behavior-y: contain;
+
+  /* ÚJ SOR: EGYEDI KURZOR! (A 16 16 azt jelenti, hogy a kép közepe lesz a kattintási pont) */
+  cursor: url('./kurzor.png') 16 16, auto; 
+}
+
+/* Opcionális: Ha azt akarod, hogy a linkek felett is cserélődjön (pl. a mutatóujj ikon helyett) */
+a, button, .clickable, .card-header, .filter-btn, .hero-btn {
+  cursor: url('./kurzor.png') 16 16, pointer !important;
+}
 
 /* HEADER & OVERLAY */
 .site-header { background: var(--teal-dark); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--teal); position: relative; z-index: 50; }
@@ -324,3 +339,54 @@ footer a { color: var(--gold-light); text-decoration: none; }
 .easter-trigger-flex { padding: 0; display: flex; align-items: center; }
 .music-btn { font-size: 11px; padding: 6px 12px; }
 .music-btn span { font-size: 16px; margin-right: 4px; vertical-align: middle; }
+
+/* =========================================
+   SZEM GRAFIKÁK ÉS ANIMÁCIÓK
+   ========================================= */
+
+/* 1. HÁTTÉR VÍZJEL */
+.bg-watermark {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background-image: url('./szem-hatter.png');
+  background-repeat: repeat;
+  background-size: 180px; /* Így egy sormintát kapunk. Növelheted/csökkentheted a méretét */
+  opacity: 0.05; /* Csak 5%-osan látszik */
+  z-index: -1; pointer-events: none;
+}
+@media (prefers-color-scheme: dark) {
+  .bg-watermark { opacity: 0.03; filter: grayscale(1) invert(1); }
+}
+
+/* 2. NINCS TALÁLAT SZEM ANIMÁCIÓ */
+.no-results-eye {
+  max-width: 120px;
+  margin: 0 auto 15px;
+  display: block;
+  opacity: 0.8;
+  animation: lookAround 4s infinite ease-in-out;
+}
+@keyframes lookAround {
+  0%, 100% { transform: translateX(0) rotate(0deg) scale(1); }
+  25% { transform: translateX(-15px) rotate(-8deg) scale(1.05); }
+  75% { transform: translateX(15px) rotate(8deg) scale(1.05); }
+}
+
+/* 3. MOZGÓ SZEM A FEJLÉCBEN */
+.interactive-eye-container {
+  position: relative;
+  width: 45px; /* A szemfehérje szélessége (igazítsd a képedhez) */
+  height: 25px; /* A szemfehérje magassága (igazítsd a képedhez) */
+  display: inline-block;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+.eye-base { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; z-index: 1; }
+.eye-pupil {
+  width: 12px; /* A pupilla mérete */
+  height: 12px;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  transition: transform 0.05s linear; /* Finom mozgás */
+}

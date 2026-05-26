@@ -31,6 +31,7 @@
 </script>
 </head>
 <body>
+<div class="bg-watermark"></div>
 
 <div id="pdfOverlay" class="pdf-overlay">
   <img src="./kacsinto-szem.gif" alt="Kacsintás">
@@ -130,6 +131,12 @@
   </div>
   <div class="header-right">
     <div class="easter-trigger easter-trigger-flex">
+      <!-- Mozgó szem -->
+      <div class="interactive-eye-container" id="trackingEye">
+         <img src="./szem-alap.png" class="eye-base" alt="Szem">
+         <img src="./pupilla.png" class="eye-pupil" id="movingPupil" alt="Pupilla">
+      </div>
+      
       <a href="vezerlo-2026.html" class="secret-admin-link">2026</a>
       <span class="admin-tooltip">Nincs itt semmi látnivaló!</span>
     </div>
@@ -202,6 +209,7 @@
 <div class="content" id="mainContent">
 
 <div id="noResultsMsg" class="no-results-msg">
+  <img src="./szem-nincs.png" alt="Kereső szem" class="no-results-eye">
   <span class="no-results-subtitle">A keresésre nincs találat.</span>
   Csak azért is lesz Találkozó!
 </div>

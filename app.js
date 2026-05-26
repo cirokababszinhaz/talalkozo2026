@@ -1254,6 +1254,44 @@ function initApp() {
     });
     const sponsorBox = document.getElementById('sponsorsBox');
     if (sponsorBox) observer.observe(sponsorBox);
+
+// MOZGÓ SZEM MATEMATIKÁJA (Pupilla követés)
+    const eyeContainer = document.getElementById('trackingEye');
+    const pupil = document.getElementById('movingPupil');
+
+    if (eyeContainer && pupil) {
+        const handleMove = (e) => {
+            const rect = eyeContainer.getBoundingClientRect();
+            // A szem középpontjának meghatározása
+            const eyeX = rect.left + rect.width / 2;
+            const eyeY = rect.top + rect.height / 2;
+
+            // Az egér vagy ujj pozíciójának lekérése
+            let clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            let clientY = e.clientY || (e.touches && e.touches[0].clientY);
+
+            if(clientX === undefined || clientY === undefined) return;
+
+            // Szög kiszámítása az egér és a szem közepe között
+            const angle = Math.atan2(clientY - eyeY, clientX - eyeX);
+            
+            // MAXIMÁLIS ELMOZDULÁS (Sugarak). Hogy ne másszon ki a pupilla a szemből!
+            // Ezt a két számot növeld/csökkentsd a CSS méreteid alapján.
+            const maxRadiusX = 8; // Vízszintes mozgástér pixelben
+            const maxRadiusY = 4; // Függőleges mozgástér pixelben
+
+            const pupX = Math.cos(angle) * maxRadiusX;
+            const pupY = Math.sin(angle) * maxRadiusY;
+
+            // Pozicionálás (alap -50% középre húzás + az elmozdulás)
+            pupil.style.transform = `translate(calc(-50% + ${pupX}px), calc(-50% + ${pupY}px))`;
+        };
+
+        // Figyeljük az egér mozgását asztali gépen, és az ujj húzását mobilon
+        window.addEventListener('mousemove', handleMove);
+        window.addEventListener('touchmove', handleMove);
+    }
+
 }
 
 // BIZTOSÍTJUK A BETÖLTÉST
