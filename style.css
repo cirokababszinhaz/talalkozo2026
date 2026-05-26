@@ -344,19 +344,20 @@ footer a { color: var(--gold-light); text-decoration: none; }
    SZEM GRAFIKÁK ÉS ANIMÁCIÓK
    ========================================= */
 
-/* 1. HÁTTÉR VÍZJEL */
+/* 1. HÁTTÉR VÍZJEL (Váltakozó, elszórt minta) */
 .bg-watermark {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background-image: url('./szem-hatter.png');
-  background-repeat: repeat;
-  background-size: 180px; /* Így egy sormintát kapunk. Növelheted/csökkentheted a méretét */
-  opacity: 0.05; /* Csak 5%-osan látszik */
+  /* Két képet használunk egymáson elcsúsztatva */
+  background-image: url('./szem-hatter.png'), url('./szem-nincs.png');
+  background-position: 0 0, 100px 120px;
+  background-size: 200px, 140px;
+  background-repeat: repeat, repeat;
+  opacity: 0.05; 
   z-index: -1; pointer-events: none;
 }
 @media (prefers-color-scheme: dark) {
   .bg-watermark { opacity: 0.03; filter: grayscale(1) invert(1); }
 }
-
 /* 2. NINCS TALÁLAT SZEM ANIMÁCIÓ */
 .no-results-eye {
   max-width: 120px;
@@ -371,22 +372,15 @@ footer a { color: var(--gold-light); text-decoration: none; }
   75% { transform: translateX(15px) rotate(8deg) scale(1.05); }
 }
 
-/* 3. MOZGÓ SZEM A FEJLÉCBEN */
-.interactive-eye-container {
-  position: relative;
-  width: 45px; /* A szemfehérje szélessége (igazítsd a képedhez) */
-  height: 25px; /* A szemfehérje magassága (igazítsd a képedhez) */
-  display: inline-block;
-  margin-right: 10px;
-  vertical-align: middle;
+/* PISLOGÓ SZEM A FEJLÉCBEN */
+.header-eye { width: 35px; margin-right: 10px; vertical-align: middle; animation: blink 4s infinite; }
+@keyframes blink { 
+  0%, 96%, 98%, 100% { transform: scaleY(1); } 
+  97%, 99% { transform: scaleY(0.1); } 
 }
-.eye-base { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; z-index: 1; }
-.eye-pupil {
-  width: 12px; /* A pupilla mérete */
-  height: 12px;
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 2;
-  transition: transform 0.05s linear; /* Finom mozgás */
+
+/* EGYEDI KURZOR CSAK ASZTALI GÉPEN */
+@media (pointer: fine) {
+  body { cursor: url('./kurzor.png') 16 16, auto; }
+  a, button, .clickable, .card-header, .filter-btn, .hero-btn { cursor: url('./kurzor.png') 16 16, pointer !important; }
 }
