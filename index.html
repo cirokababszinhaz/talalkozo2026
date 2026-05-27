@@ -122,6 +122,25 @@
   </div>
 </div>
 
+<!-- ÚJ KÉRDÉSKÜLDŐ MODAL OVERLAY -->
+<div class="overlay" id="helpModal">
+  <div class="modal-box">
+    <div class="modal-header modal-header-teal">
+      <span class="modal-title modal-title-center">💬 Segítségkérés / Kérdés</span>
+    </div>
+    <div class="modal-body">
+      <p class="checkin-subtitle">Írd meg a kérdésed, és a szervezők hamarosan válaszolnak e-mailben!</p>
+      
+      <input type="text" id="helpNameInput" placeholder="Neved..." maxlength="40" class="checkin-input" style="text-align: left;">
+      <input type="email" id="helpEmailInput" placeholder="E-mail címed..." class="checkin-input" style="text-align: left;">
+      <textarea id="helpTextInput" placeholder="Miben segíthetünk?..." maxlength="300" class="checkin-select" style="min-height: 100px; margin-bottom: 15px; resize: vertical;"></textarea>
+      
+      <button class="modal-submit" id="helpSubmitBtn" style="background: var(--teal);">Kérdés elküldése</button>
+      <button class="modal-close modal-close-transparent" id="helpCloseBtn">Mégse</button>
+    </div>
+  </div>
+</div>
+
 <header class="site-header">
   <div class="header-logo">
     <a href="https://ciroka.hu" target="_blank" title="Örülünk, hogy itt vagytok!">
@@ -175,9 +194,14 @@
     <div class="ql-wrapper"><button class="ql-btn" id="btnShare">🚀 Oszd meg a programot!</button></div>
     <div class="ql-wrapper"><button class="ql-btn" id="btnHolEgyek">🍔 Hol egyek?</button></div>
     <div class="ql-wrapper">
-       <button class="ql-btn" id="btnCheckin">📍 Itt vagyok!</button>
-       <div class="checkin-status d-none" id="myCheckinStatus"></div>
-    </div>
+   <button class="ql-btn" id="btnCheckin" style="position: relative;">
+      📍 Itt vagyok!
+      <!-- Új létszám számláló buborék -->
+      <span id="ciBadge" class="gb-notification-badge" style="display: none;">0</span>
+   </button>
+   <!-- d-none helyett tiszta inline stílussal indítunk -->
+   <div class="checkin-status" id="myCheckinStatus" style="display: none;"></div>
+</div>
   </div>
 </div>
 
@@ -326,7 +350,7 @@
     </div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Ciróka Bábszínház</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/44C1R7q2n" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/2676308876086317" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -362,7 +386,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/5nmcP7WCi" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/1942131873062165" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -370,6 +394,43 @@
   <div class="event-card type-social" data-start="2026-06-13T11:30:00+02:00" data-end="2026-06-13T12:30:00+02:00">
     <div class="card-header"><div class="event-title">🥂 Állófogadás</div></div>
   </div>
+
+<div class="slot-time">13:00 – 17:00</div>
+  <div class="event-card type-social" id="show-kiallitas" data-start="2026-06-13T13:00:00+02:00" data-end="2026-06-13T17:00:00+02:00">
+    <div class="card-header">
+      <div class="card-header-row">
+        <div><div class="event-title">🖼️ NYITÓKÉP - Látványtervező hallgatók kiállítása</div><div class="event-company">Megnyitó</div></div>
+        <div class="header-actions">
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">NYITÓKÉP</div>
+        <div class="details-text">
+          <strong>A Magyar Képzőművészeti Egyetem és a Rippl-Rónai Művészeti Intézet látványtervező szakos hallgatóinak közös kiállítása</strong><br><br>
+          A kiállításon a bábtervezői stilizációs feladatok mellett, hangulatfestéseket, sziluett és karakterképzéshez készült rajzokat, tárgybábokat, konkrét darabok bábterveit, a bábok köré gondolt díszlet-, jelmezkoncepciókat és terveket, valamint kivitelezett bábokat láthat a nagyközönség.<br><br>
+          A kiállításon bemutatott bábok olyan művek karaktereit jelenítik meg többek között, mint Bartók Béla A kékszakállú herceg vára, A fából faragott királyfi, William Shakespeare A makrancos hölgy, Arany János Rózsa és Ibolya vagy Molière Dandin György, avagy a megcsúfolt férj.<br><br>
+          A kiállítás anyaga továbbá betekintést nyújt a 2025/26-os tanév két szemeszterében a BA I, BA II, BAIII, MA I szakos hallgatók által készített vizsga- és diplomamunkákba. Csáth Géza: Janika, Tasnádi István: Farkas és Piroska, Moliere: Amphitryon, Vörösmarty Mihály: Csongor és Tünde, Spiró György: Koccanás, Csehov: Három nővér című művekhez készült díszlet-, jelmez- és bábterveket tekinthetik meg a látogatók.<br><br>
+          A kiállításmegnyitón a Magyar Képzőművészeti Egyetem MA I osztálya által tervezett és kivitelezett teatro lambe-lambe projekteket a Színház- és Filmművészeti Egyetem első éves színművész-bábszínész osztály hallgatói keltik életre.
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Infók</div>
+        <div class="details-text">
+          <strong>Helyszín:</strong> Tudomány és Művészetek Háza, Kecskemét, Rákóczi út 2.<br>
+          <strong>Megtekinthető:</strong> 2026. június 13 - június 21.<br>
+          <strong>Megnyitja:</strong> a Színház- és Filmművészeti Egyetem első éves színművész-bábszínész osztálya, valamint Varjas Zsófia, Kocsis Eszter, Palya Gábor és Hoffer Károly
+        </div>
+      </div>
+    </div></div>
+    <div class="event-footer pt-10">
+      <div class="event-meta"><span class="badge badge-venue">Tudomány és Művészetek Háza</span></div>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/1625928051859863" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
 
   <div class="slot-time">14:30 – 15:20</div>
   <div class="event-card type-show" id="show-lathatatlan" data-start="2026-06-13T14:30:00+02:00" data-end="2026-06-13T15:20:00+02:00">
@@ -404,45 +465,37 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Kelemen L. Kamaraszínház</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/4AlHsNQBE" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/1657836858584235" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
-  <div class="slot-time">16:30 – 17:00</div>
-  <div class="event-card type-social" id="show-kiallitas" data-start="2026-06-13T16:30:00+02:00" data-end="2026-06-13T17:00:00+02:00">
+  <div class="slot-time">16:30 – 17:10</div>
+  <div class="event-card type-show" id="show-honvagy" data-start="2026-06-13T16:30:00+02:00" data-end="2026-06-13T17:10:00+02:00">
     <div class="card-header">
       <div class="card-header-row">
-        <div><div class="event-title">🖼️ NYITÓKÉP - Látványtervező hallgatók kiállítása - Megnyitó</div><div class="event-company">Kiállításmegnyitó</div></div>
+        <div>
+          <div class="event-title">Örökölt honvágy<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">SZFE - Russa Karina</div>
+        </div>
         <div class="header-actions">
+          <div class="star-container"><span class="star-btn">☆</span></div>
+          <div class="mini-pulse-alert">!</div>
           <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
         </div>
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
       <div class="details-section">
-        <div class="details-label">NYITÓKÉP</div>
-        <div class="details-text">
-          <strong>A Magyar Képzőművészeti Egyetem és a Rippl-Rónai Művészeti Intézet látványtervező szakos hallgatóinak közös kiállítása</strong><br><br>
-          A kiállításon a bábtervezői stilizációs feladatok mellett, hangulatfestéseket, sziluett és karakterképzéshez készült rajzokat, tárgybábokat, konkrét darabok bábterveit, a bábok köré gondolt díszlet-, jelmezkoncepciókat és terveket, valamint kivitelezett bábokat láthat a nagyközönség.<br><br>
-          A kiállításon bemutatott bábok olyan művek karaktereit jelenítik meg többek között, mint Bartók Béla A kékszakállú herceg vára, A fából faragott királyfi, William Shakespeare A makrancos hölgy, Arany János Rózsa és Ibolya vagy Molière Dandin György, avagy a megcsúfolt férj.<br><br>
-          A kiállítás anyaga továbbá betekintést nyújt a 2025/26-os tanév két szemeszterében a BA I, BA II, BAIII, MA I szakos hallgatók által készített vizsga- és diplomamunkákba. Csáth Géza: Janika, Tasnádi István: Farkas és Piroska, Moliere: Amphitryon, Vörösmarty Mihály: Csongor és Tünde, Spiró György: Koccanás, Csehov: Három nővér című művekhez készült díszlet-, jelmez- és bábterveket tekinthetik meg a látogatók.<br><br>
-          A kiállításmegnyitón a Magyar Képzőművészeti Egyetem MA I osztálya által tervezett és kivitelezett teatro lambe-lambe projekteket a Színház- és Filmművészeti Egyetem első éves színművész-bábszínész osztály hallgatói keltik életre.
-        </div>
-      </div>
-      <div class="details-section">
-        <div class="details-label">Infók</div>
-        <div class="details-text">
-          <strong>Helyszín:</strong> Tudomány és Művészetek Háza, Kecskemét, Rákóczi út 2.<br>
-          <strong>Megtekinthető:</strong> 2026. június 13 - június 21.<br>
-          <strong>Megnyitja:</strong> a Színház- és Filmművészeti Egyetem első éves színművész-bábszínész osztálya, valamint Varjas Zsófia, Kocsis Eszter, Palya Gábor és Hoffer Károly
-        </div>
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">Írta, alkotta és játssza: Russa Karina</div>
       </div>
     </div></div>
-    <div class="event-footer pt-10">
-      <div class="event-meta"><span class="badge badge-venue">Tudomány és Művészetek Háza</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/5TBTJWJsS" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ciróka kisterem</span></div>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/1550265200431928" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
+
 
   <div class="slot-time">18:00 – 19:00</div>
   <div class="event-card type-show" id="show-atanaz" data-start="2026-06-13T18:00:00+02:00" data-end="2026-06-13T19:00:00+02:00">
@@ -492,7 +545,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/64Go9WP2y" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/1287010780071695" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -510,32 +563,7 @@
     <div class="card-header"><div class="event-title">💬 Szakmai megbeszélés</div></div>
   </div>
 
-  <div class="slot-time">23:00 – 23:40</div>
-  <div class="event-card type-show" id="show-honvagy" data-start="2026-06-13T23:00:00+02:00" data-end="2026-06-13T23:40:00+02:00">
-    <div class="card-header">
-      <div class="card-header-row">
-        <div>
-          <div class="event-title">Örökölt honvágy<span class="live-badge">MOST ZAJLIK</span></div>
-          <div class="event-company">SZFE - Russa Karina</div>
-        </div>
-        <div class="header-actions">
-          <div class="star-container"><span class="star-btn">☆</span></div>
-          <div class="mini-pulse-alert">!</div>
-          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
-        </div>
-      </div>
-    </div>
-    <div class="card-details"><div class="card-details-inner">
-      <div class="details-section">
-        <div class="details-label">Alkotók</div>
-        <div class="details-text">Írta, alkotta és játssza: Russa Karina</div>
-      </div>
-    </div></div>
-    <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Ciróka kisterem</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/67FBn9tiD" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
-    </div>
-  </div>
+  
 </div>
 
 <!-- VASÁRNAP – jún. 14. -->
@@ -552,7 +580,7 @@
     </div>
     <div class="event-footer pt-10">
       <div class="event-meta"></div>
-      <a class="fb-event-btn" href="https://fb.me/e/6TEYw3GEe" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/1298772345782961/1298772349116294" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -591,7 +619,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Kelemen L. Kamaraszínház</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/636HP3047" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/1003472059033049" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -639,7 +667,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/6iR3cSAwd" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/2192930181525625" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -675,7 +703,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Kelemen L. Kamaraszínház</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/7MXwjFf77" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/2064418238288703" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -713,7 +741,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/7ESeEJgPD" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/1304878464905429" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -766,7 +794,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Ciróka kisterem</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/4HU74WtyD" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/1273661698087020" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 </div>
@@ -785,7 +813,7 @@
     </div>
     <div class="event-footer pt-10">
       <div class="event-meta"></div>
-      <a class="fb-event-btn" href="https://fb.me/e/6TEYw3GEe" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/1298772345782961/1298772352449627" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -824,7 +852,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Ruszt J. Stúdiószínház</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/7wGInXGub" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/1330707658870758/1330707668870757" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -858,7 +886,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Ciróka kisterem</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/4vyswGE0x" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/1044112131631369/1044112141631368" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -904,7 +932,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/7MbaES68P" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/1668617880826699" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -956,7 +984,7 @@
         <span class="badge badge-venue">Hírös Agóra</span>
         <span class="badge badge-public">Nyilvános előadás</span>
       </div>
-      <a class="fb-event-btn" href="https://fb.me/e/5CLaDhFKf" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/4318696261726528" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
   
@@ -995,7 +1023,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Ruszt J. Stúdiószínház</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/7wGInXGub" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/1330707658870758/1330707662204091" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -1029,7 +1057,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Ciróka kisterem</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/4vyswGE0x" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/1044112131631369/1063567163019199" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -1080,7 +1108,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/6XWjRK3Z7" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/1600350011038664" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 </div>
@@ -1099,7 +1127,7 @@
     </div>
     <div class="event-footer pt-10">
       <div class="event-meta"></div>
-      <a class="fb-event-btn" href="https://fb.me/e/6TEYw3GEe" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/1298772345782961/1298772355782960" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -1139,7 +1167,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Ifjúsági Otthon udvara</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/5WkKlcjdg" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/2108571153049675" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -1188,7 +1216,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Kelemen L. Kamaraszínház</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/5YdPHq1yz" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/819784581194532" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -1223,7 +1251,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Ruszt J. Stúdiószínház</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/9QNmr1TL6" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/5334745303417435" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -1269,7 +1297,7 @@
       <div class="event-meta">
         <span class="badge badge-venue">Hírös Agóra</span>
       </div>
-      <a class="fb-event-btn" href="https://fb.me/e/3LMJKIvs3" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/3255523264835190" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -1325,7 +1353,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/4phbbMCOO" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/1468420997545705" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -1366,7 +1394,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/8ePdUc77o" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/1315646817170553" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -1412,7 +1440,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Kelemen L. Kamaraszínház</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/km9hAwMbA" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/1462042011867684" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -1451,7 +1479,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Ciróka kisterem</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/9zPdzLzA5" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/822602983808477/822602993808476" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -1491,7 +1519,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Ruszt J. Stúdiószínház</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/7yrhzpeiV" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/2433194203770645/2433194207103978" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -1532,7 +1560,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/7iJRzUILe" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/993360473215099" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -1594,7 +1622,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Kelemen L. Kamaraszínház</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/jwinVSjKw" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/2667156207013933" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -1631,7 +1659,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/7RAJShdyK" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/818240308025820" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -1670,7 +1698,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Ciróka kisterem</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/9zPdzLzA5" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/822602983808477/822602990475143" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -1710,7 +1738,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Ruszt J. Stúdiószínház</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/7yrhzpeiV" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/2433194203770645/2433194213770644" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -1747,7 +1775,7 @@
     </div></div>
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Kelemen L. Kamaraszínház</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/6QBxzINC1" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/975240595261814" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -1796,7 +1824,11 @@
     <div class="info-item"><strong>Varróműhely (Emőd Kriszta)</strong><a href="tel:+36209446533">+36 20 944 6533</a></div>
   </div>
 
-  <div class="map-container">
+  <!-- ÚJ GOMB SEGÍTSÉGKÉRÉSHEZ (A rács alatt, de még a térkép felett helyezkedik el) -->
+  <button class="pdf-dl-btn" id="btnHelp" style="margin-top: 20px; display: block; width: 100%; text-align: center; background: var(--teal); border: none;">Kérdésed van? Segítünk! 💬</button>
+
+  <!-- A térkép konténere megmarad a dobozon belül -->
+  <div class="map-container" style="margin-top: 30px;">
     <div class="map-title">📍 Helyszínek</div>
     
     <div class="venue-item">
@@ -1864,7 +1896,7 @@
       </div>
     </div>
 
-  <div class="venue-item">
+    <div class="venue-item">
       <div class="map-venue-row">
         <div class="map-venue-flex">
           <div>
@@ -1877,7 +1909,7 @@
       </div>
     </div>
 
-     <div class="venue-item border-none">
+    <div class="venue-item border-none">
       <div class="map-venue-row">
         <div class="map-venue-flex">
           <div>

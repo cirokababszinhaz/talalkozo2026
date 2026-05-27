@@ -101,6 +101,9 @@ h1 em { color: var(--gold-light); font-style: italic; }
 .checkin-status-link { color: var(--gold-light); cursor: pointer; font-size: 10px; text-decoration: underline; font-weight: 700; }
 .checkin-status-box { margin-top: 6px; display: flex; justify-content: center; gap: 12px; align-items: center;}
 .checkin-status-revoke { color: var(--red); cursor: pointer; font-size: 10px; text-decoration: underline; font-weight: 700;}
+.d-none {
+  display: none !important;
+}
 
 /* SZŰRŐ GOMBOK */
 .legend-bar { background: var(--teal-dark); display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.1); }
@@ -394,4 +397,9 @@ footer a { color: var(--gold-light); text-decoration: none; }
 @media (pointer: fine) {
   body { cursor: url('./kurzor.png') 16 16, auto; }
   a, button, .clickable, .card-header, .filter-btn, .hero-btn { cursor: url('./kurzor.png') 16 16, pointer !important; }
+}
+
+.fb-event-btn svg, 
+.fb-event-btn use {
+  pointer-events: none;
 }

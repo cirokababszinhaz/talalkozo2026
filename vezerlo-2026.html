@@ -62,6 +62,16 @@
   .marionette-mode::after { right: 20%; }
   @keyframes sway { 0%, 100% { transform: rotate(-1.5deg); } 50% { transform: rotate(1.5deg); } }
 
+/* ÚJ KÉRDÉSEK STÍLUSAI */
+  .question-item { border-left-color: var(--gold); }
+  .question-item.resolved-item { opacity: 0.35; filter: grayscale(50%); border-left-color: var(--muted); transition: opacity 0.3s; }
+  .question-item.resolved-item .alert-text { text-decoration: line-through; color: var(--muted); }
+  
+  .reply-btn { background: var(--green); color: #fff; padding: 6px 10px; border-radius: 3px; font-size: 10px; font-weight: 700; text-transform: uppercase; border: none; text-decoration: none; display: inline-block; margin-right: 5px; }
+  .reply-btn:hover { background: #145a32; text-decoration: none; color: #fff;}
+  
+  .resolve-btn { background: var(--teal); color: #fff; padding: 6px 10px; border-radius: 3px; font-size: 10px; font-weight: 700; text-transform: uppercase; border: none; cursor: pointer; margin-right: 5px;}
+  .resolve-btn:hover { background: var(--teal-dark); }
 </style>
 </head>
 <body>
@@ -160,6 +170,12 @@
   <div class="section-title">Aktív értesítések</div>
   <div id="activeAlertsContainer">Nincs aktív értesítés.</div>
 
+  <!-- Helyezze ezt közvetlenül az "Emlékkönyv moderálás" h2 címe fölé: -->
+  <div class="divider"></div>
+  <h2>Beérkezett kérdések</h2>
+  <div class="subtitle">Segítségnyújtás és válaszadás</div>
+  <div id="questionsAdminContainer">Nincs beérkezett kérdés.</div>
+
   <div class="divider"></div>
   <h2>Emlékkönyv moderálás</h2>
   <div class="subtitle">Vendégek üzeneteinek ellenőrzése</div>
@@ -173,7 +189,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, push, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  import { getDatabase, ref, push, set, remove, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
   import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getStorage, ref as sRef, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
@@ -297,6 +313,39 @@
       });
     });
 
+
+// Az initAdmin() végére, vagy a többi figyelő mellé másolja be:
+  onValue(ref(db, "questions"), (snap) => {
+    const container = document.getElementById("questionsAdminContainer");
+    container.innerHTML = "";
+    if (!snap.exists()) { container.innerHTML = "<p style='font-size:12px;color:var(--muted)'>Nincs beérkezett kérdés.</p>"; return; }
+    
+    const data = snap.val();
+    const qArray = Object.keys(data).map(key => ({ id: key, ...data[key] })).sort((a,b) => b.timeRaw - a.timeRaw);
+    
+    qArray.forEach(q => {
+      const isResolved = q.resolved || false;
+      const resolvedClass = isResolved ? "resolved-item" : "";
+      const resolveText = isResolved ? "Megnyitás" : "✓ Kész (Kipipál)";
+      
+      container.innerHTML += `
+        <div class="alert-item question-item ${resolvedClass}">
+          <div style="width:100%;">
+            <div class="alert-meta">${q.dateStr} | Feladó: ${escapeHTML(q.name)} (${escapeHTML(q.email)})</div>
+            <div class="alert-text" style="margin-bottom: 12px; font-size: 14px;">${escapeHTML(q.text)}</div>
+            <div>
+              <!-- Email küldés gomb -->
+              <a href="mailto:${encodeURIComponent(q.email)}?subject=Válasz a 17. Bábszínházi Találkozó segítségkérésre" class="reply-btn">✉ Válaszolok</a>
+              <!-- Állapotváltó gomb -->
+              <button class="resolve-btn" onclick="window.toggleResolveQuestion('${q.id}', ${isResolved})">${resolveText}</button>
+              <!-- Törlés gomb -->
+              <button class="del-btn" style="background:#fee; color:var(--red);" onclick="window.deleteQuestion('${q.id}')">Törlés</button>
+            </div>
+          </div>
+        </div>`;
+    });
+  });
+
     onValue(ref(db, "guestbook"), (snap) => {
       const container = document.getElementById("guestbookAdminContainer");
       container.innerHTML = "";
@@ -373,6 +422,17 @@
     el.textContent = msg; el.className = "feedback " + type; el.style.display = "block";
     setTimeout(() => el.style.display = "none", 4000);
   }
+
+// Regisztrálja a globális kattintási eseményeket a script alján:
+  window.toggleResolveQuestion = async function(id, currentStatus) {
+    await update(ref(db, "questions/" + id), { resolved: !currentStatus });
+  };
+
+  window.deleteQuestion = async function(id) {
+    if(confirm("Biztosan véglegesen törlöd ezt a kérdést?")) {
+      await remove(ref(db, "questions/" + id));
+    }
+  };
 </script>
 
 <script>

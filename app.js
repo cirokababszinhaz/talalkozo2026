@@ -517,41 +517,63 @@ function revokeCheckin(e) {
 }
 
 onValue(checkinRef, (snap) => {
+    // Alaphelyzetbe állítjuk az összes helyszín listáját a térkép alatt
     Object.keys(venueNames).forEach(id => {
         const container = document.getElementById('checkins-' + id);
         if(container) container.innerHTML = '';
     });
 
-    if(!snap.exists()) return;
+    const ciBadge = document.getElementById('ciBadge');
+
+    // Ha nincs senki bejelentkezve, elrejtjük a számlálót
+    if(!snap.exists()) {
+        if(ciBadge) ciBadge.style.display = 'none';
+        return;
+    }
     
     const data = snap.val();
     const now = Date.now();
     const TWO_HOURS = 2 * 60 * 60 * 1000;
+    
+    let totalActiveCheckins = 0; // Ez fogja számolni az összes aktív embert
 
     for (let venueId in data) {
         const venueContainer = document.getElementById('checkins-' + venueId);
-        if(!venueContainer) continue;
-
         let hasCheckin = false;
         const checkins = data[venueId];
         
         Object.keys(checkins).forEach(key => {
             const checkinData = checkins[key];
+            // Csak a 2 órán belüli bejelentkezéseket vesszük figyelembe
             if (now - checkinData.timeRaw < TWO_HOURS) {
-                if(!hasCheckin) {
-                    if (venueId === 'bufe') {
-                        venueContainer.innerHTML = '<div style="font-size:10px; color:var(--muted); margin-bottom:5px; font-weight:600; width: 100%;">Frissítő beszerzés kávézóban/étteremben:</div>';
-                    } else {
-                        venueContainer.innerHTML = '<div style="font-size:10px; color:var(--muted); margin-bottom:5px; font-weight:600; width: 100%;">Akik itt vannak:</div>';
+                totalActiveCheckins++; // Növeljük a globális számlálót
+                
+                if(venueContainer) {
+                    if(!hasCheckin) {
+                        if (venueId === 'bufe') {
+                            venueContainer.innerHTML = '<div style="font-size:10px; color:var(--muted); margin-bottom:5px; font-weight:600; width: 100%;">Frissítő beszerzés kávézóban/étteremben:</div>';
+                        } else {
+                            venueContainer.innerHTML = '<div style="font-size:10px; color:var(--muted); margin-bottom:5px; font-weight:600; width: 100%;">Akik itt vannak:</div>';
+                        }
+                        hasCheckin = true;
                     }
-                    hasCheckin = true;
+                    const span = document.createElement('span');
+                    span.className = 'checkin-bubble';
+                    span.innerText = escapeHTML(checkinData.name);
+                    venueContainer.appendChild(span);
                 }
-                const span = document.createElement('span');
-                span.className = 'checkin-bubble';
-                span.innerText = escapeHTML(checkinData.name);
-                venueContainer.appendChild(span);
             }
         });
+    }
+
+    // Frissítjük a gomb melletti kis piros számlálót
+    if(ciBadge) {
+        if (totalActiveCheckins > 0) {
+            ciBadge.innerText = totalActiveCheckins;
+            ciBadge.style.display = 'block';
+        } else {
+            ciBadge.style.display = 'none';
+        }
     }
 });
 
@@ -1092,6 +1114,16 @@ function initApp() {
     const btnCheckin = document.getElementById('btnCheckin');
     if(btnCheckin) btnCheckin.addEventListener('click', openCheckin);
 
+// app.js - tegye az initApp() függvényen belülre a többi gombkezelő mellé:
+    const btnHelp = document.getElementById('btnHelp');
+    if(btnHelp) btnHelp.addEventListener('click', () => { document.getElementById('helpModal').classList.add('visible'); });
+
+    const helpCloseBtn = document.getElementById('helpCloseBtn');
+    if(helpCloseBtn) helpCloseBtn.addEventListener('click', () => { document.getElementById('helpModal').classList.remove('visible'); });
+
+    const helpSubmitBtn = document.getElementById('helpSubmitBtn');
+    if(helpSubmitBtn) helpSubmitBtn.addEventListener('click', submitHelpRequest);
+
     // Megosztás Gomb (Web Share API)
     const btnShare = document.getElementById('btnShare');
     if(btnShare) {
@@ -1141,18 +1173,27 @@ function initApp() {
             
             // Facebook gombok megnyitása
             const fbBtn = e.target.closest('.fb-event-btn');
-            if (fbBtn) {
-                const url = fbBtn.getAttribute('href');
-                // Ha nincs valódi link, letiltjuk a kattintást és szólunk
-                if (!url || url === '#' || url === '') {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    showToast("Ehhez a programhoz jelenleg nincs Facebook esemény!");
-                }
-                // HA VAN VALÓDI LINK, NEM CSINÁLUNK SEMMIT! 
-                // Így a böngésző a normál működése szerint, tiltás nélkül megnyitja.
-                return; 
-            }
+if (fbBtn) {
+    const url = fbBtn.getAttribute('href');
+    // Ha nincs valódi link, letiltjuk a kattintást és szólunk
+    if (!url || url === '#' || url === '') {
+        e.preventDefault();
+        e.stopPropagation();
+        showToast("Ehhez a programhoz jelenleg nincs Facebook esemény!");
+        return; 
+    }
+
+    // JAVÍTÁS MOBILRA ÉS PWA-RA:
+    // Ha standalone (telepített) módban fut az app, kényszerítjük a külső böngésző/app megnyitását
+    const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    if (isStandaloneMode || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        e.preventDefault();
+        e.stopPropagation();
+        // window.open meghívása kényszeríti az OS-t, hogy külső ablakban/appban nyissa meg
+        window.open(url, '_system'); 
+    }
+    return; 
+}
 
             if(e.target.matches('.badge-venue')) {
                 filterVenue(e.target, e);
@@ -1286,4 +1327,64 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initApp);
 } else {
     initApp();
+}
+
+async function submitHelpRequest() {
+    const nameEl = document.getElementById('helpNameInput');
+    const emailEl = document.getElementById('helpEmailInput');
+    const textEl = document.getElementById('helpTextInput');
+    if(!nameEl || !emailEl || !textEl) return;
+
+    const name = nameEl.value.trim();
+    const email = emailEl.value.trim();
+    const text = textEl.value.trim();
+
+    if(!name || !email || !text) {
+        showToast("Kérjük, tölts ki minden mezőt!");
+        return;
+    }
+
+    // Egyszerű e-mail cím ellenőrzés
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(!emailRegex.test(email)) {
+        showToast("Kérjük, érvényes e-mail címet adj meg!");
+        return;
+    }
+
+    const submitBtn = document.getElementById('helpSubmitBtn');
+    if(submitBtn) {
+        submitBtn.innerText = "Küldés...";
+        submitBtn.disabled = true;
+    }
+
+    const dateStr = new Date().toLocaleDateString('hu-HU', {month:'short', day:'numeric'}) + " " + new Date().getHours().toString().padStart(2,'0') + ":" + new Date().getMinutes().toString().padStart(2,'0');
+
+    try {
+        const qRef = ref(db, 'questions');
+        const newRef = push(qRef);
+        await set(newRef, {
+            name: name,
+            email: email,
+            text: text,
+            timeRaw: Date.now(),
+            dateStr: dateStr,
+            resolved: false // Alapértelmezetten megoldatlan
+        });
+
+        // Mezők ürítése
+        nameEl.value = "";
+        emailEl.value = "";
+        textEl.value = "";
+        
+        document.getElementById('helpModal').classList.remove('visible');
+        showToast("Kérdés elküldve! Figyeld a postaládádat!");
+        trackEvent('help_request_sent');
+    } catch(err) {
+        showToast("Hiba történt: " + err.message);
+    } finally {
+        if(submitBtn) {
+            submitBtn.innerText = "Kérdés elküldése";
+            submitBtn.disabled = false;
+        }
+    }
 }
