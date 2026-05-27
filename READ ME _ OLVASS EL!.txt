@@ -1,0 +1,22 @@
+4. A hiányzó Facebook Megosztás feladat (Open Graph Meta Tagek)
+Amikor valaki bemásolja a Találkozó linkjét egy Facebook bejegyzésbe, vagy elküldi Messengeren, a Facebook beolvassa az úgynevezett Open Graph (OG) címkéket az oldaladból, és az alapján generálja a szép, nagy képes előnézetet.
+Ha felgörgetsz az index.html fájlod legelejére, a <head> részben látni fogod ezt a blokkot:
+code
+
+Html
+<!-- FB OPEN GRAPH META TAGEK -->
+<meta property="og:title" content="Magyarországi Bábszínházak 17. Találkozója">
+<meta property="og:description" content="2026. június 13-18. Kecskemét. Nézd meg a teljes programot!">
+<meta property="og:image" content="https://cirokababszinhaz.github.io/talalkozo2026/assets/img/placeholder-banner.jpg"> 
+<meta property="og:url" content="https://cirokababszinhaz.github.io/talalkozo2026/">
+<meta property="og:type" content="website">
+
+Mi itt a feladatod?
+A Kép (og:image): Készítened kell egy nagyon szép, látványos, fekvő tájolású képet (A Facebook ajánlása szerint 1200 x 630 pixel méretben). Ezen legyen rajta a találkozó logója, a dátum, esetleg egy szép bábos fotó.
+Ezt a képet töltsd fel a GitHubra mondjuk fb-megosztas.jpg néven.
+Az index.html-ben az og:image sorban cseréld ki a linket a te feltöltött képed teljes, abszolút webcímére! (Pl.: content="https://cirokababszinhaz.github.io/talalkozo2026/fb-megosztas.jpg"). Fontos: Itt kötelező a "https://..." kezdetű teljes URL, a sima "./kép.jpg" relatív linket a Facebook nem érti meg!
+
+A címet (og:title) és a leírást (og:description) is átírhatod itt bármire, amit szeretnél, hogy megjelenjen a posztokban.
+Hogyan teszteld a megosztást?
+Mielőtt élesíted, ha feltöltötted az új képet és az új index.html-t, látogass el a Facebook Sharing Debugger oldalára. Másold be a Találkozód linkjét, és kattints a "Hibakeresés" (Debug) gombra. Ha régi képet mutat, kattints az "Újbóli lekérés" (Scrape again) gombra. Itt fogod látni pontosan azt az előnézetet, amit a vendégek is fognak látni megosztáskor!
+(És persze ne felejtsd el az sw.js verziószámát emelni! Végtelenül profi lesz az egész!)
