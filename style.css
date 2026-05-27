@@ -185,7 +185,7 @@ h1 em { color: var(--gold-light); font-style: italic; }
 .badge-public:hover { background: #c0392b; color: #fff; }
 
 .fb-event-btn, .route-btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; background: rgba(26,92,88,0.07); border: 1px solid rgba(26,92,88,0.3); border-radius: 3px; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; color: var(--teal-dark); transition: .2s; white-space: nowrap; flex-shrink: 0; text-decoration: none;}
-.fb-event-btn:hover, .route-btn:hover { background: var(--teal); color: #fff; text-decoration: none;}
+.fb-event-btn:hover, .route-btn:hover { background: var(--teal); color: #fff; text-decoration: none;margin-left: auto;}
 
 .card-details { max-height: 0; overflow: hidden; transition: max-height .4s ease; background: rgba(26,92,88,0.03); }
 .event-card.open .card-details { max-height: 4000px; border-top: 1px solid var(--border); }
