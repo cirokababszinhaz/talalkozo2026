@@ -113,6 +113,17 @@ h1 em { color: var(--gold-light); font-style: italic; }
 .dot-social { background: #b0a898; }
 .dot-public { background: transparent; border: 3px solid var(--orange); }
 
+/* EMLÉKKÖNYV ÉRTESÍTÉS BADGE */
+.gb-notification-badge {
+  position: absolute; top: -6px; right: -6px;
+  background: var(--red); color: #fff;
+  font-size: 9px; font-weight: 800;
+  padding: 2px 5px; border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  animation: popIn 0.3s ease;
+  pointer-events: none; /* Hogy ne zavarjon be a kattintásba */
+}
+
 /* TABS ÉS MOBIL SCROLL HINT */
 .tabs-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; background: var(--surface); border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; transition: top 0.3s;}
 .tabs-wrap::-webkit-scrollbar { display: none; }
@@ -372,11 +383,11 @@ footer a { color: var(--gold-light); text-decoration: none; }
   75% { transform: translateX(15px) rotate(8deg) scale(1.05); }
 }
 
-/* PISLOGÓ SZEM A FEJLÉCBEN */
-.header-eye { width: 35px; margin-right: 10px; vertical-align: middle; animation: blink 4s infinite; }
-@keyframes blink { 
-  0%, 96%, 98%, 100% { transform: scaleY(1); } 
-  97%, 99% { transform: scaleY(0.1); } 
+/* PISLOGÓ/STATIKUS SZEMEK A FEJLÉCBEN */
+.header-eye { 
+  width: 28px; /* Állítsd be, mekkorák legyenek */
+  margin-right: 6px; 
+  vertical-align: middle; 
 }
 
 /* EGYEDI KURZOR CSAK ASZTALI GÉPEN */

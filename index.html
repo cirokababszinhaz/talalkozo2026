@@ -31,7 +31,6 @@
 </script>
 </head>
 <body>
-<div class="bg-watermark"></div>
 
 <div id="pdfOverlay" class="pdf-overlay">
   <img src="./kacsinto-szem.gif" alt="Kacsintás">
@@ -131,7 +130,9 @@
   </div>
   <div class="header-right">
     <div class="easter-trigger easter-trigger-flex">
-      <!-- Pislogó szem -->
+      
+      <!-- Két statikus szem, az egyik tükrözve -->
+      <img src="./szem-alap.png" class="header-eye" alt="Szem" style="transform: scaleX(-1);">
       <img src="./szem-alap.png" class="header-eye" alt="Szem">
       
       <a href="vezerlo-2026.html" class="secret-admin-link">2026</a>
@@ -164,7 +165,12 @@
   </div>
   <div class="quick-links">
     <div class="ql-wrapper"><button class="ql-btn" id="favFilterBtn">★ Kedvenceim</button></div>
-    <div class="ql-wrapper"><button class="ql-btn" id="btnGuestbook">📖 Emlékkönyv</button></div>
+    <div class="ql-wrapper">
+      <button class="ql-btn" id="btnGuestbook" style="position: relative;">
+         📖 Emlékkönyv
+         <span id="gbBadge" class="gb-notification-badge" style="display: none;">0</span>
+      </button>
+    </div>
     <div class="ql-wrapper"><button class="ql-btn" id="btnQuote">🎭 Napi motiváció</button></div>
     <div class="ql-wrapper"><button class="ql-btn" id="btnShare">🚀 Oszd meg a programot!</button></div>
     <div class="ql-wrapper"><button class="ql-btn" id="btnHolEgyek">🍔 Hol egyek?</button></div>
@@ -406,7 +412,7 @@
   <div class="event-card type-social" id="show-kiallitas" data-start="2026-06-13T16:30:00+02:00" data-end="2026-06-13T17:00:00+02:00">
     <div class="card-header">
       <div class="card-header-row">
-        <div><div class="event-title">🖼️ MKE – MATE látványtervező hallgatók</div><div class="event-company">Kiállításmegnyitó</div></div>
+        <div><div class="event-title">🖼️ NYITÓKÉP - Látványtervező hallgatók kiállítása - Megnyitó</div><div class="event-company">Kiállításmegnyitó</div></div>
         <div class="header-actions">
           <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
         </div>
@@ -540,7 +546,7 @@
       <div class="card-header-row">
         <div>
           <div class="event-title">Szakmai fórum</div>
-          <div class="event-company">UNIMA / Bábművész Szövetség / Igazgatók – zártkörű megbeszélés</div>
+          <div class="event-company">Igazgatók zártkörű megbeszélése (egyeztetés alatt)</div>
         </div>
       </div>
     </div>
@@ -725,42 +731,6 @@
     <div class="card-header"><div class="event-title">💬 Szakmai megbeszélés</div></div>
   </div>
 
-  <div class="slot-time">23:00 – 0:15</div>
-  <div class="event-card type-show" id="show-liselotte" data-start="2026-06-14T23:00:00+02:00" data-end="2026-06-15T00:15:00+02:00">
-    <div class="card-header">
-      <div class="card-header-row">
-        <div>
-          <div class="event-title">Liselotte és a május<span class="live-badge">MOST ZAJLIK</span></div>
-          <div class="event-company">SZFE - Kiss Dorina</div>
-        </div>
-        <div class="header-actions">
-          <div class="star-container"><span class="star-btn">☆</span></div>
-          <div class="mini-pulse-alert">!</div>
-          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
-        </div>
-      </div>
-    </div>
-    <div class="card-details"><div class="card-details-inner">
-      <div class="details-section">
-        <div class="details-label">Alkotók</div>
-        <div class="details-text">
-          Szerző: Pozsgai Zsolt<br>
-          Tervező: Horváth Márk<br>
-          Koreográfus: Puha Bernadett<br>
-          Dramaturg, rendező: Kiss Dorina<br><br>
-          Szereplők: Gyöngyössy Csenge, Lajhó Máté
-        </div>
-      </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály</div>
-        <div class="details-text">14+</div>
-      </div>
-    </div></div>
-    <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
-      <a class="fb-event-btn" href="https://fb.me/e/6XWjRK3Z7" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
-    </div>
-  </div>
 
   <div class="slot-time">23:00 – 23:45</div>
   <div class="event-card type-show" id="show-frida" data-start="2026-06-14T23:00:00+02:00" data-end="2026-06-14T23:45:00+02:00">
@@ -1076,6 +1046,43 @@
   <div class="event-card type-forum" data-start="2026-06-15T20:30:00+02:00" data-end="2026-06-15T22:30:00+02:00">
     <div class="card-header"><div class="event-title">💬 Szakmai megbeszélés</div></div>
   </div>
+
+<div class="slot-time">23:00 – 0:15</div>
+  <div class="event-card type-show" id="show-liselotte" data-start="2026-06-14T23:00:00+02:00" data-end="2026-06-15T00:15:00+02:00">
+    <div class="card-header">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Liselotte és a május<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">SZFE - Kiss Dorina</div>
+        </div>
+        <div class="header-actions">
+          <div class="star-container"><span class="star-btn">☆</span></div>
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Szerző: Pozsgai Zsolt<br>
+          Tervező: Horváth Márk<br>
+          Koreográfus: Puha Bernadett<br>
+          Dramaturg, rendező: Kiss Dorina<br><br>
+          Szereplők: Gyöngyössy Csenge, Lajhó Máté
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály</div>
+        <div class="details-text">14+</div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ciróka nagyterem</span></div>
+      <a class="fb-event-btn" href="https://fb.me/e/6XWjRK3Z7" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
 </div>
 
 <!-- KEDD – jún. 16. -->
@@ -1149,7 +1156,7 @@
     <div class="card-header">
       <div class="card-header-row">
         <div>
-          <div class="event-title">Fekete gólya, fehér gólya, szürke gólya<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-title">fekete gólya, fehér gólya, szürke gólya<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">ESZME és a MU Színház közös produkciója</div>
         </div>
         <div class="header-actions">
@@ -1331,7 +1338,7 @@
     <div class="card-header">
       <div class="card-header-row">
         <div>
-          <div class="event-title">A szegény halász, meg a túlsokra vágyó felesége<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-title">A szegény halász, meg a túl sokra vágyó felesége<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">Magamura Alkotóműhely</div>
         </div>
         <div class="header-actions">
@@ -1895,7 +1902,10 @@
     <img src="./tamogato3.png" class="sponsor-logo" alt="Támogató" loading="lazy">
     <img src="./tamogato4.png" class="sponsor-logo" alt="Támogató" loading="lazy">
     <img src="./tamogato5.png" class="sponsor-logo" alt="Támogató" loading="lazy">
+<!-- Itt bújik meg a szem a támogatók között! -->
+    <img src="./szem-nincs2.png" class="sponsor-logo" alt="Meglepetés" loading="lazy">
     <img src="./tamogato6.png" class="sponsor-logo" alt="Támogató" loading="lazy">
+<img src="./szem-nincs.png" class="sponsor-logo" alt="Meglepetés" loading="lazy">
   </div>
 </div>
 

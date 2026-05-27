@@ -35,6 +35,7 @@ let currentTypeFilter = null;
 let isFavoritesMode = false;
 let isGastroMode = false;
 let isPhotoWide = false;
+let currentGbTotal = 0;
 let resizedImageDataUrl = null;
 
 // BIZTONSÁGOS STRING FORMÁZÁS
@@ -220,11 +221,34 @@ onValue(gbRef, (snap) => {
     const data = snap.exists() ? snap.val() : null;
     renderGuestbook(data, "gbGridModal");
     renderGuestbook(data, "gbGridPostFest"); 
+    
+    // ÚJ RÉSZ: Olvasatlan üzenetek számolása
+    if (data) {
+        const gbArr = Object.keys(data);
+        currentGbTotal = gbArr.length;
+        let seen = parseInt(localStorage.getItem('lastSeenGbCount') || '0');
+        let unread = currentGbTotal - seen;
+        
+        const badge = document.getElementById('gbBadge');
+        if (badge) {
+            if (unread > 0) {
+                badge.innerText = unread;
+                badge.style.display = 'block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+    }
 });
 
 function openGuestbook() {
     const guestbookModal = document.getElementById('guestbookModal');
     if(guestbookModal) guestbookModal.classList.add('visible');
+    
+    // ÚJ RÉSZ: Elmentjük, hogy már mindet látta, és eltüntetjük a pöttyöt
+    localStorage.setItem('lastSeenGbCount', currentGbTotal.toString());
+    const badge = document.getElementById('gbBadge');
+    if(badge) badge.style.display = 'none';
 }
 
 function handlePhotoSelect(event) {
@@ -1076,7 +1100,7 @@ function initApp() {
                 try {
                     await navigator.share({
                         title: '17. Bábszínházi Találkozó',
-                        text: 'Kecskemét, 2026. június 13-18. Nézd meg a programot és gyere te is!',
+                        text: 'Kecskemét, 2026. június 13-18. Nézd meg a programot!',
                         url: window.location.href
                     });
                     trackEvent('app_shared'); 
