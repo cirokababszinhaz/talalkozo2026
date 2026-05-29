@@ -28,7 +28,9 @@ const app = initializeApp(firebaseConfig);
 const db  = getDatabase(app);
 const storage = getStorage(app);
 
-// GLOBÁLIS ÁLLAPOTOK
+// ==========================================
+// 🛠️ GLOBÁLIS ÁLLAPOTOK & LEKÉPEZÉSEK
+// ==========================================
 let globalAlerts = [];
 let activeTabBeforeSearch = 0;
 let currentTypeFilter = null;
@@ -37,6 +39,19 @@ let isGastroMode = false;
 let isPhotoWide = false;
 let currentGbTotal = 0;
 let resizedImageDataUrl = null;
+let helpResizedImageDataUrl = null; // ÚJ VÁLTOZÓ SEGÍTSÉGKÉRÉSHEZ
+
+// CSOPORTOS ELŐADÁSOK LEKÉPEZÉSE ÉRTESÍTÉSEKHEZ (Kiemelve globális szintre, így minden fv. eléri!)
+const SHOW_GROUPS = {
+    'show-tragedia-hetfo-d': ['show-tragedia-hetfo-d', 'show-tragedia-hetfo-e'],
+    'show-tragedia-hetfo-e': ['show-tragedia-hetfo-d', 'show-tragedia-hetfo-e'],
+    'show-doboz-hetfo': ['show-doboz-hetfo', 'show-doboz-hetfo-e'],
+    'show-doboz-hetfo-e': ['show-doboz-hetfo', 'show-doboz-hetfo-e'],
+    'show-lenka-sze': ['show-lenka-sze', 'show-lenka-csut'],
+    'show-lenka-csut': ['show-lenka-sze', 'show-lenka-csut'],
+    'show-tryangle-sze': ['show-tryangle-sze', 'show-tryangle-csut'],
+    'show-tryangle-csut': ['show-tryangle-sze', 'show-tryangle-csut']
+};
 
 // BIZTONSÁGOS STRING FORMÁZÁS
 function escapeHTML(str) {
@@ -94,11 +109,14 @@ onValue(ref(db, "alertsList"), (snap) => {
 
     globalAlerts.forEach(alert => {
         if (alert.targetId && alert.targetId !== "all") {
-            const targetCard = document.getElementById(alert.targetId);
-            if (targetCard) targetCard.classList.add("has-alert");
+            // JAVÍTÁS: Csoportos előadások esetében mindegyik érintett kártyát megjelöljük
+            const targets = SHOW_GROUPS[alert.targetId] || [alert.targetId];
+            targets.forEach(tId => {
+                const targetCard = document.getElementById(tId);
+                if (targetCard) targetCard.classList.add("has-alert");
+            });
         }
     });
-
     const newestAlert = globalAlerts[0];
     const lastSeenTime = sessionStorage.getItem("lastSeenAlertTime");
     
@@ -150,7 +168,9 @@ function openAlertsModal(targetId = null) {
 
     let filteredAlerts = globalAlerts;
     if (targetId) {
-        filteredAlerts = globalAlerts.filter(a => a.targetId === targetId);
+        // JAVÍTÁS: Ha csoportos előadásról van szó, kiszűrjük az összes hozzá tartozó értesítést (Globális leképezőből)
+        const group = SHOW_GROUPS[targetId] || [targetId];
+        filteredAlerts = globalAlerts.filter(a => group.includes(a.targetId));
         modalTitle.textContent = "Értesítés a programhoz";
     } else {
         modalTitle.textContent = "Összes Értesítés";
@@ -691,6 +711,8 @@ function toggleGastroCard() {
 }
 
 function generateQuote() {
+// ÚJ GA4 MÉRÉS:
+    trackEvent('quote_viewed');
     const quotes = [
         "A színház ott kezdődik, ahol a mindennapok véget érnek.",
         "A mese a gyerekek egyetlen komoly dolga.",
@@ -702,7 +724,7 @@ function generateQuote() {
         "A báb súlya nem kilóban mérhető. Hanem a vastapsokban.",
         "Ha minden működik, az gyanús. Valami biztos kimaradt.",
         "A közönség nem lát mindent. Szerencsére!",
-        "A bábok nem fáradnak el. De te igen, szóval igyál még egy kávét.",
+        "A bábok nem fáradnak el. De te igen, szóval igyál még een kávét.",
         "Egy jó Találkozón nem csak előadásokat gyűjtesz, hanem történeteket is.",
         "A báb akkor él, amikor elfelejted, hogy te mozgatod.",
         "Minden előadás egy kicsit más. Akkor is, ha ugyanaz.",
@@ -733,7 +755,7 @@ function generateQuote() {
         "Ha mindenki érti, akkor valamit biztosan túlegyszerűsítettünk.",
         "A produkció kész van. Csak még dolgozunk rajta.",
         "A bemutató után mindenki fáradt. Kivéve azt, akinek még bontania kell.",
-        "A Találkozó harmadik napján már mindenki tegez mindenkit. Néha saját magát is.",
+        "A Találkozó harmadik tagján már mindenki tegez mindenkit. Néha saját magát is.",
         "Az előadás hossza relatív. A pakolásé nem.",
         "A legjobb beszélgetés ott kezdődik, ahol elfogyott a hivatalos program.",
         "Minden Találkozón van egy ember, aki tudja, hol van a hosszabbító. Ő a valódi főszereplő.",
@@ -1124,7 +1146,10 @@ function initApp() {
     const helpSubmitBtn = document.getElementById('helpSubmitBtn');
     if(helpSubmitBtn) helpSubmitBtn.addEventListener('click', submitHelpRequest);
 
-    // Megosztás Gomb (Web Share API)
+    const helpPhotoInput = document.getElementById('helpPhotoInput');
+    if(helpPhotoInput) helpPhotoInput.addEventListener('change', handleHelpPhotoSelect);
+
+// Megosztás Gomb (Web Share API)
     const btnShare = document.getElementById('btnShare');
     if(btnShare) {
         btnShare.addEventListener('click', async () => {
@@ -1159,8 +1184,14 @@ function initApp() {
    // Kártya lenyitás (Javított, könnyen kattintható verzió)
     document.querySelectorAll('.card-header').forEach(header => {
         header.addEventListener('click', function(e) {
-            // CSAK akkor nem nyílik le, ha a csillagra vagy a piros "!" ikonra böktek
             if(!e.target.closest('.star-btn') && !e.target.closest('.mini-pulse-alert')) { 
+                
+                // ÚJ GA4 MÉRÉS BEILLESZTÉSE:
+                const card = this.closest('.event-card');
+                if (card && !card.classList.contains('open')) { // Csak a nyitást mérjük, a becsukást nem
+                    trackEvent('show_expanded', { show_id: card.id });
+                }
+
                 toggleCard(this); 
             }
         });
@@ -1171,6 +1202,15 @@ function initApp() {
     if(mainContent) {
         mainContent.addEventListener('click', (e) => {
             
+const routeBtn = e.target.closest('.route-btn');
+            if (routeBtn) {
+                // Kinyerjük a gomb feletti helyszín nevet
+                const venueTitleEl = routeBtn.closest('.gastro-venue-item, .map-venue-flex')?.querySelector('.venue-item-title');
+                const venueName = venueTitleEl ? venueTitleEl.innerText.trim() : "Ismeretlen";
+                
+                trackEvent('navigation_requested', { venue_name: venueName });
+            }
+
             // Facebook gombok megnyitása
             const fbBtn = e.target.closest('.fb-event-btn');
 if (fbBtn) {
@@ -1235,11 +1275,15 @@ if (fbBtn) {
     if(pdfBtn && pdfOverlay) {
         pdfBtn.addEventListener('click', function(e) {
             e.preventDefault(); 
+            
+            // ÚJ GA4 MÉRÉS BEILLESZTÉSE:
+            trackEvent('pdf_downloaded');
+
             const targetUrl = this.href;
             pdfOverlay.classList.add('show');
             setTimeout(() => {
                 pdfOverlay.classList.remove('show');
-                window.location.href = targetUrl; // Ezzel kikerüli a pop-up blokkolókat!
+                window.location.href = targetUrl;
             }, 1800);
         });
     }
@@ -1344,7 +1388,6 @@ async function submitHelpRequest() {
         return;
     }
 
-    // Egyszerű e-mail cím ellenőrzés
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if(!emailRegex.test(email)) {
         showToast("Kérjük, érvényes e-mail címet adj meg!");
@@ -1359,7 +1402,20 @@ async function submitHelpRequest() {
 
     const dateStr = new Date().toLocaleDateString('hu-HU', {month:'short', day:'numeric'}) + " " + new Date().getHours().toString().padStart(2,'0') + ":" + new Date().getMinutes().toString().padStart(2,'0');
 
+    let photoUrl = "";
+
     try {
+        // HA VAN KÉP, FELTÖLTJÜK A STORAGE-BA
+        if (helpResizedImageDataUrl) {
+            try {
+                const photoRef = sRef(storage, 'questions/' + Date.now() + '.jpg');
+                await uploadString(photoRef, helpResizedImageDataUrl, 'data_url');
+                photoUrl = await getDownloadURL(photoRef);
+            } catch (imgError) {
+                console.error("Képfeltöltési hiba:", imgError);
+            }
+        }
+
         const qRef = ref(db, 'questions');
         const newRef = push(qRef);
         await set(newRef, {
@@ -1368,14 +1424,29 @@ async function submitHelpRequest() {
             text: text,
             timeRaw: Date.now(),
             dateStr: dateStr,
-            resolved: false // Alapértelmezetten megoldatlan
+            photoUrl: photoUrl, // Mentjük a kép linkjét is!
+            resolved: false
         });
 
-        // Mezők ürítése
+        // Mezők ürítése és visszaállítása
         nameEl.value = "";
         emailEl.value = "";
         textEl.value = "";
         
+        const helpPhotoInput = document.getElementById('helpPhotoInput');
+        if(helpPhotoInput) helpPhotoInput.value = "";
+        
+        const preview = document.getElementById('helpPhotoPreview');
+        if(preview) preview.style.display = 'none';
+        
+        const btn = document.getElementById('helpPhotoBtn');
+        if(btn) {
+            btn.style.borderColor = 'var(--teal)';
+            btn.style.color = 'var(--teal)';
+            btn.innerText = '📸 FOTÓ CSATOLÁSA (Opcionális)';
+        }
+        helpResizedImageDataUrl = null;
+
         document.getElementById('helpModal').classList.remove('visible');
         showToast("Kérdés elküldve! Figyeld a postaládádat!");
         trackEvent('help_request_sent');
@@ -1385,6 +1456,45 @@ async function submitHelpRequest() {
         if(submitBtn) {
             submitBtn.innerText = "Kérdés elküldése";
             submitBtn.disabled = false;
+        }
+    }
+}
+
+function handleHelpPhotoSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+        showToast("Kérlek, csak képet válassz ki!");
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function(e) {
+        const img = new Image();
+        img.src = e.target.result;
+        
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 800; const MAX_HEIGHT = 800;
+            let width = img.width; let height = img.height;
+            
+            if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
+            else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
+            canvas.width = width; canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            helpResizedImageDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+            
+            const btn = document.getElementById('helpPhotoBtn');
+            const preview = document.getElementById('helpPhotoPreview');
+            if(btn && preview) {
+                preview.style.display = 'block';
+                btn.style.borderColor = 'var(--green)';
+                btn.style.color = 'var(--green)';
+                btn.innerText = '✓ FOTÓ CSATOLVA';
+            }
         }
     }
 }

@@ -403,3 +403,47 @@ footer a { color: var(--gold-light); text-decoration: none; }
 .fb-event-btn use {
   pointer-events: none;
 }
+
+/* TÁMOGATÓI SZEMEK LEBEGŐ BUBORÉKJA */
+.sponsor-tooltip-wrap {
+  position: relative;
+  display: inline-block;
+}
+.sponsor-tooltip-text {
+  visibility: hidden;
+  background-color: var(--teal-dark);
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  padding: 6px 12px;
+  position: absolute;
+  z-index: 999;
+  bottom: 125%; /* A kép felett jelenik meg */
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  pointer-events: none;
+}
+.sponsor-tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: var(--teal-dark) transparent transparent transparent;
+}
+.sponsor-tooltip-wrap:hover .sponsor-tooltip-text,
+.sponsor-tooltip-wrap:active .sponsor-tooltip-text {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(-5px);
+}

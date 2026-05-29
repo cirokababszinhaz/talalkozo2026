@@ -135,6 +135,13 @@
       <input type="email" id="helpEmailInput" placeholder="E-mail címed..." class="checkin-input" style="text-align: left;">
       <textarea id="helpTextInput" placeholder="Miben segíthetünk?..." maxlength="300" class="checkin-select" style="min-height: 100px; margin-bottom: 15px; resize: vertical;"></textarea>
       
+      <!-- ÚJ: FOTÓ CSATOLÁSA GOMB -->
+      <input type="file" id="helpPhotoInput" accept="image/*" class="hidden-file-input">
+      <label for="helpPhotoInput" class="hero-btn gb-photo-btn" id="helpPhotoBtn" style="width: 100%; border-color: var(--teal); color: var(--teal); justify-content: center; cursor: pointer; text-align: center; margin-bottom: 10px;">
+         📸 FOTÓ CSATOLÁSA (Opcionális)
+      </label>
+      <div id="helpPhotoPreview" class="gb-photo-preview" style="font-size: 10px; color: var(--green); text-align: center; margin-bottom: 10px; font-weight: 700; display: none;">✓ Fotó csatolva!</div>
+      
       <button class="modal-submit" id="helpSubmitBtn" style="background: var(--teal);">Kérdés elküldése</button>
       <button class="modal-close modal-close-transparent" id="helpCloseBtn">Mégse</button>
     </div>
@@ -166,7 +173,7 @@
   <div class="hero-date text-white">2026. június 13–18. &nbsp;·&nbsp; Kecskemét</div>
   
   <div class="hero-buttons" id="heroButtons">
-    <a href="https://drive.google.com/file/d/1eDwb5_U7Fy0et1VN9GWzLfthKv9j35Nm/view?usp=sharing" target="_blank" class="pdf-dl-btn">📄 Töltsd le a programot egyben (PDF)</a>
+    <a href="https://drive.google.com/file/d/1O8W0bRcJH9RGepTay2Tqt7pRRo3dnHjS/view?usp=sharing" target="_blank" class="pdf-dl-btn">📄 Töltsd le a programot egyben (PDF)</a>
     
     <button id="installAppBtn" class="hero-btn hero-btn-gold">📲 Telepítsd a telefonodra!</button>
     
@@ -488,6 +495,10 @@
       <div class="details-section">
         <div class="details-label">Alkotók</div>
         <div class="details-text">Írta, alkotta és játssza: Russa Karina</div>
+      </div>
+<div class="details-section">
+        <div class="details-label">Korosztály</div>
+        <div class="details-text">14+</div>
       </div>
     </div></div>
     <div class="event-footer">
@@ -817,6 +828,42 @@
     </div>
   </div>
 
+  <!-- 1. DÉLELŐTT: A DOBOZ JÖN ELŐSZÖR -->
+  <div class="slot-time">11:00 – 11:50</div>
+  <div class="event-card type-show" id="show-doboz-hetfo" data-start="2026-06-15T11:00:00+02:00" data-end="2026-06-15T11:50:00+02:00">
+    <div class="card-header">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">A doboz<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">Illaberek Bábszínház</div>
+        </div>
+        <div class="header-actions">
+          <div class="star-container"><span class="star-btn">☆</span></div>
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Alkotók: Nyirkó Krisztina, Darvas Benedek és Nizsai Dániel<br><br>
+          Szereplők: Nyirkó Krisztina és Nizsai Dániel
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály</div>
+        <div class="details-text">1+</div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ciróka kisterem</span></div>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/1044112131631369/1044112141631368" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <!-- 2. DÉLELŐTT: AZ EMBER TRAGÉDIÁJA JÖN MÁSODIKNAK -->
   <div class="slot-time">11:00 – 12:30</div>
   <div class="event-card type-show" id="show-tragedia-hetfo-d" data-start="2026-06-15T11:00:00+02:00" data-end="2026-06-15T12:30:00+02:00">
     <div class="card-header">
@@ -853,40 +900,6 @@
     <div class="event-footer">
       <div class="event-meta"><span class="badge badge-venue">Ruszt J. Stúdiószínház</span></div>
       <a class="fb-event-btn" href="https://www.facebook.com/events/1330707658870758/1330707668870757" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
-    </div>
-  </div>
-
-  <div class="slot-time">11:00 – 11:50</div>
-  <div class="event-card type-show" id="show-doboz-hetfo" data-start="2026-06-15T11:00:00+02:00" data-end="2026-06-15T11:50:00+02:00">
-    <div class="card-header">
-      <div class="card-header-row">
-        <div>
-          <div class="event-title">A doboz<span class="live-badge">MOST ZAJLIK</span></div>
-          <div class="event-company">Illaberek Bábszínház</div>
-        </div>
-        <div class="header-actions">
-          <div class="star-container"><span class="star-btn">☆</span></div>
-          <div class="mini-pulse-alert">!</div>
-          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
-        </div>
-      </div>
-    </div>
-    <div class="card-details"><div class="card-details-inner">
-      <div class="details-section">
-        <div class="details-label">Alkotók</div>
-        <div class="details-text">
-          Alkotók: Nyirkó Krisztina, Darvas Benedek és Nizsai Dániel<br><br>
-          Szereplők: Nyirkó Krisztina és Nizsai Dániel
-        </div>
-      </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály</div>
-        <div class="details-text">1+</div>
-      </div>
-    </div></div>
-    <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Ciróka kisterem</span></div>
-      <a class="fb-event-btn" href="https://www.facebook.com/events/1044112131631369/1044112141631368" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
 
@@ -988,6 +1001,42 @@
     </div>
   </div>
   
+  <!-- 3. DÉLUTÁN: A DOBOZ JÖN ELŐSZÖR -->
+  <div class="slot-time">17:30 – 18:20</div>
+  <div class="event-card type-show" id="show-doboz-hetfo-e" data-start="2026-06-15T17:30:00+02:00" data-end="2026-06-15T18:20:00+02:00">
+    <div class="card-header">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">A doboz<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">Illaberek Bábszínház</div>
+        </div>
+        <div class="header-actions">
+          <div class="star-container"><span class="star-btn">☆</span></div>
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Alkotók: Nyirkó Krisztina, Darvas Benedek és Nizsai Dániel<br><br>
+          Szereplők: Nyirkó Krisztina és Nizsai Dániel
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Korosztály</div>
+        <div class="details-text">1+</div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ciróka kisterem</span></div>
+      <a class="fb-event-btn" href="https://www.facebook.com/events/1044112131631369/1063567163019199" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
+    </div>
+  </div>
+
+  <!-- 4. DÉLUTÁN: AZ EMBER TRAGÉDIÁJA JÖN MÁSODIKNAK -->
   <div class="slot-time">17:30 – 19:00</div>
   <div class="event-card type-show" id="show-tragedia-hetfo-e" data-start="2026-06-15T17:30:00+02:00" data-end="2026-06-15T19:00:00+02:00">
     <div class="card-header">
@@ -1027,40 +1076,6 @@
     </div>
   </div>
 
-  <div class="slot-time">17:30 – 18:20</div>
-  <div class="event-card type-show" id="show-doboz-hetfo-e" data-start="2026-06-15T17:30:00+02:00" data-end="2026-06-15T18:20:00+02:00">
-    <div class="card-header">
-      <div class="card-header-row">
-        <div>
-          <div class="event-title">A doboz<span class="live-badge">MOST ZAJLIK</span></div>
-          <div class="event-company">Illaberek Bábszínház</div>
-        </div>
-        <div class="header-actions">
-          <div class="star-container"><span class="star-btn">☆</span></div>
-          <div class="mini-pulse-alert">!</div>
-          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
-        </div>
-      </div>
-    </div>
-    <div class="card-details"><div class="card-details-inner">
-      <div class="details-section">
-        <div class="details-label">Alkotók</div>
-        <div class="details-text">
-          Alkotók: Nyirkó Krisztina, Darvas Benedek és Nizsai Dániel<br><br>
-          Szereplők: Nyirkó Krisztina és Nizsai Dániel
-        </div>
-      </div>
-      <div class="details-section">
-        <div class="details-label">Korosztály</div>
-        <div class="details-text">1+</div>
-      </div>
-    </div></div>
-    <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Ciróka kisterem</span></div>
-      <a class="fb-event-btn" href="https://www.facebook.com/events/1044112131631369/1063567163019199" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
-    </div>
-  </div>
-
   <div class="section-divider"></div>
   <div class="slot-time">19:00 – 20:30</div>
   <div class="event-card type-social" data-start="2026-06-15T19:00:00+02:00" data-end="2026-06-15T20:30:00+02:00">
@@ -1075,7 +1090,7 @@
     <div class="card-header"><div class="event-title">💬 Szakmai megbeszélés</div></div>
   </div>
 
-<div class="slot-time">23:00 – 0:15</div>
+  <div class="slot-time">23:00 – 0:15</div>
   <div class="event-card type-show" id="show-liselotte" data-start="2026-06-14T23:00:00+02:00" data-end="2026-06-15T00:15:00+02:00">
     <div class="card-header">
       <div class="card-header-row">
@@ -1466,7 +1481,7 @@
     <div class="card-header">
       <div class="card-header-row">
         <div>
-          <div class="event-title">Lenka és a Szemüveges lány<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-title">Lenka és a szemüveges lány<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">JuBo Társulat</div>
         </div>
         <div class="header-actions">
@@ -1685,7 +1700,7 @@
     <div class="card-header">
       <div class="card-header-row">
         <div>
-          <div class="event-title">Lenka és a Szemüveges lány<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-title">Lenka és a szemüveges lány<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">JuBo Társulat</div>
         </div>
         <div class="header-actions">
@@ -1952,11 +1967,20 @@
     <img src="./tamogato4.png" class="sponsor-logo" alt="Támogató" loading="lazy">
     <img src="./tamogato5.png" class="sponsor-logo" alt="Támogató" loading="lazy">
 <!-- Itt bújik meg a szem a támogatók között! -->
-    <img src="./szem-nincs2.png" class="sponsor-logo" alt="Meglepetés" loading="lazy">
+    <!-- 1. INTERAKTÍV SZEM -->
+    <div class="sponsor-tooltip-wrap">
+      <img src="./szem-nincs2.png" class="sponsor-logo" alt="Meglepetés" loading="lazy">
+      <span class="sponsor-tooltip-text">A plakát látványtervezője:</span>
+    </div>
+
     <img src="./tamogato6.png" class="sponsor-logo" alt="Támogató" loading="lazy">
-<img src="./szem-nincs.png" class="sponsor-logo" alt="Meglepetés" loading="lazy">
+
+    <!-- 2. INTERAKTÍV SZEM -->
+    <div class="sponsor-tooltip-wrap">
+      <img src="./szem-nincs.png" class="sponsor-logo" alt="Meglepetés" loading="lazy">
+      <span class="sponsor-tooltip-text">Szoboszlay Eszter</span>
+    </div>
   </div>
-</div>
 
 <footer>
   <a href="https://ciroka.hu" target="_blank">ciroka.hu</a>

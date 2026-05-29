@@ -1,5 +1,5 @@
 // FIGYELEM: Átírtuk v4-re, mert lettek új támogatók és módosult a szöveg!
-const CACHE_NAME = 'talalkozo-cache-v19';
+const CACHE_NAME = 'talalkozo-cache-v20';
 
 // Ide be kell írni minden fájlt, amit offline is látni akarunk
 const ASSETS_TO_CACHE = [
@@ -8,6 +8,8 @@ const ASSETS_TO_CACHE = [
   './style.css',
   './app.js',
   './manifest.json',
+'./icon-192.png', // ÚJ
+  './icon-512.png', // ÚJ
   './levesm.png',
   './dixie.png',
   './spaletta.png',
@@ -55,13 +57,14 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // A Firebase adatbázist és a GA4-et SOHA ne cacheljük, mert hibát okoz!
+  // A Firebase adatbázist, a GA4-et és a Tag Managert SOHA ne cacheljük, mert hibát okoz!
   if (
     event.request.method !== 'GET' ||
     url.hostname.includes('firebaseio.com') ||
     url.hostname.includes('firebasedatabase.app') ||
     url.hostname.includes('firebasestorage.app') ||
-    url.hostname.includes('google-analytics.com')
+    url.hostname.includes('google-analytics.com') ||
+    url.hostname.includes('googletagmanager.com') // ÚJ SOR
   ) {
     return; // Átengedjük a neten
   }

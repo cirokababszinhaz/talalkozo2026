@@ -72,6 +72,20 @@
   
   .resolve-btn { background: var(--teal); color: #fff; padding: 6px 10px; border-radius: 3px; font-size: 10px; font-weight: 700; text-transform: uppercase; border: none; cursor: pointer; margin-right: 5px;}
   .resolve-btn:hover { background: var(--teal-dark); }
+
+/* Mobilbarát kártyák a vezérlőpulton */
+  @media (max-width: 480px) {
+    .alert-item {
+      flex-direction: column;
+    }
+    .alert-item .del-btn, 
+    .alert-item .resolve-btn, 
+    .alert-item .reply-btn {
+      width: 100%;
+      text-align: center;
+      margin-top: 8px;
+    }
+  }
 </style>
 </head>
 <body>
@@ -328,12 +342,16 @@
       const resolvedClass = isResolved ? "resolved-item" : "";
       const resolveText = isResolved ? "Megnyitás" : "✓ Kész (Kipipál)";
       
+      // HA VAN FOTÓ, MEGJELENÍTJÜK
+      let imgHtml = q.photoUrl ? `<img src="${q.photoUrl}" class="gb-photo" style="margin-bottom:8px;">` : '';
+      
       container.innerHTML += `
         <div class="alert-item question-item ${resolvedClass}">
           <div style="width:100%;">
             <div class="alert-meta">${q.dateStr} | Feladó: ${escapeHTML(q.name)} (${escapeHTML(q.email)})</div>
             <div class="alert-text" style="margin-bottom: 12px; font-size: 14px;">${escapeHTML(q.text)}</div>
-            <div>
+            ${imgHtml}
+            <div style="margin-top: 10px;">
               <!-- Email küldés gomb -->
               <a href="mailto:${encodeURIComponent(q.email)}?subject=Válasz a 17. Bábszínházi Találkozó segítségkérésre" class="reply-btn">✉ Válaszolok</a>
               <!-- Állapotváltó gomb -->
