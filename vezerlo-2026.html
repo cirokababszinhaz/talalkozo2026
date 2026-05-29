@@ -179,9 +179,29 @@
   <button class="btn btn-primary" id="publishAlertBtn" onclick="window.publishAlert()">🔔 Közzététel</button>
   <div class="feedback" id="publishFeedback"></div>
 
+  <!-- ÚJ: BLOG/AD-HOC PROGRAM LÉTREHOZÓ RÉSZ -->
+  <div class="divider"></div>
+  <h2>Ad-hoc program / Blogbejegyzés</h2>
+  <div class="subtitle">Rendkívüli újdonságok és új események kiírása</div>
+
+  <label>Új esemény vagy hír címe</label>
+  <input type="text" id="blogTitleInput" placeholder="Pl.: Rendkívüli koncert a kávézóban!">
+
+  <label>Esemény leírása / szövege</label>
+  <textarea id="blogTextInput" placeholder="Részletek, pontos időpont, fellépők..."></textarea>
+
+  <input type="file" id="blogPhotoInput" accept="image/*" style="position: absolute; opacity: 0; width: 1px; height: 1px; z-index: -1;" onchange="window.handleBlogPhotoSelect(event)">
+  <label for="blogPhotoInput" class="btn btn-outline" id="blogPhotoBtn" style="cursor: pointer;">
+    📸 KÉP CSATOLÁSA A BEJEGYZÉSHEZ (Opcionális)
+  </label>
+  <div id="blogPhotoPreview" style="font-size:10px; color:var(--green); text-align:center; margin-bottom:15px; font-weight:700; display:none;">✓ Kép előkészítve!</div>
+
+  <button class="btn btn-primary" id="publishBlogBtn" onclick="window.publishBlog()" style="background: var(--teal);">✨ Újdonság közzététele</button>
+  <div class="feedback" id="publishBlogFeedback"></div>
+
   <div class="divider"></div>
 
-  <div class="section-title">Aktív értesítések</div>
+  <div class="section-title">Aktív értesítések és ad-hoc programok</div>
   <div id="activeAlertsContainer">Nincs aktív értesítés.</div>
 
   <!-- Helyezze ezt közvetlenül az "Emlékkönyv moderálás" h2 címe fölé: -->
@@ -304,23 +324,59 @@
     }
   };
 
+  // --- KÉP KIVÁLASZTÁSA BLOGHOZ ---
+  window.handleBlogPhotoSelect = function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { alert("Kérlek, csak képet válassz ki!"); return; }
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function(e) {
+      const img = new Image();
+      img.src = e.target.result;
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 800; const MAX_HEIGHT = 800;
+        let width = img.width; let height = img.height;
+        
+        if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
+        else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
+        
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        window.blogResizedImage = canvas.toDataURL('image/jpeg', 0.7);
+        
+        const btn = document.getElementById('blogPhotoBtn');
+        document.getElementById('blogPhotoPreview').style.display = 'block';
+        btn.style.borderColor = 'var(--green)';
+        btn.style.color = 'var(--green)';
+        btn.innerText = '✓ FOTÓ CSATOLVA';
+      }
+    }
+  };
+
   function initAdmin() {
     onValue(ref(db, "alertsList"), (snap) => {
       const container = document.getElementById("activeAlertsContainer");
       container.innerHTML = "";
-      if (!snap.exists()) { container.innerHTML = "<p style='font-size:12px;color:var(--muted)'>Nincs aktív értesítés.</p>"; return; }
+      if (!snap.exists()) { container.innerHTML = "<p style='font-size:12px;color:var(--muted)'>Nincs aktív értesítés vagy ad-hoc program.</p>"; return; }
       const data = snap.val();
       const alertsArray = Object.keys(data).map(key => ({ id: key, ...data[key] })).sort((a,b) => b.timeRaw - a.timeRaw);
       alertsArray.forEach(alert => {
-        let targetName = alert.targetId === "all" ? "Általános" : document.querySelector(`#alertTarget option[value="${alert.targetId}"]`).textContent;
+        let isBlog = alert.isBlog || false;
+        let badgeText = isBlog ? "AD-HOC PROGRAM / BLOG" : "RENDKÍVÜLI ÉRTESÍTÉS";
+        let targetName = alert.targetId === "all" ? "Általános" : (alert.targetId ? document.querySelector(`#alertTarget option[value="${alert.targetId}"]`).textContent : "Nincs (Blogbejegyzés)");
         let imgHtml = alert.photoUrl ? `<img src="${alert.photoUrl}" class="gb-photo" style="margin-bottom:8px;">` : '';
         
         container.innerHTML += `
-          <div class="alert-item">
+          <div class="alert-item" style="border-left-color: ${isBlog ? 'var(--gold)' : 'var(--red)'};">
             <div>
-              <div class="alert-meta">${alert.timestamp} | Célpont: ${targetName}</div>
+              <div class="alert-meta">[${badgeText}] | ${alert.timestamp} | Cél: ${targetName}</div>
               ${imgHtml}
-              <div class="alert-text">${escapeHTML(alert.message)}</div>
+              <div class="alert-text"><strong>${alert.title ? escapeHTML(alert.title) + ': ' : ''}</strong>${escapeHTML(alert.message)}</div>
             </div>
             <button class="del-btn" onclick="window.deleteAlert('${alert.id}')">Törlés</button>
           </div>`;
@@ -328,7 +384,6 @@
     });
 
 
-// Az initAdmin() végére, vagy a többi figyelő mellé másolja be:
   onValue(ref(db, "questions"), (snap) => {
     const container = document.getElementById("questionsAdminContainer");
     container.innerHTML = "";
@@ -433,7 +488,57 @@
     }
   };
 
-  window.deleteAlert = async function(id) { if(confirm("Biztosan törlöd ezt az értesítést?")) await remove(ref(db, "alertsList/" + id)); };
+  // --- AD-HOC PROGRAM / BLOG KÖZZÉTÉTELE FOTÓVAL ---
+  window.publishBlog = async function() {
+    const title = document.getElementById("blogTitleInput").value.trim();
+    const text = document.getElementById("blogTextInput").value.trim();
+    const fb = document.getElementById("publishBlogFeedback");
+    const btn = document.getElementById("publishBlogBtn");
+    
+    if (!title || !text) { showFeedback(fb, "A címet és a szöveget is kötelező kitölteni!", "err"); return; }
+    
+    btn.disabled = true;
+    btn.innerText = "Feltöltés...";
+
+    try {
+      let photoUrl = "";
+      if (window.blogResizedImage) {
+         const photoRef = sRef(storage, 'alerts/' + Date.now() + '.jpg');
+         await uploadString(photoRef, window.blogResizedImage, 'data_url');
+         photoUrl = await getDownloadURL(photoRef);
+      }
+
+      const newRef = push(ref(db, "alertsList"));
+      await set(newRef, { 
+        title: title,
+        message: text, 
+        isBlog: true, // Kijelöljük, hogy ez egy blogbejegyzés
+        timestamp: getBudapestTimeStr(), 
+        timeRaw: Date.now(),
+        photoUrl: photoUrl 
+      });
+
+      // Űrlap nullázása
+      document.getElementById("blogTitleInput").value = "";
+      document.getElementById("blogTextInput").value = "";
+      document.getElementById("blogPhotoInput").value = "";
+      document.getElementById('blogPhotoPreview').style.display = 'none';
+      const pBtn = document.getElementById('blogPhotoBtn');
+      pBtn.style.borderColor = 'var(--teal)';
+      pBtn.style.color = 'var(--teal)';
+      pBtn.innerText = '📸 KÉP CSATOLÁSA (Opcionális)';
+      window.blogResizedImage = null;
+
+      showFeedback(fb, "✓ Újdonság közzétéve!", "ok");
+    } catch(e) { 
+      showFeedback(fb, "Hiba a feltöltésnél!", "err"); 
+    } finally {
+      btn.disabled = false;
+      btn.innerText = "✨ Újdonság közzététele";
+    }
+  };
+
+  window.deleteAlert = async function(id) { if(confirm("Biztosan törlöd ezt a bejegyzést?")) await remove(ref(db, "alertsList/" + id)); };
   window.deleteGbMessage = async function(id) { if(confirm("Biztosan törlöd ezt az emlékkönyv bejegyzést?")) await remove(ref(db, "guestbook/" + id)); };
 
   function showFeedback(el, msg, type) {
