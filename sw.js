@@ -1,6 +1,6 @@
 ```javascript
 // FIGYELEM: Átírtuk v21-re az új funkciók és dizájn miatt!
-const CACHE_NAME = 'talalkozo-cache-v21';
+const CACHE_NAME = 'talalkozo-cache-v22';
 
 const ASSETS_TO_CACHE = [
   './',

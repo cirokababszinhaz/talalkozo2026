@@ -52,8 +52,11 @@ body {
   cursor: url('./kurzor.png') 16 16, auto; 
 }
 
-a, button, .clickable, .card-header, .filter-btn, .hero-btn {
-  cursor: url('./kurzor.png') 16 16, pointer !important;
+/* Kattintási egyedi kurzor finom egérmutatóval rendelkező eszközökhöz */
+@media (pointer: fine) {
+  a, button, .clickable, .card-header, .filter-btn, .hero-btn {
+    cursor: url('./kurzor.png') 16 16, pointer !important;
+  }
 }
 
 /* HEADER & OVERLAY */
@@ -84,7 +87,7 @@ h1 em { color: var(--gold-light); font-style: italic; }
 
 #topAlertBar { background: var(--red); color: #fff; text-align: center; padding: 12px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; cursor: pointer; display: none; transition: background .2s; position: sticky; top:0; z-index: 1050; box-shadow: 0 2px 10px rgba(0,0,0,0.2);}
 
-/* KERESŐ & GOMBOK */
+/* KERESŐSÁV, SZŰRŐK ÉS GYORSLINKEK ELRENDEZÉSE */
 .search-wrap { background: var(--teal-dark); padding: 16px 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .search-input-box { position: relative; width: 100%; max-width: 400px; }
 .search-input-box input { width: 100%; padding: 12px 16px 12px 40px; border-radius: 20px; border: none; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; outline: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
@@ -102,7 +105,7 @@ h1 em { color: var(--gold-light); font-style: italic; }
   display: none !important;
 }
 
-/* SZŰRŐ GOMBOK */
+/* DYNAMIC LEGEND BAR */
 .legend-bar { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; }
 .filter-btn { display: flex; align-items: center; gap: 6px; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--teal-dark); font-weight: 600; cursor: pointer; transition: .2s; user-select: none; background: #fff; padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border); }
 .filter-btn:hover { background: var(--surface); }
@@ -113,7 +116,7 @@ h1 em { color: var(--gold-light); font-style: italic; }
 .dot-social { background: #b0a898; }
 .dot-public { background: transparent; border: 3px solid var(--orange); }
 
-/* EMLÉKKÖNYV ÉRTESÍTÉS BADGE */
+/* ERTESITES JELZO PIROS PÖTTYÖK */
 .gb-notification-badge {
   position: absolute; top: -6px; right: -6px;
   background: var(--red); color: #fff;
@@ -136,7 +139,7 @@ h1 em { color: var(--gold-light); font-style: italic; }
 .scroll-hint { display: none; text-align: center; font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; padding: 4px 0 8px; font-weight: 700; background: var(--surface); border-bottom: 2px solid var(--border); }
 @media (max-width: 650px) { .scroll-hint { display: block; } .tabs-wrap { border-bottom: none; } }
 
-/* TARTALOM ÉS KÁRTYÁK */
+/* TARTALOM ÉS PROGRAMKÁRTYÁK */
 .content { padding: 32px 16px 40px; max-width: 680px; margin: 0 auto; position: relative; }
 .day-panel { display: none; }
 .day-panel.active { display: block; animation: fadein .25s ease; }
@@ -218,11 +221,10 @@ h1 em { color: var(--gold-light); font-style: italic; }
 .gastro-logo { width: 45px; height: 45px; object-fit: contain; background: var(--card); border-radius: 4px; padding: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; flex-shrink: 0; }
 .gastro-logo:hover, .gastro-logo.active-touch { transform: scale(1.5) rotate(-5deg); z-index: 10; position: relative; }
 
-/* MAP & INFOS */
+/* MAP & PUBLIC INFOS (Kártyás formázású névjegyek) */
 .info-box-bottom { background: var(--surface); border-top: 2px solid var(--border); padding: 40px 20px; max-width: 680px; margin: 0 auto; border-radius: 6px 6px 0 0; position: relative;}
 .info-box-bottom h3 { font-family: 'Playfair Display', serif; color: var(--teal-dark); font-size: 22px; margin-bottom: 20px; }
 
-/* Kapcsolati kártya modern formázása */
 .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 40px; }
 @media (max-width: 600px) { .info-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 400px) { .info-grid { grid-template-columns: 1fr; } }
@@ -233,7 +235,6 @@ h1 em { color: var(--gold-light); font-style: italic; }
 .info-phone { font-weight: 600; font-size: 12px; color: var(--teal); text-decoration: none; margin-top: auto; }
 .info-phone:hover { text-decoration: underline; }
 
-/* Specifikus stílus a műhelyeknek (vastagabb kategória címkék) */
 .info-workshop-title { font-weight: 800 !important; font-size: 11px !important; color: var(--red) !important; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
 
 .map-container { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 20px; }
@@ -254,7 +255,7 @@ h1 em { color: var(--gold-light); font-style: italic; }
 .checkin-bubble::before { content: ''; display: block; width: 6px; height: 6px; background: #fff; border-radius: 50%; animation: pulse 1.5s infinite; }
 @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-/* POLAROID EMLÉKKÖNYV FOTÓFAL */
+/* POLAROID VENDÉGKÖNYV */
 #postFestivalView { display: none; padding: 20px; max-width: 1000px; margin: 0 auto; min-height: 50vh;}
 .gb-grid { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; align-items: flex-start; padding-top: 10px; }
 .polaroid { background: #fff; padding: 10px 10px 30px 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); position: relative; width: 100%; max-width: 240px; display: flex; flex-direction: column; transform: rotate(calc(-4deg + 8deg * var(--rand))); }
@@ -312,7 +313,7 @@ h1 em { color: var(--gold-light); font-style: italic; }
 .quote-text { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--teal-dark); font-style: italic; line-height: 1.4; margin-bottom: 15px; }
 .quote-author { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); font-weight: 700; }
 
-/* TÁMOGATÓI SZEKCIÓ (Színesre állítva!) */
+/* TÁMOGATÓI SZEKCIÓ (Színes, megőrzött hover animációval) */
 .sponsors-box { background: var(--surface); padding: 40px 20px; text-align: center; border-top: 2px solid var(--border); overflow: hidden; position: relative;}
 .sponsors-title { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 25px; font-weight: 700; }
 .sponsors-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; align-items: center; max-width: 800px; margin: 0 auto; transition: transform 0.5s linear;}
@@ -367,7 +368,6 @@ footer a { color: var(--gold-light); text-decoration: none; }
 /* 1. HÁTTÉR VÍZJEL (Váltakozó, elszórt minta) */
 .bg-watermark {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  /* Két képet használunk egymáson elcsúsztatva */
   background-image: url('./szem-hatter.png'), url('./szem-nincs.png');
   background-position: 0 0, 100px 120px;
   background-size: 200px, 140px;
@@ -394,20 +394,9 @@ footer a { color: var(--gold-light); text-decoration: none; }
 
 /* PISLOGÓ/STATIKUS SZEMEK A FEJLÉCBEN */
 .header-eye { 
-  width: 28px; /* Állítsd be, mekkorák legyenek */
+  width: 28px; 
   margin-right: 6px; 
   vertical-align: middle; 
-}
-
-/* EGYEDI KURZOR CSAK ASZTALI GÉPEN */
-@media (pointer: fine) {
-  body { cursor: url('./kurzor.png') 16 16, auto; }
-  a, button, .clickable, .card-header, .filter-btn, .hero-btn { cursor: url('./kurzor.png') 16 16, pointer !important; }
-}
-
-.fb-event-btn svg, 
-.fb-event-btn use {
-  pointer-events: none;
 }
 
 /* TÁMOGATÓI SZEMEK LEBEGŐ BUBORÉKJA */
