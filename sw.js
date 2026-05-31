@@ -1,15 +1,15 @@
-```javascript
-// FIGYELEM: Átírtuk v21-re az új funkciók és dizájn miatt!
-const CACHE_NAME = 'talalkozo-cache-v22';
+// FIGYELEM: Átírtuk v4-re, mert lettek új támogatók és módosult a szöveg!
+const CACHE_NAME = 'talalkozo-cache-v20';
 
+// Ide be kell írni minden fájlt, amit offline is látni akarunk
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './style.css',
   './app.js',
   './manifest.json',
-  './icon-192.png', 
-  './icon-512.png', 
+'./icon-192.png', // ÚJ
+  './icon-512.png', // ÚJ
   './levesm.png',
   './dixie.png',
   './spaletta.png',
@@ -18,16 +18,17 @@ const ASSETS_TO_CACHE = [
   './tamogato2.png',
   './tamogato3.png',
   './tamogato4.png',
-  './tamogato5.png',       
-  './tamogato6.png',       
+  './tamogato5.png',       // ÚJ 5. Támogató
+  './tamogato6.png',       // ÚJ 6. Támogató
   './kacsinto-szem.gif',
-  './szem-hatter.png',   
-  './szem-nincs.png',    
-  './szem-nincs2.png',    
-  './szem-alap.png',     
-  './pupilla.png',        
-  './kurzor.png'        
+'./szem-hatter.png',   // ÚJ KÉP
+  './szem-nincs.png',    // ÚJ KÉP
+'./szem-nincs2.png',    // ÚJ KÉP
+  './szem-alap.png',     // ÚJ KÉP
+  './pupilla.png',        // ÚJ KÉP
+'./kurzor.png'        // ÚJ KÉP
 ];
+
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -44,7 +45,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
+            return caches.delete(cacheName); // Törli a régi v1-es cache-t
           }
         })
       );
@@ -56,17 +57,19 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
+  // A Firebase adatbázist, a GA4-et és a Tag Managert SOHA ne cacheljük, mert hibát okoz!
   if (
     event.request.method !== 'GET' ||
     url.hostname.includes('firebaseio.com') ||
     url.hostname.includes('firebasedatabase.app') ||
     url.hostname.includes('firebasestorage.app') ||
     url.hostname.includes('google-analytics.com') ||
-    url.hostname.includes('googletagmanager.com')
+    url.hostname.includes('googletagmanager.com') // ÚJ SOR
   ) {
-    return; 
+    return; // Átengedjük a neten
   }
 
+  // Minden mást (HTML, képek) először a Cache-ből próbálunk betölteni
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
@@ -77,7 +80,9 @@ self.addEventListener('fetch', (event) => {
           cache.put(event.request, networkResponse.clone());
           return networkResponse;
         });
-      }).catch(() => {});
+      }).catch(() => {
+        // Ha nincs net és nincs cache-ben, nem csinálunk semmit
+      });
     })
   );
 });

@@ -49,14 +49,14 @@ body {
   overflow-x: hidden; 
   transition: transform 0.5s ease; 
   overscroll-behavior-y: contain;
+
+  /* ÚJ SOR: EGYEDI KURZOR! (A 16 16 azt jelenti, hogy a kép közepe lesz a kattintási pont) */
   cursor: url('./kurzor.png') 16 16, auto; 
 }
 
-/* Kattintási egyedi kurzor finom egérmutatóval rendelkező eszközökhöz */
-@media (pointer: fine) {
-  a, button, .clickable, .card-header, .filter-btn, .hero-btn {
-    cursor: url('./kurzor.png') 16 16, pointer !important;
-  }
+/* Opcionális: Ha azt akarod, hogy a linkek felett is cserélődjön (pl. a mutatóujj ikon helyett) */
+a, button, .clickable, .card-header, .filter-btn, .hero-btn {
+  cursor: url('./kurzor.png') 16 16, pointer !important;
 }
 
 /* HEADER & OVERLAY */
@@ -87,7 +87,7 @@ h1 em { color: var(--gold-light); font-style: italic; }
 
 #topAlertBar { background: var(--red); color: #fff; text-align: center; padding: 12px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; cursor: pointer; display: none; transition: background .2s; position: sticky; top:0; z-index: 1050; box-shadow: 0 2px 10px rgba(0,0,0,0.2);}
 
-/* KERESŐSÁV, SZŰRŐK ÉS GYORSLINKEK ELRENDEZÉSE */
+/* KERESŐ & GOMBOK */
 .search-wrap { background: var(--teal-dark); padding: 16px 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .search-input-box { position: relative; width: 100%; max-width: 400px; }
 .search-input-box input { width: 100%; padding: 12px 16px 12px 40px; border-radius: 20px; border: none; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; outline: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
@@ -105,8 +105,8 @@ h1 em { color: var(--gold-light); font-style: italic; }
   display: none !important;
 }
 
-/* DYNAMIC LEGEND BAR */
-.legend-bar { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; }
+/* SZŰRŐ GOMBOK */
+.legend-bar { background: var(--teal-dark); display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.1); }
 .filter-btn { display: flex; align-items: center; gap: 6px; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--teal-dark); font-weight: 600; cursor: pointer; transition: .2s; user-select: none; background: #fff; padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border); }
 .filter-btn:hover { background: var(--surface); }
 .filter-btn.active { background: var(--gold-light); color: #000; border-color: var(--gold-light); font-weight: 700; }
@@ -116,7 +116,7 @@ h1 em { color: var(--gold-light); font-style: italic; }
 .dot-social { background: #b0a898; }
 .dot-public { background: transparent; border: 3px solid var(--orange); }
 
-/* ERTESITES JELZO PIROS PÖTTYÖK */
+/* EMLÉKKÖNYV ÉRTESÍTÉS BADGE */
 .gb-notification-badge {
   position: absolute; top: -6px; right: -6px;
   background: var(--red); color: #fff;
@@ -124,7 +124,7 @@ h1 em { color: var(--gold-light); font-style: italic; }
   padding: 2px 5px; border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.3);
   animation: popIn 0.3s ease;
-  pointer-events: none; 
+  pointer-events: none; /* Hogy ne zavarjon be a kattintásba */
 }
 
 /* TABS ÉS MOBIL SCROLL HINT */
@@ -139,7 +139,7 @@ h1 em { color: var(--gold-light); font-style: italic; }
 .scroll-hint { display: none; text-align: center; font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; padding: 4px 0 8px; font-weight: 700; background: var(--surface); border-bottom: 2px solid var(--border); }
 @media (max-width: 650px) { .scroll-hint { display: block; } .tabs-wrap { border-bottom: none; } }
 
-/* TARTALOM ÉS PROGRAMKÁRTYÁK */
+/* TARTALOM ÉS KÁRTYÁK */
 .content { padding: 32px 16px 40px; max-width: 680px; margin: 0 auto; position: relative; }
 .day-panel { display: none; }
 .day-panel.active { display: block; animation: fadein .25s ease; }
@@ -154,12 +154,11 @@ h1 em { color: var(--gold-light); font-style: italic; }
 .event-card { background: var(--card); border: 1px solid var(--border); border-left: 5px solid var(--border); border-radius: 4px; margin-bottom: 10px; overflow: hidden; transition: box-shadow .2s, transform 0.2s; position: relative; }
 .event-card.type-show  { border-left-color: var(--teal); }
 .event-card.type-forum { border-left-color: var(--gold); }
-.event-card.type-exhibition { border-left-color: #b0a898; background: var(--surface); }
 .event-card.type-social { border-left-color: #b0a898; background: var(--surface); }
 
 .card-header { padding: 14px 16px 12px 18px; cursor: pointer; user-select: none; }
 .event-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--teal-dark); line-height: 1.3; margin-bottom: 4px; }
-.event-card.type-social .event-title, .event-card.type-exhibition .event-title { font-family: 'Montserrat', sans-serif; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; color: var(--muted); }
+.event-card.type-social .event-title { font-family: 'Montserrat', sans-serif; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; color: var(--muted); }
 .event-company { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
 
 .live-badge { display: none; background: var(--red); color: #fff; font-size: 9px; padding: 3px 6px; border-radius: 3px; font-weight: 700; letter-spacing: 1px; font-family: 'Montserrat', sans-serif; animation: blink 1.5s infinite; vertical-align: middle; margin-left: 8px; position: relative; top: -2px; }
@@ -186,7 +185,7 @@ h1 em { color: var(--gold-light); font-style: italic; }
 .badge-public:hover { background: #c0392b; color: #fff; }
 
 .fb-event-btn, .route-btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; background: rgba(26,92,88,0.07); border: 1px solid rgba(26,92,88,0.3); border-radius: 3px; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; color: var(--teal-dark); transition: .2s; white-space: nowrap; flex-shrink: 0; text-decoration: none;}
-.fb-event-btn:hover, .route-btn:hover { background: var(--teal); color: #fff; text-decoration: none; margin-left: auto; }
+.fb-event-btn:hover, .route-btn:hover { background: var(--teal); color: #fff; text-decoration: none;margin-left: auto;}
 
 .card-details { max-height: 0; overflow: hidden; transition: max-height .4s ease; background: rgba(26,92,88,0.03); }
 .event-card.open .card-details { max-height: 4000px; border-top: 1px solid var(--border); }
@@ -221,21 +220,15 @@ h1 em { color: var(--gold-light); font-style: italic; }
 .gastro-logo { width: 45px; height: 45px; object-fit: contain; background: var(--card); border-radius: 4px; padding: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; flex-shrink: 0; }
 .gastro-logo:hover, .gastro-logo.active-touch { transform: scale(1.5) rotate(-5deg); z-index: 10; position: relative; }
 
-/* MAP & PUBLIC INFOS (Kártyás formázású névjegyek) */
+/* MAP & INFOS */
 .info-box-bottom { background: var(--surface); border-top: 2px solid var(--border); padding: 40px 20px; max-width: 680px; margin: 0 auto; border-radius: 6px 6px 0 0; position: relative;}
 .info-box-bottom h3 { font-family: 'Playfair Display', serif; color: var(--teal-dark); font-size: 22px; margin-bottom: 20px; }
-
 .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 40px; }
 @media (max-width: 600px) { .info-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 400px) { .info-grid { grid-template-columns: 1fr; } }
-
-.info-item { display: flex; flex-direction: column; margin-bottom: 10px; background: var(--card); padding: 12px; border-radius: 4px; border: 1px solid var(--border); box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-.info-name { font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.3; }
-.info-title { font-size: 10px; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
-.info-phone { font-weight: 600; font-size: 12px; color: var(--teal); text-decoration: none; margin-top: auto; }
-.info-phone:hover { text-decoration: underline; }
-
-.info-workshop-title { font-weight: 800 !important; font-size: 11px !important; color: var(--red) !important; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
+.info-item { font-size: 13px; color: #000; font-weight: 600; display: flex; flex-direction: column;}
+.info-item strong { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--teal); margin-bottom: 2px; font-weight: 700;}
+.info-item a { color: #000; text-decoration: none; }
 
 .map-container { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 20px; }
 .map-title { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-light); font-weight: 700; margin-bottom: 15px; }
@@ -255,7 +248,7 @@ h1 em { color: var(--gold-light); font-style: italic; }
 .checkin-bubble::before { content: ''; display: block; width: 6px; height: 6px; background: #fff; border-radius: 50%; animation: pulse 1.5s infinite; }
 @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-/* POLAROID VENDÉGKÖNYV */
+/* POLAROID EMLÉKKÖNYV FOTÓFAL */
 #postFestivalView { display: none; padding: 20px; max-width: 1000px; margin: 0 auto; min-height: 50vh;}
 .gb-grid { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; align-items: flex-start; padding-top: 10px; }
 .polaroid { background: #fff; padding: 10px 10px 30px 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); position: relative; width: 100%; max-width: 240px; display: flex; flex-direction: column; transform: rotate(calc(-4deg + 8deg * var(--rand))); }
@@ -313,12 +306,12 @@ h1 em { color: var(--gold-light); font-style: italic; }
 .quote-text { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--teal-dark); font-style: italic; line-height: 1.4; margin-bottom: 15px; }
 .quote-author { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); font-weight: 700; }
 
-/* TÁMOGATÓI SZEKCIÓ (Színes, megőrzött hover animációval) */
+/* TÁMOGATÓI SZEKCIÓ */
 .sponsors-box { background: var(--surface); padding: 40px 20px; text-align: center; border-top: 2px solid var(--border); overflow: hidden; position: relative;}
 .sponsors-title { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 25px; font-weight: 700; }
 .sponsors-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; align-items: center; max-width: 800px; margin: 0 auto; transition: transform 0.5s linear;}
-.sponsor-logo { max-width: 160px; height: auto; max-height: 70px; object-fit: contain; opacity: 1; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; padding: 5px; }
-.sponsor-logo:hover, .sponsor-logo.active-touch { transform: scale(1.15); z-index: 10; position: relative; }
+.sponsor-logo { max-width: 160px; height: auto; max-height: 70px; object-fit: contain; opacity: 0.6; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); filter: grayscale(100%); cursor: pointer; padding: 5px; }
+.sponsor-logo:hover, .sponsor-logo.active-touch { opacity: 1; filter: grayscale(0%); transform: scale(1.15); z-index: 10; position: relative; }
 
 @media (max-width: 600px) {
   .sponsors-grid { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 10px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
@@ -368,6 +361,7 @@ footer a { color: var(--gold-light); text-decoration: none; }
 /* 1. HÁTTÉR VÍZJEL (Váltakozó, elszórt minta) */
 .bg-watermark {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  /* Két képet használunk egymáson elcsúsztatva */
   background-image: url('./szem-hatter.png'), url('./szem-nincs.png');
   background-position: 0 0, 100px 120px;
   background-size: 200px, 140px;
@@ -394,9 +388,20 @@ footer a { color: var(--gold-light); text-decoration: none; }
 
 /* PISLOGÓ/STATIKUS SZEMEK A FEJLÉCBEN */
 .header-eye { 
-  width: 28px; 
+  width: 28px; /* Állítsd be, mekkorák legyenek */
   margin-right: 6px; 
   vertical-align: middle; 
+}
+
+/* EGYEDI KURZOR CSAK ASZTALI GÉPEN */
+@media (pointer: fine) {
+  body { cursor: url('./kurzor.png') 16 16, auto; }
+  a, button, .clickable, .card-header, .filter-btn, .hero-btn { cursor: url('./kurzor.png') 16 16, pointer !important; }
+}
+
+.fb-event-btn svg, 
+.fb-event-btn use {
+  pointer-events: none;
 }
 
 /* TÁMOGATÓI SZEMEK LEBEGŐ BUBORÉKJA */
