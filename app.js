@@ -1347,6 +1347,19 @@ function initApp() {
 
 }
 
+// ==========================================
+// 🌍 GLOBÁLIS WINDOW EXPORT (Claude AI javaslata alapján)
+// Biztosítja, hogy az inline onclick események és az ES modul is tökéletesen együttműködjön!
+// ==========================================
+window.showDay = showDay;
+window.toggleCard = toggleCard;
+window.openCheckin = openCheckin;
+window.toggleTypeFilter = toggleTypeFilter;
+window.toggleFavoritesView = toggleFavoritesView;
+window.toggleGastroCard = toggleGastroCard;
+window.openGuestbook = openGuestbook;
+window.generateQuote = generateQuote;
+
 // BIZTOSÍTJUK A BETÖLTÉST
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initApp);
