@@ -41,7 +41,7 @@ let currentGbTotal = 0;
 let resizedImageDataUrl = null;
 let helpResizedImageDataUrl = null; 
 
-// CSOPORTOS ELŐADÁSOK LEKÉPEZÉSE ÉRTESÍTÉSEKHEZ (Minden fv. eléri)
+// CSOPORTOS ELŐADÁSOK LEKÉPEZÉSE ÉRTESÍTÉSEKHEZ
 const SHOW_GROUPS = {
     'show-tragedia-hetfo-d': ['show-tragedia-hetfo-d', 'show-tragedia-hetfo-e'],
     'show-tragedia-hetfo-e': ['show-tragedia-hetfo-d', 'show-tragedia-hetfo-e'],
@@ -224,7 +224,7 @@ function closeAlertsModal() {
     if(alertsModal) alertsModal.classList.remove("visible");
 }
 
-// LIVE "UPDATE" TIMELINE BLOG RENDERELESE
+// ÚJ: AZ LIVE "UPDATE" BLOGFOLYAM RENDERELESE
 function renderUpdatesBlog() {
     const container = document.getElementById('updatesBlogContainer');
     if(!container) return;
@@ -1142,6 +1142,7 @@ function initApp() {
     const quoteCloseBtn = document.getElementById('quoteCloseBtn');
     if(quoteCloseBtn) quoteCloseBtn.addEventListener('click', () => { document.getElementById('quoteModal').classList.remove('visible'); });
     
+    // Gyorslinkek
     const favFilterBtn = document.getElementById('favFilterBtn');
     if(favFilterBtn) favFilterBtn.addEventListener('click', toggleFavoritesView);
     
@@ -1169,6 +1170,7 @@ function initApp() {
     const helpPhotoInput = document.getElementById('helpPhotoInput');
     if(helpPhotoInput) helpPhotoInput.addEventListener('change', handleHelpPhotoSelect);
 
+    // Megosztás Gomb (Web Share API) – JAVÍTVA: A három pont (...) helyett a teljes működő kódot kiírtuk!
     const btnShare = document.getElementById('btnShare');
     if(btnShare) {
         btnShare.addEventListener('click', async () => {
@@ -1190,14 +1192,17 @@ function initApp() {
         });
     }
 
+    // Szűrők
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.addEventListener('click', () => toggleTypeFilter(btn.getAttribute('data-filter')));
     });
 
+    // Fülek (Tabs)
     document.querySelectorAll('.tab-btn').forEach((btn, index) => {
         btn.addEventListener('click', () => showDay(index, btn));
     });
 
+    // Kártya lenyitás 
     document.querySelectorAll('.card-header').forEach(header => {
         header.addEventListener('click', function(e) {
             if(!e.target.closest('.star-btn') && !e.target.closest('.mini-pulse-alert')) { 
@@ -1210,6 +1215,7 @@ function initApp() {
         });
     });
 
+    // Delegált eseménykezelők 
     const mainContent = document.getElementById('mainContent');
     if(mainContent) {
         mainContent.addEventListener('click', (e) => {
@@ -1221,6 +1227,7 @@ function initApp() {
                 trackEvent('navigation_requested', { venue_name: venueName });
             }
 
+            // Facebook gombok megnyitása
             const fbBtn = e.target.closest('.fb-event-btn');
             if (fbBtn) {
                 const url = fbBtn.getAttribute('href');
@@ -1339,6 +1346,7 @@ function initApp() {
 
 }
 
+// BIZTOSÍTJUK A BETÖLTÉST
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initApp);
 } else {
