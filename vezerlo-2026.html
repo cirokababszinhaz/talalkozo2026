@@ -55,7 +55,7 @@
 
   footer { background: var(--teal-dark); text-align: center; padding: 20px; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.35); font-weight: 600; }
 
-  /* KÁRTYÁS ELKÜLÖNÍTÉS AZ ÁTLÁTHATÓSÁGÉRT */
+  /* VIZUÁLIS ELKÜLÖNÍTŐ KÁRTYÁK AZ ADMINON */
   .admin-card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -72,7 +72,7 @@
   .marionette-mode::after { right: 20%; }
   @keyframes sway { 0%, 100% { transform: rotate(-1.5deg); } 50% { transform: rotate(1.5deg); } }
 
-  /* ÚJ KÉRDÉSEK STÍLUSAI */
+  /* KÉRDÉSEK ÉS MEGOLDOTTSÁG STÍLUSAI */
   .question-item { border-left-color: var(--gold); }
   .question-item.resolved-item { opacity: 0.35; filter: grayscale(50%); border-left-color: var(--muted); transition: opacity 0.3s; }
   .question-item.resolved-item .alert-text { text-decoration: line-through; color: var(--muted); }
@@ -83,7 +83,6 @@
   .resolve-btn { background: var(--teal); color: #fff; padding: 6px 10px; border-radius: 3px; font-size: 10px; font-weight: 700; text-transform: uppercase; border: none; cursor: pointer; margin-right: 5px;}
   .resolve-btn:hover { background: var(--teal-dark); }
 
-  /* Mobilbarát kártyák a vezérlőpulton */
   @media (max-width: 480px) {
     .alert-item {
       flex-direction: column;
@@ -103,12 +102,14 @@
 <header>
   <div class="logo">17. Találkozó</div>
   <div class="header-actions">
+    <!-- Csak bejelentkezve jelennek meg -->
     <a href="https://drive.google.com/file/d/169T5cqGkVrjowQZXFdXqsY-2yZodyUHk/view?usp=drive_link" target="_blank" class="badge badge-gold" id="phonebookBtn" style="display: none;">
       <span style="font-size:12px;">📞</span> Telefonkönyv
     </a>
     <a href="https://drive.google.com/drive/folders/1WwTYq5HThmX1w2ppVP381ymKDKL0U4uN?usp=sharing" target="_blank" class="badge badge-gold" id="allFilesBtn" style="display: none;">
       <span style="font-size:12px;">📁</span> MINDEN
     </a>
+    
     <a href="index.html" class="badge badge-outline">⬅ Főoldalra</a>
     <div class="badge" id="logoutBtnTop" style="display: none;" onclick="window.doLogout()">Kijelentkezés</div>
     <div class="badge" id="marionetteBtn">Vezérlőpult</div>
@@ -236,7 +237,8 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getDatabase, ref, push, set, remove, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
   import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getStorage, ref as sRef, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+  import { getStorage, ref as sRef, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.getStorage";
+  import { getDownloadURL as sGetDownloadURL, ref as sRefObj, uploadString as sUploadString } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyB7BkU92oIK3H_01uX9hr8GatQyE_NXMyA",
@@ -415,8 +417,11 @@
               <div class="alert-text" style="margin-bottom: 12px; font-size: 14px;">${escapeHTML(q.text)}</div>
               ${imgHtml}
               <div style="margin-top: 10px;">
+                <!-- Email küldés gomb -->
                 <a href="mailto:${encodeURIComponent(q.email)}?subject=Válasz a 17. Bábszínházi Találkozó segítségkérésre" class="reply-btn">✉ Válaszolok</a>
+                <!-- Állapotváltó gomb -->
                 <button class="resolve-btn" onclick="window.toggleResolveQuestion('${q.id}', ${isResolved})">${resolveText}</button>
+                <!-- Törlés gomb -->
                 <button class="del-btn" style="background:#fee; color:var(--red);" onclick="window.deleteQuestion('${q.id}')">Törlés</button>
               </div>
             </div>

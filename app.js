@@ -147,6 +147,7 @@ onValue(ref(db, "alertsList"), (snap) => {
         }
     }
 
+    // JAVÍTVA: Csak akkor ugrik fel ablakban, ha VALÓDI havária értesítés érkezett (nem ad-hoc blogprogram)
     if (realAlerts.length > 0) {
         const newestAlert = realAlerts[0];
         const lastSeenTime = sessionStorage.getItem("lastSeenAlertTime");
@@ -224,7 +225,7 @@ function closeAlertsModal() {
     if(alertsModal) alertsModal.classList.remove("visible");
 }
 
-// ÚJ: AZ LIVE "UPDATE" BLOGFOLYAM RENDERELESE
+// LIVE "UPDATE" BLOGFOLYAM RENDERELESE
 function renderUpdatesBlog() {
     const container = document.getElementById('updatesBlogContainer');
     if(!container) return;
@@ -1158,7 +1159,7 @@ function initApp() {
     const btnCheckin = document.getElementById('btnCheckin');
     if(btnCheckin) btnCheckin.addEventListener('click', openCheckin);
 
-    // Kérdésküldés
+// app.js - tegye az initApp() függvényen belülre a többi gombkezelő mellé:
     const btnHelp = document.getElementById('btnHelp');
     if(btnHelp) btnHelp.addEventListener('click', () => { document.getElementById('helpModal').classList.add('visible'); });
 
@@ -1171,7 +1172,7 @@ function initApp() {
     const helpPhotoInput = document.getElementById('helpPhotoInput');
     if(helpPhotoInput) helpPhotoInput.addEventListener('change', handleHelpPhotoSelect);
 
-    // Megosztás Gomb (Web Share API) – TELJES, JAVÍTVA
+    // Megosztás Gomb (Web Share API) – JAVÍTVA: A három pont (...) helyett a teljes működő kódot kiírtuk!
     const btnShare = document.getElementById('btnShare');
     if(btnShare) {
         btnShare.addEventListener('click', async () => {
@@ -1203,7 +1204,7 @@ function initApp() {
         btn.addEventListener('click', () => showDay(index, btn));
     });
 
-    // Kártya lenyitás 
+   // Kártya lenyitás (Javított, könnyen kattintható verzió)
     document.querySelectorAll('.card-header').forEach(header => {
         header.addEventListener('click', function(e) {
             if(!e.target.closest('.star-btn') && !e.target.closest('.mini-pulse-alert')) { 
@@ -1216,12 +1217,12 @@ function initApp() {
         });
     });
 
-    // Delegált eseménykezelők 
+  // Delegált eseménykezelők 
     const mainContent = document.getElementById('mainContent');
     if(mainContent) {
         mainContent.addEventListener('click', (e) => {
             
-            const routeBtn = e.target.closest('.route-btn');
+const routeBtn = e.target.closest('.route-btn');
             if (routeBtn) {
                 const venueTitleEl = routeBtn.closest('.gastro-venue-item, .map-venue-flex')?.querySelector('.venue-item-title');
                 const venueName = venueTitleEl ? venueTitleEl.innerText.trim() : "Ismeretlen";
@@ -1230,23 +1231,27 @@ function initApp() {
 
             // Facebook gombok megnyitása
             const fbBtn = e.target.closest('.fb-event-btn');
-            if (fbBtn) {
-                const url = fbBtn.getAttribute('href');
-                if (!url || url === '#' || url === '') {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    showToast("Ehhez a programhoz jelenleg nincs Facebook esemény!");
-                    return; 
-                }
+if (fbBtn) {
+    const url = fbBtn.getAttribute('href');
+    // Ha nincs valódi link, letiltjuk a kattintást és szólunk
+    if (!url || url === '#' || url === '') {
+        e.preventDefault();
+        e.stopPropagation();
+        showToast("Ehhez a programhoz jelenleg nincs Facebook esemény!");
+        return; 
+    }
 
-                const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-                if (isStandaloneMode || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    window.open(url, '_system'); 
-                }
-                return; 
-            }
+    // JAVÍTÁS MOBILRA ÉS PWA-RA:
+    // Ha standalone (telepített) módban fut az app, kényszerítjük a külső böngésző/app megnyitását
+    const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    if (isStandaloneMode || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        e.preventDefault();
+        e.stopPropagation();
+        // window.open megnyitja
+        window.open(url, '_system'); 
+    }
+    return; 
+}
 
             if(e.target.matches('.badge-venue')) {
                 filterVenue(e.target, e);
@@ -1281,8 +1286,10 @@ function initApp() {
         });
     }
 
+    // PDF Kacsintó inicializálása
     initPdfTriggers();
 
+    // Touch animációk logókhoz
     document.querySelectorAll('.gastro-logo, .sponsor-logo').forEach(logo => {
         logo.addEventListener('touchstart', function() {
             this.classList.add('active-touch');
@@ -1290,6 +1297,7 @@ function initApp() {
         });
     });
 
+    // Csillagok állapotának visszaállítása
     document.querySelectorAll('.event-card').forEach(card => {
         if(card.id && localStorage.getItem('fav_' + card.id)) {
             const star = card.querySelector('.star-btn');
@@ -1297,6 +1305,7 @@ function initApp() {
         }
     });
 
+    // Checkin URL feldolgozása
     const urlParams = new URLSearchParams(window.location.search);
     const checkinVenueId = urlParams.get('checkin');
     if(checkinVenueId && venueNames[checkinVenueId]) {
@@ -1346,19 +1355,6 @@ function initApp() {
     if (sponsorBox) observer.observe(sponsorBox);
 
 }
-
-// ==========================================
-// 🌍 GLOBÁLIS WINDOW EXPORT (Claude AI javaslata alapján)
-// Biztosítja, hogy az inline onclick események és az ES modul is tökéletesen együttműködjön!
-// ==========================================
-window.showDay = showDay;
-window.toggleCard = toggleCard;
-window.openCheckin = openCheckin;
-window.toggleTypeFilter = toggleTypeFilter;
-window.toggleFavoritesView = toggleFavoritesView;
-window.toggleGastroCard = toggleGastroCard;
-window.openGuestbook = openGuestbook;
-window.generateQuote = generateQuote;
 
 // BIZTOSÍTJUK A BETÖLTÉST
 if (document.readyState === 'loading') {
@@ -1490,4 +1486,29 @@ function handleHelpPhotoSelect(event) {
             }
         }
     }
+}
+
+// ==========================================
+// 🌍 GLOBÁLIS WINDOW EXPORT (Claude AI javaslata alapján)
+// Biztosítja, hogy az inline onclick események és az ES modul is tökéletesen együttműködjön!
+// ==========================================
+window.showDay = showDay;
+window.toggleCard = toggleCard;
+window.openCheckin = openCheckin;
+window.toggleTypeFilter = toggleTypeFilter;
+window.toggleFavoritesView = toggleFavoritesView;
+window.toggleGastroCard = toggleGastroCard;
+window.openGuestbook = openGuestbook;
+window.generateQuote = generateQuote;
+window.submitHelpRequest = submitHelpRequest;
+window.handleHelpPhotoSelect = handleHelpPhotoSelect;
+window.submitGuestbook = submitGuestbook;
+window.handlePhotoSelect = handlePhotoSelect;
+window.submitCheckin = submitCheckin;
+
+// BIZTOSÍTJUK A BETÖLTÉST (Ez marad a legalsó sor)
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+} else {
+    initApp();
 }

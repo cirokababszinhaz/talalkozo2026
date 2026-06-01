@@ -1,5 +1,5 @@
-// FIGYELEM: Átírtuk v21-re az új funkciók és dizájn miatt!
-const CACHE_NAME = 'talalkozo-cache-v24';
+// FIGYELEM: Átírtuk v25-re az új funkciók és dizájn miatt!
+const CACHE_NAME = 'talalkozo-cache-v26';
 
 const ASSETS_TO_CACHE = [
   './',

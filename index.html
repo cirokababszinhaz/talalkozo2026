@@ -66,7 +66,7 @@
          <div class="gb-grid" id="gbGridModal"></div>
       </div>
       <div class="gb-form">
-         <div class="gb-form-title">Örökíts meg bir pillanatot!</div>
+         <div class="gb-form-title">Örökíts meg egy pillanatot!</div>
          <input type="text" id="gbName" placeholder="Neved vagy társulatod" maxlength="40">
          <textarea id="gbText" placeholder="Írj egy rövid üzenetet vagy poént a képhez..." maxlength="150"></textarea>
          
@@ -140,9 +140,9 @@
       <!-- FOTÓ CSATOLÁSA A SEGÍTSÉGKÉRÉSHEZ -->
       <input type="file" id="helpPhotoInput" accept="image/*" class="hidden-file-input">
       <label for="helpPhotoInput" class="hero-btn gb-photo-btn" id="helpPhotoBtn" style="width: 100%; border-color: var(--teal); color: var(--teal); justify-content: center; cursor: pointer; text-align: center; margin-bottom: 10px;">
-         📸 FOTÓ CSATOLÁSA (Opcionális)
+         📸 FOTÓ KIVÁLASZTÁSA (Opcionális)
       </label>
-      <div id="helpPhotoPreview" class="gb-photo-preview" style="font-size: 10px; color: var(--green); text-align: center; margin-bottom: 10px; font-weight: 700; display: none;">✓ Fotó csatoltva!</div>
+      <div id="helpPhotoPreview" class="gb-photo-preview" style="font-size: 10px; color: var(--green); text-align: center; margin-bottom: 10px; font-weight: 700; display: none;">✓ Fotó csatolva!</div>
       
       <button class="modal-submit" id="helpSubmitBtn" style="background: var(--teal);">Kérdés elküldése</button>
       <button class="modal-close modal-close-transparent" id="helpCloseBtn">Mégse</button>
@@ -170,7 +170,7 @@
 
 <div class="hero">
   <div class="hero-eyebrow" id="heroEyebrow">Magyarországi Bábszínházak</div>
-  <h1 id="heroTitle">17. <em>Találkozója</em></h1>
+  <h1 id="heroTitle">17. Találkozója</h1>
   <div class="hero-date text-white">2026. június 13–18. &nbsp;·&nbsp; Kecskemét</div>
   
   <div class="hero-buttons" id="heroButtons">
@@ -201,7 +201,7 @@
     </button>
   </div>
 
-  <!-- 2. HELY: GYORSLINKEK - KÖZÉPEN -->
+  <!-- 2. HELY: GYORSLINKEK - KÖZÉPEN (Megosztás gomb kitörölve!) -->
   <div class="quick-links" style="margin-bottom: 12px;">
     <div class="ql-wrapper"><button class="ql-btn" id="favFilterBtn">★ Kedvenceim</button></div>
     <div class="ql-wrapper">
@@ -211,7 +211,6 @@
       </button>
     </div>
     <div class="ql-wrapper"><button class="ql-btn" id="btnQuote">🎭 Napi motiváció</button></div>
-    <div class="ql-wrapper"><button class="ql-btn" id="btnShare">🚀 Oszd meg a programot!</button></div>
     <div class="ql-wrapper"><button class="ql-btn" id="btnHolEgyek">🍔 Hol egyek?</button></div>
     <div class="ql-wrapper">
        <button class="ql-btn" id="btnCheckin" style="position: relative;">
@@ -276,7 +275,7 @@
   </div>
 </div>
 
-<!-- GASZTRO KÁRTYA (JAVÍTVA: ID beillesztve!) -->
+<!-- GASZTRO KÁRTYA -->
 <div class="secret-card-container" id="secretGastroCard">
   <div class="event-card type-social secret-gastro-card">
     <div class="card-header pointer-events-none">
@@ -356,7 +355,7 @@
         </div>
       </div>
 
-      <!-- ÚJ: TOVÁBBI NEM KEDVEZMÉNYES ÉTTERMEK GOMB -->
+      <!-- TOVÁBBI NEM KEDVEZMÉNYES ÉTTERMEK GOMB -->
       <div style="margin-top: 25px; text-align: center;">
          <a class="pdf-dl-btn" href="https://drive.google.com/file/d/1O8W0bRcJH9RGepTay2Tqt7pRRo3dnHjS/view?usp=sharing" target="_blank" style="display: inline-block; background: var(--teal); color: #fff; width: auto; padding: 12px 24px;">További nem kedvezményes, közeli éttermek 🍔</a>
       </div>
@@ -432,6 +431,20 @@
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
+      
+      <!-- KIÁLLÍTÁS NYITVATARTÁSA BEILLESZTVE -->
+      <div class="details-section">
+        <div class="details-label">Kiállítás nyitvatartása</div>
+        <div class="details-text" style="font-weight:700; line-height:1.6;">
+           13. szombat: 13-16<br>
+           14. vasárnap: 10-16<br>
+           15. hétfő: 10-16<br>
+           16. kedd: 10-16<br>
+           17. szerda: 10-16<br>
+           18. csütörtök: 10-16
+        </div>
+      </div>
+
       <div class="details-section">
         <div class="details-label">NYITÓKÉP</div>
         <div class="details-text">
@@ -1553,7 +1566,7 @@
           Tervező: Kárpáti Panna<br>
           Zeneszerző: Vranik Krisztián, Jankó Mátyás<br>
           Fénytervező: Váradi András, Selmeczi Mercédesz<br>
-          Konzulens: Fejes Kitty<br>
+          Koreográfus: Kovács Domokos<br>
           Rendező: Kovács Domokos<br><br>
           Szereplők: Kovács Domokos, L. Nagy Attila
         </div>
@@ -2049,6 +2062,7 @@
   </div>
 </footer>
 
-<script type="module" src="app.js"></script>
+<!-- JAVÍTVA: Kényszerített betöltés Cache Buster-rel -->
+<script type="module" src="app.js?v=26"></script>
 </body>
 </html>
