@@ -1,4 +1,3 @@
-```javascript
 // FIGYELEM: Átírtuk v21-re az új funkciók és dizájn miatt!
 const CACHE_NAME = 'talalkozo-cache-v24';
 
