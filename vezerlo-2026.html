@@ -55,7 +55,7 @@
 
   footer { background: var(--teal-dark); text-align: center; padding: 20px; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.35); font-weight: 600; }
 
-  /* VIZUÁLIS ELKÜLÖNÍTŐ KÁRTYÁK AZ ADMINON */
+  /* KÁRTYÁS ELKÜLÖNÍTÉS AZ ÁTLÁTHATÓSÁGÉRT */
   .admin-card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -72,7 +72,7 @@
   .marionette-mode::after { right: 20%; }
   @keyframes sway { 0%, 100% { transform: rotate(-1.5deg); } 50% { transform: rotate(1.5deg); } }
 
-  /* KÉRDÉSEK ÉS MEGOLDOTTSÁG STÍLUSAI */
+  /* ÚJ KÉRDÉSEK STÍLUSAI */
   .question-item { border-left-color: var(--gold); }
   .question-item.resolved-item { opacity: 0.35; filter: grayscale(50%); border-left-color: var(--muted); transition: opacity 0.3s; }
   .question-item.resolved-item .alert-text { text-decoration: line-through; color: var(--muted); }
@@ -83,6 +83,7 @@
   .resolve-btn { background: var(--teal); color: #fff; padding: 6px 10px; border-radius: 3px; font-size: 10px; font-weight: 700; text-transform: uppercase; border: none; cursor: pointer; margin-right: 5px;}
   .resolve-btn:hover { background: var(--teal-dark); }
 
+  /* Mobilbarát kártyák a vezérlőpulton */
   @media (max-width: 480px) {
     .alert-item {
       flex-direction: column;
@@ -217,6 +218,7 @@
   <div class="section-title">Aktív értesítések és ad-hoc programok</div>
   <div id="activeAlertsContainer">Nincs aktív értesítés.</div>
 
+  <!-- Helyezze ezt közvetlenül az "Emlékkönyv moderálás" h2 címe fölé: -->
   <div class="divider"></div>
   <h2>Beérkezett kérdések</h2>
   <div class="subtitle">Segítségnyújtás és válaszadás</div>
@@ -237,8 +239,8 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getDatabase, ref, push, set, remove, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
   import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getStorage, ref as sRef, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.getStorage";
-  import { getDownloadURL as sGetDownloadURL, ref as sRefObj, uploadString as sUploadString } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+  // JAVÍTVA: Helyes modulvégződésű (.js) betöltés a Storage-hoz!
+  import { getStorage, ref as sRef, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyB7BkU92oIK3H_01uX9hr8GatQyE_NXMyA",
@@ -457,7 +459,7 @@
     const fb = document.getElementById("publishFeedback");
     const btn = document.getElementById("publishAlertBtn");
     
-    if (!text && !window.alertResizedImage) { showFeedback(fb, "Írj be egy üzenetet vagy csatolj fotót!", "err"); return; }
+    if (!text && !window.alertResizedImage) { showFeedback(fb, "Írj be een üzenetet vagy csatolj fotót!", "err"); return; }
     
     btn.disabled = true;
     btn.innerText = "Feltöltés...";
