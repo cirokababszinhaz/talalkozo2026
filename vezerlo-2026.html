@@ -8,195 +8,136 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root { --teal: #1a5c58; --teal-dark: #113d3a; --gold: #c4913a; --gold-light: #d4a84a; --bg: #f0ece3; --card: #fff; --text: #1a1a1a; --muted: #6b6258; --border: rgba(26,92,88,0.18); --red: #c0392b; --green: #1a7a4a; }
-  body { background: var(--bg); font-family: 'Montserrat', sans-serif; font-weight: 500; min-height: 100vh; display: flex; flex-direction: column; transition: transform 0.5s; }
   
-  header { background: var(--teal-dark); padding: 16px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+  body { background: var(--bg); font-family: 'Montserrat', sans-serif; font-weight: 500; min-height: 100vh; display: flex; flex-direction: column; transition: transform 0.5s; overflow-x: hidden; }
+  
+  header { background: var(--teal-dark); padding: 16px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; position: sticky; top: 0; z-index: 100; border-bottom: 2px solid var(--teal); }
   header .logo { font-weight: 700; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-light); }
   .header-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-  header .badge { background: var(--red); color: #fff; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; padding: 4px 8px; border-radius: 2px; cursor: pointer; user-select: none; display: flex; align-items: center; gap: 4px; text-decoration: none; border: 1px solid transparent; transition: 0.2s;}
-  header .badge:hover { filter: brightness(1.2); }
-  header .badge-gold { background: var(--gold); }
-  header .badge-outline { background: transparent; border-color: rgba(255,255,255,0.3); }
   
+  .badge { background: var(--red); color: #fff; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; padding: 6px 10px; border-radius: 2px; cursor: pointer; text-decoration: none; border: 1px solid transparent; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
+  .badge:hover { filter: brightness(1.2); }
+  .badge-gold { background: var(--gold); }
+  .badge-outline { background: transparent; border-color: rgba(255,255,255,0.3); }
+
   #loginScreen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; }
   .login-joke { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--teal-dark); text-align: center; margin-bottom: 30px; font-style: italic; line-height:1.4;}
   .login-box { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 32px; max-width: 380px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.05);}
-  .login-box h2 { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--teal-dark); margin-bottom: 6px; }
-
-  #adminPanel { flex: 1; display: none; padding: 32px 20px 60px; max-width: 600px; margin: 0 auto; width: 100%; }
+  
+  #adminPanel { flex: 1; display: none; padding: 32px 20px 60px; max-width: 700px; margin: 0 auto; width: 100%; }
   h2 { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--teal-dark); margin-bottom: 6px; }
   .subtitle { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 28px; font-weight: 600; }
 
-  .section-title { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; font-weight: 700; color: var(--teal); margin-bottom: 12px; }
+  .section-title { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; font-weight: 700; color: var(--teal); margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 5px; margin-top: 40px;}
+  
   label { display: block; font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
-  input[type="email"], input[type="password"], textarea, select { width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 3px; font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 14px; color: var(--text); background: #fff; margin-bottom: 16px; outline: none; }
-  textarea { min-height: 90px; resize: vertical; }
-
+  input, textarea, select { width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 3px; font-family: inherit; font-size: 14px; margin-bottom: 16px; outline: none; background: #fff; }
+  
   .btn { display: block; width: 100%; padding: 12px; font-family: 'Montserrat', sans-serif; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; font-weight: 700; border: none; border-radius: 3px; cursor: pointer; transition: .2s; margin-bottom: 10px; text-align: center; }
   .btn-primary { background: var(--red); color: #fff; }
-  .btn-primary:hover { background: #a93226; }
   .btn-outline { background: transparent; color: var(--teal); border: 2px solid var(--teal); }
   .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
 
   .feedback { font-size: 12px; padding: 10px 14px; border-radius: 3px; margin-top: 4px; display: none; font-weight: 600;}
-  .feedback.ok  { background: rgba(26,122,74,0.1); color: var(--green); border: 1px solid rgba(26,122,74,0.25); }
-  .feedback.err { background: rgba(192,57,43,0.1); color: var(--red); border: 1px solid rgba(192,57,43,0.2); }
-
-  .divider { height: 2px; background: var(--border); margin: 32px 0; }
+  .feedback.ok { background: rgba(26,122,74,0.1); color: var(--green); }
+  .feedback.err { background: rgba(192,57,43,0.1); color: var(--red); }
 
   .alert-item { background: #fff; border: 1px solid var(--border); border-left: 4px solid var(--red); border-radius: 4px; padding: 12px 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;}
   .alert-meta { font-size: 10px; color: var(--muted); margin-bottom: 6px; font-weight: 700; text-transform: uppercase;}
-  .alert-text { font-size: 14px; line-height: 1.4; color: var(--text); font-weight: 600;}
-  .del-btn { background: #fee; color: var(--red); border: 1px solid var(--red); padding: 6px 10px; border-radius: 3px; cursor: pointer; font-size: 10px; font-weight: 700; text-transform: uppercase; border:none;}
+  .alert-text { font-size: 14px; line-height: 1.4; font-weight: 600;}
+  .del-btn { background: #fee; color: var(--red); padding: 6px 10px; border-radius: 3px; cursor: pointer; font-size: 10px; font-weight: 700; border: none; }
   
-  .gb-item { border-left-color: var(--teal); flex-direction:column; }
-  .gb-item .del-btn { background: var(--teal); color: #fff; margin-top:10px;}
-  .gb-photo { max-width: 150px; border-radius: 4px; margin-top: 10px; border: 1px solid var(--border); display: block;}
-
-  footer { background: var(--teal-dark); text-align: center; padding: 20px; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.35); font-weight: 600; }
-
-  /* MARIONETT MÓD ADMIN */
-  .marionette-mode { animation: sway 3s infinite ease-in-out; transform-origin: top center; overflow: visible !important; }
-  .marionette-mode::before, .marionette-mode::after { content:''; position:fixed; top:0; width:1px; background:rgba(0,0,0,0.4); height:100vh; z-index: 9999; pointer-events:none;}
-  .marionette-mode::before { left: 20%; }
-  .marionette-mode::after { right: 20%; }
-  @keyframes sway { 0%, 100% { transform: rotate(-1.5deg); } 50% { transform: rotate(1.5deg); } }
-
-/* ÚJ KÉRDÉSEK STÍLUSAI */
   .question-item { border-left-color: var(--gold); }
-  .question-item.resolved-item { opacity: 0.35; filter: grayscale(50%); border-left-color: var(--muted); transition: opacity 0.3s; }
-  .question-item.resolved-item .alert-text { text-decoration: line-through; color: var(--muted); }
+  .resolved-item { opacity: 0.5; filter: grayscale(1); }
   
-  .reply-btn { background: var(--green); color: #fff; padding: 6px 10px; border-radius: 3px; font-size: 10px; font-weight: 700; text-transform: uppercase; border: none; text-decoration: none; display: inline-block; margin-right: 5px; }
-  .reply-btn:hover { background: #145a32; text-decoration: none; color: #fff;}
-  
-  .resolve-btn { background: var(--teal); color: #fff; padding: 6px 10px; border-radius: 3px; font-size: 10px; font-weight: 700; text-transform: uppercase; border: none; cursor: pointer; margin-right: 5px;}
-  .resolve-btn:hover { background: var(--teal-dark); }
+  .gb-photo { max-width: 150px; border-radius: 4px; margin-top: 10px; display: block; border: 1px solid var(--border); }
 
-/* Mobilbarát kártyák a vezérlőpulton */
-  @media (max-width: 480px) {
-    .alert-item {
-      flex-direction: column;
-    }
-    .alert-item .del-btn, 
-    .alert-item .resolve-btn, 
-    .alert-item .reply-btn {
-      width: 100%;
-      text-align: center;
-      margin-top: 8px;
-    }
-  }
+  footer { background: var(--teal-dark); text-align: center; padding: 20px; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+
+  /* MARIONETT ANIMÁCIÓ */
+  .marionette-mode { animation: sway 3s infinite ease-in-out; transform-origin: top center; }
+  @keyframes sway { 0%, 100% { transform: rotate(-1deg); } 50% { transform: rotate(1deg); } }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">17. Találkozó</div>
+  <div class="logo">17. Találkozó Vezérlő</div>
   <div class="header-actions">
-    <!-- Csak bejelentkezve jelennek meg -->
-    <a href="https://drive.google.com/file/d/169T5cqGkVrjowQZXFdXqsY-2yZodyUHk/view?usp=drive_link" target="_blank" class="badge badge-gold" id="phonebookBtn" style="display: none;">
-      <span style="font-size:12px;">📞</span> Telefonkönyv
-    </a>
-    <a href="https://drive.google.com/drive/folders/1WwTYq5HThmX1w2ppVP381ymKDKL0U4uN?usp=sharing" target="_blank" class="badge badge-gold" id="allFilesBtn" style="display: none;">
-      <span style="font-size:12px;">📁</span> MINDEN
-    </a>
-    
-    <a href="index.html" class="badge badge-outline">⬅ Főoldalra</a>
-    <div class="badge" id="logoutBtnTop" style="display: none;" onclick="window.doLogout()">Kijelentkezés</div>
+    <a href="https://drive.google.com/file/d/169T5cqGkVrjowQZXFdXqsY-2yZodyUHk/view" target="_blank" class="badge badge-gold" id="phoneBtn" style="display:none;">📞 Telefonkönyv</a>
+    <a href="index.html" class="badge badge-outline">⬅ Kilépés a főoldalra</a>
     <div class="badge" id="marionetteBtn">Vezérlőpult</div>
   </div>
 </header>
 
+<!-- LOGIN -->
 <div id="loginScreen">
   <div class="login-joke">Kíváncsiskodunk, kíváncsiskodunk,<br>a nézőtér meg üres?</div>
   <div class="login-box">
-    <h2>Belépés</h2>
-    <label for="emailInput" style="margin-top:20px;">Email cím</label>
+    <label>Email</label>
     <input type="email" id="emailInput" placeholder="admin@ciroka.hu">
-    
-    <label for="pwdInput">Jelszó</label>
-    <input type="password" id="pwdInput" onkeydown="if(event.key==='Enter') window.doLogin()">
-    
+    <label>Jelszó</label>
+    <input type="password" id="pwdInput">
     <button class="btn btn-primary" onclick="window.doLogin()">Belépés</button>
-    <div class="feedback err" id="loginError">Hiba a belépésnél.</div>
+    <div id="loginError" class="feedback err">Hiba a belépésnél!</div>
   </div>
 </div>
 
+<!-- ADMIN PANEL -->
 <div id="adminPanel">
-  <h2>Értesítések kezelése</h2>
-  <div class="subtitle">Havária és módosítások</div>
+  <h2>Üdvözlünk a gépteremben!</h2>
+  <div class="subtitle">Itt irányíthatod a Találkozó vérkeringését.</div>
 
-  <div class="section-title">Új értesítés közzététele</div>
-  <label>Érintett program (Opcionális)</label>
+  <!-- ÉRTESÍTÉSEK -->
+  <div class="section-title">1. Havária / Fontos értesítés küldése</div>
+  <label>Program választása (Opcionális)</label>
   <select id="alertTarget">
-    <option value="all">-- Általános (nem kötődik konkrét előadáshoz) --</option>
-    <!-- Szombat -->
-    <option value="show-eye-catching">Eye catching</option>
-    <option value="show-lathatatlan">A láthatatlan jóbarát</option>
-    <option value="show-atanaz">Atanáz, a lámpaláz</option>
-    <option value="show-honvagy">Örökölt honvágy</option>
-    <!-- Vasárnap -->
-    <option value="show-cseresznyefa">Én és a cseresznyefa</option>
-    <option value="show-piroska">Piroska és a farkas</option>
-    <option value="show-kosziv">A kőszív</option>
-    <option value="show-juhasz">Az igazmondó juhász</option>
-    <option value="show-frida">Itt vagyok, hát élek, Frida</option>
-    <!-- Hétfő -->
-    <option value="show-tragedia-hetfo-d">Az ember tragédiája (Délelőtt)</option>
-    <option value="show-doboz-hetfo">A doboz (Délelőtt)</option>
-    <option value="show-graffalo">Graffaló</option>
-    <option value="show-bambi">Bambi</option>
-    <option value="show-tragedia-hetfo-e">Az ember tragédiája (Délután)</option>
-    <option value="show-doboz-hetfo-e">A doboz (Délután)</option>
-    <!-- Kedd -->
-    <option value="show-lud">Ha már lúd…</option>
-    <option value="show-golya">Fekete gólya, fehér gólya, szürke gólya</option>
-    <option value="show-lepke">A lepkegyűjtő</option>
-    <option value="show-sarkany">Sárkánykirály</option>
-    <!-- Szerda -->
-    <option value="show-halasz">A szegény halász, meg a túlsokra vágyó felesége</option>
-    <option value="show-hapci">Hapci király</option>
-    <option value="show-lenka-sze">Lenka és a Szemüveges lány (Szerda)</option>
-    <option value="show-tryangle-sze">Tryangle (Szerda)</option>
-    <option value="show-patkanyfogo">A Patkányfogó Projekt</option>
-    <!-- Csütörtök -->
-    <option value="show-capitalism">Capitalism for children</option>
-    <option value="show-csodaszarvas">Csodaszarvas</option>
-    <option value="show-lenka-csut">Lenka és a Szemüveges lány (Csütörtök)</option>
-    <option value="show-tryangle-csut">Tryangle (Csütörtök)</option>
-    <option value="show-vampir">Én, a vámpír</option>
+    <option value="all">-- Általános értesítés --</option>
+    <optgroup label="Szombat">
+      <option value="show-eye-catching">Eye Catching</option>
+      <option value="show-lathatatlan">A láthatatlan jóbarát</option>
+      <option value="show-atanaz">Atanáz, a lámpaláz</option>
+    </optgroup>
+    <optgroup label="Hétfő">
+      <option value="show-tragedia-hetfo-d">Az ember tragédiája</option>
+      <option value="show-bambi">Bambi</option>
+    </optgroup>
   </select>
 
   <label>Üzenet szövege</label>
-  <textarea id="alertText" placeholder="Pl.: A Bambi előadás helyszíne megváltozott..."></textarea>
+  <textarea id="alertText" placeholder="Pl.: Az előadás 15 percet késik műszaki okok miatt..."></textarea>
   
-  <input type="file" id="alertPhotoInput" accept="image/*" style="position: absolute; opacity: 0; width: 1px; height: 1px; z-index: -1;" onchange="window.handleAlertPhotoSelect(event)">
-  <label for="alertPhotoInput" class="btn btn-outline" id="alertPhotoBtn" style="cursor: pointer;">
-    📸 FOTÓ CSATOLÁSA (Opcionális)
-  </label>
-  <div id="alertPhotoPreview" style="font-size:10px; color:var(--green); text-align:center; margin-bottom:15px; font-weight:700; display:none;">✓ Fotó előkészítve!</div>
+  <input type="file" id="alertPhotoInput" accept="image/*" style="display:none;" onchange="window.handleAlertPhotoSelect(event)">
+  <button class="btn btn-outline" onclick="document.getElementById('alertPhotoInput').click()" id="alertPhotoBtn">📸 Fotó csatolása (Opcionális)</button>
+  <div id="alertPhotoPreview" style="display:none; color:var(--green); font-size:10px; text-align:center; font-weight:700; margin-bottom:15px;">✓ Fotó előkészítve!</div>
 
-  <button class="btn btn-primary" id="publishAlertBtn" onclick="window.publishAlert()">🔔 Közzététel</button>
-  <div class="feedback" id="publishFeedback"></div>
+  <button class="btn btn-primary" id="publishAlertBtn" onclick="window.publishAlert()">🔔 Értesítés közzététele</button>
+  <div id="publishFeedback" class="feedback"></div>
 
-  <div class="divider"></div>
+  <!-- BLOG / AD-HOC PROGRAMOK -->
+  <div class="section-title">2. Új Ad-hoc program (Update szekció)</div>
+  <div class="subtitle">Ezek a programok a főoldalon az "Update" gomb alatt jelennek meg blogszerűen.</div>
+  
+  <label>Program / Hír címe</label>
+  <input type="text" id="blogTitle" placeholder="Pl.: Meglepetés koncert a kávézóban!">
+  <label>Helyszín</label>
+  <input type="text" id="blogLocation" placeholder="Pl.: Ciróka Udvar">
+  <label>Részletes leírás</label>
+  <textarea id="blogDesc" placeholder="Minden fontos infó az eseményről..."></textarea>
+  
+  <button class="btn btn-primary" style="background:var(--teal);" onclick="window.publishBlogPost()">🚀 Ad-hoc program közzététele</button>
 
-  <div class="section-title">Aktív értesítések</div>
-  <div id="activeAlertsContainer">Nincs aktív értesítés.</div>
+  <!-- KÉRDÉSEK -->
+  <div class="section-title">3. Beérkezett segítségkérések</div>
+  <div id="questionsContainer">Betöltés...</div>
 
-  <!-- Helyezze ezt közvetlenül az "Emlékkönyv moderálás" h2 címe fölé: -->
-  <div class="divider"></div>
-  <h2>Beérkezett kérdések</h2>
-  <div class="subtitle">Segítségnyújtás és válaszadás</div>
-  <div id="questionsAdminContainer">Nincs beérkezett kérdés.</div>
+  <!-- EMLÉKKÖNYV -->
+  <div class="section-title">4. Emlékkönyv moderálása</div>
+  <div id="gbAdminContainer">Betöltés...</div>
 
-  <div class="divider"></div>
-  <h2>Emlékkönyv moderálás</h2>
-  <div class="subtitle">Vendégek üzeneteinek ellenőrzése</div>
-  <div id="guestbookAdminContainer">Nincs még bejegyzés.</div>
-
-  <div class="divider"></div>
-  <button class="btn btn-ghost" onclick="window.doLogout()">Kijelentkezés</button>
+  <div style="margin-top:50px;">
+    <button class="btn btn-ghost" onclick="window.doLogout()">Kijelentkezés</button>
+  </div>
 </div>
 
 <footer>Vezérlőpult &nbsp;·&nbsp; 17. Találkozó</footer>
@@ -218,239 +159,150 @@
   };
 
   const app = initializeApp(firebaseConfig);
-  const db  = getDatabase(app);
+  const db = getDatabase(app);
   const auth = getAuth(app);
   const storage = getStorage(app);
-  
+
+  let alertResizedImage = null;
+
+  // AUTH FIGYELÉS
   onAuthStateChanged(auth, (user) => {
     if (user) {
       document.getElementById("loginScreen").style.display = "none";
-      document.getElementById("adminPanel").style.display  = "block";
-      document.getElementById("phonebookBtn").style.display = "flex";
-      document.getElementById("allFilesBtn").style.display = "flex";
-      document.getElementById("logoutBtnTop").style.display = "flex";
-      initAdmin();
+      document.getElementById("adminPanel").style.display = "block";
+      document.getElementById("phoneBtn").style.display = "block";
+      initAdminData();
     } else {
       document.getElementById("loginScreen").style.display = "flex";
-      document.getElementById("adminPanel").style.display  = "none";
-      document.getElementById("phonebookBtn").style.display = "none";
-      document.getElementById("allFilesBtn").style.display = "none";
-      document.getElementById("logoutBtnTop").style.display = "none";
+      document.getElementById("adminPanel").style.display = "none";
     }
   });
 
-  window.doLogin = function() {
-    const email = document.getElementById("emailInput").value.trim();
-    const pwd = document.getElementById("pwdInput").value.trim();
-    const errBox = document.getElementById("loginError");
-    errBox.style.display = "none";
-
-    if(!email || !pwd) {
-      errBox.style.display = "block";
-      errBox.textContent = "Kérlek add meg az emailt és a jelszót is!";
-      return;
-    }
-
-    signInWithEmailAndPassword(auth, email, pwd)
-      .catch((error) => {
-        errBox.style.display = "block";
-        errBox.textContent = "Hiba: " + error.code; 
-        setTimeout(() => errBox.style.display = "none", 5000);
-      });
+  window.doLogin = () => {
+    const email = document.getElementById("emailInput").value;
+    const pwd = document.getElementById("pwdInput").value;
+    signInWithEmailAndPassword(auth, email, pwd).catch(e => {
+      document.getElementById("loginError").style.display = "block";
+    });
   };
 
-  window.doLogout = function() { signOut(auth).then(() => location.reload()); };
-
-  function escapeHTML(str) {
-    if(!str) return "";
-    return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag]));
-  }
+  window.doLogout = () => signOut(auth);
 
   function getBudapestTimeStr() {
     return new Date().toLocaleString("hu-HU", {timeZone: "Europe/Budapest", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"});
   }
 
-  // --- KÉP KIVÁLASZTÁSA ÉRTESÍTÉSHEZ ---
-  window.handleAlertPhotoSelect = function(event) {
-    const file = event.target.files[0];
+  // ÉRTESÍTÉS KÉP KEZELÉS
+  window.handleAlertPhotoSelect = (e) => {
+    const file = e.target.files[0];
     if (!file) return;
-    if (!file.type.startsWith('image/')) { alert("Kérlek, csak képet válassz ki!"); return; }
-
     const reader = new FileReader();
+    reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const MAX = 800;
+            let w = img.width, h = img.height;
+            if (w > h) { if(w > MAX) { h *= MAX/w; w = MAX; } } else { if(h > MAX) { w *= MAX/h; h = MAX; } }
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            alertResizedImage = canvas.toDataURL('image/jpeg', 0.7);
+            document.getElementById('alertPhotoPreview').style.display = 'block';
+            document.getElementById('alertPhotoBtn').innerText = '✓ FOTÓ KÉSZ';
+        };
+        img.src = event.target.result;
+    };
     reader.readAsDataURL(file);
-    reader.onload = function(e) {
-      const img = new Image();
-      img.src = e.target.result;
-      img.onload = function() {
-        const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 800; const MAX_HEIGHT = 800;
-        let width = img.width; let height = img.height;
-        
-        if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
-        else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
-        
-        canvas.width = width; canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
-        
-        window.alertResizedImage = canvas.toDataURL('image/jpeg', 0.7);
-        
-        const btn = document.getElementById('alertPhotoBtn');
-        document.getElementById('alertPhotoPreview').style.display = 'block';
-        btn.style.borderColor = 'var(--green)';
-        btn.style.color = 'var(--green)';
-        btn.innerText = '✓ FOTÓ CSATOLVA';
-      }
-    }
   };
 
-  function initAdmin() {
-    onValue(ref(db, "alertsList"), (snap) => {
-      const container = document.getElementById("activeAlertsContainer");
-      container.innerHTML = "";
-      if (!snap.exists()) { container.innerHTML = "<p style='font-size:12px;color:var(--muted)'>Nincs aktív értesítés.</p>"; return; }
-      const data = snap.val();
-      const alertsArray = Object.keys(data).map(key => ({ id: key, ...data[key] })).sort((a,b) => b.timeRaw - a.timeRaw);
-      alertsArray.forEach(alert => {
-        let targetName = alert.targetId === "all" ? "Általános" : document.querySelector(`#alertTarget option[value="${alert.targetId}"]`).textContent;
-        let imgHtml = alert.photoUrl ? `<img src="${alert.photoUrl}" class="gb-photo" style="margin-bottom:8px;">` : '';
-        
-        container.innerHTML += `
-          <div class="alert-item">
-            <div>
-              <div class="alert-meta">${alert.timestamp} | Célpont: ${targetName}</div>
-              ${imgHtml}
-              <div class="alert-text">${escapeHTML(alert.message)}</div>
-            </div>
-            <button class="del-btn" onclick="window.deleteAlert('${alert.id}')">Törlés</button>
-          </div>`;
-      });
-    });
-
-
-// Az initAdmin() végére, vagy a többi figyelő mellé másolja be:
-  onValue(ref(db, "questions"), (snap) => {
-    const container = document.getElementById("questionsAdminContainer");
-    container.innerHTML = "";
-    if (!snap.exists()) { container.innerHTML = "<p style='font-size:12px;color:var(--muted)'>Nincs beérkezett kérdés.</p>"; return; }
-    
-    const data = snap.val();
-    const qArray = Object.keys(data).map(key => ({ id: key, ...data[key] })).sort((a,b) => b.timeRaw - a.timeRaw);
-    
-    qArray.forEach(q => {
-      const isResolved = q.resolved || false;
-      const resolvedClass = isResolved ? "resolved-item" : "";
-      const resolveText = isResolved ? "Megnyitás" : "✓ Kész (Kipipál)";
-      
-      // HA VAN FOTÓ, MEGJELENÍTJÜK
-      let imgHtml = q.photoUrl ? `<img src="${q.photoUrl}" class="gb-photo" style="margin-bottom:8px;">` : '';
-      
-      container.innerHTML += `
-        <div class="alert-item question-item ${resolvedClass}">
-          <div style="width:100%;">
-            <div class="alert-meta">${q.dateStr} | Feladó: ${escapeHTML(q.name)} (${escapeHTML(q.email)})</div>
-            <div class="alert-text" style="margin-bottom: 12px; font-size: 14px;">${escapeHTML(q.text)}</div>
-            ${imgHtml}
-            <div style="margin-top: 10px;">
-              <!-- Email küldés gomb -->
-              <a href="mailto:${encodeURIComponent(q.email)}?subject=Válasz a 17. Bábszínházi Találkozó segítségkérésre" class="reply-btn">✉ Válaszolok</a>
-              <!-- Állapotváltó gomb -->
-              <button class="resolve-btn" onclick="window.toggleResolveQuestion('${q.id}', ${isResolved})">${resolveText}</button>
-              <!-- Törlés gomb -->
-              <button class="del-btn" style="background:#fee; color:var(--red);" onclick="window.deleteQuestion('${q.id}')">Törlés</button>
-            </div>
-          </div>
-        </div>`;
-    });
-  });
-
-    onValue(ref(db, "guestbook"), (snap) => {
-      const container = document.getElementById("guestbookAdminContainer");
-      container.innerHTML = "";
-      if (!snap.exists()) { container.innerHTML = "<p style='font-size:12px;color:var(--muted)'>Nincs még bejegyzés.</p>"; return; }
-      const data = snap.val();
-      const gbArray = Object.keys(data).map(key => ({ id: key, ...data[key] })).sort((a,b) => b.timeRaw - a.timeRaw);
-      gbArray.forEach(msg => {
-        let imgHtml = msg.photoUrl ? `<img src="${msg.photoUrl}" class="gb-photo">` : '';
-        container.innerHTML += `
-          <div class="alert-item gb-item">
-            <div style="width:100%;">
-              <div class="alert-meta">${msg.dateStr} | ${escapeHTML(msg.name)}</div>
-              <div class="alert-text">${escapeHTML(msg.text)}</div>
-              ${imgHtml}
-            </div>
-            <button class="del-btn" onclick="window.deleteGbMessage('${msg.id}')">Törlés</button>
-          </div>`;
-      });
-    });
-  }
-
-  // --- ÉRTESÍTÉS KÖZZÉTÉTELE FOTÓVAL ---
-  window.publishAlert = async function() {
+  // PUBLISH ALERT
+  window.publishAlert = async () => {
     const text = document.getElementById("alertText").value.trim();
     const target = document.getElementById("alertTarget").value;
-    const fb = document.getElementById("publishFeedback");
+    if(!text) return alert("Írj szöveget!");
+
     const btn = document.getElementById("publishAlertBtn");
-    
-    if (!text && !window.alertResizedImage) { showFeedback(fb, "Írj be egy üzenetet vagy csatolj fotót!", "err"); return; }
-    
-    btn.disabled = true;
-    btn.innerText = "Feltöltés...";
+    btn.disabled = true; btn.innerText = "Küldés...";
 
-    try {
-      let photoUrl = "";
-      if (window.alertResizedImage) {
-         const photoRef = sRef(storage, 'alerts/' + Date.now() + '.jpg');
-         await uploadString(photoRef, window.alertResizedImage, 'data_url');
-         photoUrl = await getDownloadURL(photoRef);
-      }
-
-      const newRef = push(ref(db, "alertsList"));
-      await set(newRef, { 
-        message: text, 
-        targetId: target, 
-        timestamp: getBudapestTimeStr(), 
-        timeRaw: Date.now(),
-        photoUrl: photoUrl 
-      });
-
-      // Űrlap nullázása
-      document.getElementById("alertText").value = "";
-      document.getElementById("alertPhotoInput").value = "";
-      document.getElementById('alertPhotoPreview').style.display = 'none';
-      const pBtn = document.getElementById('alertPhotoBtn');
-      pBtn.style.borderColor = 'var(--teal)';
-      pBtn.style.color = 'var(--teal)';
-      pBtn.innerText = '📸 FOTÓ CSATOLÁSA (Opcionális)';
-      window.alertResizedImage = null;
-
-      showFeedback(fb, "✓ Értesítés közzétéve!", "ok");
-    } catch(e) { 
-      showFeedback(fb, "Hiba: Nincs jogosultságod, vagy hiba a kapcsolatban!", "err"); 
-    } finally {
-      btn.disabled = false;
-      btn.innerText = "🔔 Közzététel";
+    let photoUrl = "";
+    if (alertResizedImage) {
+        const photoRef = sRef(storage, 'alerts/' + Date.now() + '.jpg');
+        await uploadString(photoRef, alertResizedImage, 'data_url');
+        photoUrl = await getDownloadURL(photoRef);
     }
+
+    await push(ref(db, "alertsList"), {
+        message: text, targetId: target, photoUrl: photoUrl,
+        timestamp: getBudapestTimeStr(), timeRaw: Date.now()
+    });
+
+    alert("Értesítés kiküldve!");
+    location.reload();
   };
 
-  window.deleteAlert = async function(id) { if(confirm("Biztosan törlöd ezt az értesítést?")) await remove(ref(db, "alertsList/" + id)); };
-  window.deleteGbMessage = async function(id) { if(confirm("Biztosan törlöd ezt az emlékkönyv bejegyzést?")) await remove(ref(db, "guestbook/" + id)); };
+  // PUBLISH BLOG POST
+  window.publishBlogPost = async () => {
+    const title = document.getElementById("blogTitle").value.trim();
+    const loc = document.getElementById("blogLocation").value.trim();
+    const desc = document.getElementById("blogDesc").value.trim();
 
-  function showFeedback(el, msg, type) {
-    el.textContent = msg; el.className = "feedback " + type; el.style.display = "block";
-    setTimeout(() => el.style.display = "none", 4000);
+    if(!title || !desc) return alert("Cím és leírás kötelező!");
+
+    await push(ref(db, "blogPosts"), {
+        title, location: loc, desc,
+        timeRaw: Date.now(), dateStr: getBudapestTimeStr()
+    });
+
+    alert("Ad-hoc program hozzáadva az Update szekcióhoz!");
+    location.reload();
+  };
+
+  // ADATOK BETÖLTÉSE
+  function initAdminData() {
+    // Kérdések listázása
+    onValue(ref(db, "questions"), (snap) => {
+        const container = document.getElementById("questionsContainer");
+        container.innerHTML = "";
+        if(!snap.exists()) { container.innerHTML = "Nincs kérdés."; return; }
+        Object.entries(snap.val()).reverse().forEach(([id, q]) => {
+            container.innerHTML += `
+                <div class="alert-item question-item ${q.resolved ? 'resolved-item' : ''}">
+                    <div style="flex:1">
+                        <div class="alert-meta">${q.dateStr} | ${q.name} (${q.email})</div>
+                        <div class="alert-text">${q.text}</div>
+                        <div style="margin-top:10px;">
+                            <button class="badge badge-gold" onclick="window.resolveQ('${id}')">✓ Megoldva</button>
+                            <button class="badge" style="background:#444" onclick="window.deleteQ('${id}')">Törlés</button>
+                        </div>
+                    </div>
+                </div>`;
+        });
+    });
+
+    // Emlékkönyv moderálás
+    onValue(ref(db, "guestbook"), (snap) => {
+        const container = document.getElementById("gbAdminContainer");
+        container.innerHTML = "";
+        if(!snap.exists()) { container.innerHTML = "Nincs üzenet."; return; }
+        Object.entries(snap.val()).reverse().forEach(([id, m]) => {
+            let img = m.photoUrl ? `<img src="${m.photoUrl}" class="gb-photo">` : '';
+            container.innerHTML += `
+                <div class="alert-item" style="border-left-color:var(--teal)">
+                    <div style="flex:1">
+                        <div class="alert-meta">${m.dateStr} | ${m.name}</div>
+                        <div class="alert-text">${m.text}</div>
+                        ${img}
+                    </div>
+                    <button class="del-btn" onclick="window.deleteGB('${id}')">Törlés</button>
+                </div>`;
+        });
+    });
   }
 
-// Regisztrálja a globális kattintási eseményeket a script alján:
-  window.toggleResolveQuestion = async function(id, currentStatus) {
-    await update(ref(db, "questions/" + id), { resolved: !currentStatus });
-  };
+  window.resolveQ = (id) => update(ref(db, `questions/${id}`), { resolved: true });
+  window.deleteQ = (id) => confirm("Törlöd?") && remove(ref(db, `questions/${id}`));
+  window.deleteGB = (id) => confirm("Törlöd?") && remove(ref(db, `guestbook/${id}`));
 
-  window.deleteQuestion = async function(id) {
-    if(confirm("Biztosan véglegesen törlöd ezt a kérdést?")) {
-      await remove(ref(db, "questions/" + id));
-    }
-  };
 </script>
 
 <script>
@@ -460,15 +312,13 @@
     marionetteClicks++;
     clearTimeout(mTimer);
     if(marionetteClicks === 5) {
-      document.body.classList.add('marionette-mode');
+      document.body.classList.toggle('marionette-mode');
       marionetteClicks = 0;
     } else {
       mTimer = setTimeout(() => { marionetteClicks = 0; }, 500);
     }
   });
-  document.body.addEventListener('dblclick', () => {
-    document.body.classList.remove('marionette-mode');
-  });
 </script>
+
 </body>
 </html>

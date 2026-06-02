@@ -1064,6 +1064,102 @@ window.addEventListener('beforeinstallprompt', (e) => {
     }
 });
 
+// Új globális változók a badge-hez
+let lastSeenUpdateCount = parseInt(localStorage.getItem('lastSeenUpdateCount') || '0');
+let currentUpdateTotal = 0;
+
+// Update badge és Blog posztok figyelése
+onValue(ref(db, "blogPosts"), (snap) => {
+    const blogData = snap.exists() ? snap.val() : {};
+    const alertCount = globalAlerts.length;
+    const blogCount = Object.keys(blogData).length;
+    currentUpdateTotal = alertCount + blogCount;
+
+    const badge = document.getElementById('updateBadge');
+    if(badge) {
+        let unread = currentUpdateTotal - lastSeenUpdateCount;
+        if(unread > 0) {
+            badge.innerText = unread;
+            badge.style.display = 'block';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+    renderBlogPosts(blogData);
+});
+
+// Blog posztok kirakása (az index.html-ben csinálj nekik egy divet: id="blogContainer")
+function renderBlogPosts(data) {
+    const container = document.getElementById('blogContainer');
+    if(!container) return;
+    container.innerHTML = "";
+    const posts = Object.values(data).sort((a,b) => b.timeRaw - a.timeRaw);
+    posts.forEach(p => {
+        container.innerHTML += `
+            <div class="event-card type-update open" style="border-left-color: var(--red);">
+                <div class="card-header">
+                    <div class="event-title">${escapeHTML(p.title)}</div>
+                    <div class="event-company">${escapeHTML(p.location)} | ${p.dateStr}</div>
+                </div>
+                <div class="card-details-inner" style="padding-top:0;">
+                    <div class="details-text">${escapeHTML(p.desc)}</div>
+                </div>
+            </div>
+        `;
+    });
+}
+
+// Hol egyek? PDF megnyitás kacsintással
+const otherRestBtn = document.getElementById('btnOtherRestaurants');
+if(otherRestBtn) {
+    otherRestBtn.addEventListener('click', () => {
+        const overlay = document.getElementById('pdfOverlay');
+        overlay.classList.add('show');
+        setTimeout(() => {
+            overlay.classList.remove('show');
+            window.location.href = "IDE_A_GOOGLE_DRIVE_LINK";
+        }, 1800);
+    });
+}
+
+// doSearch frissítése a Kiállítás és Update szűrőkhöz
+function doSearch() {
+    // ... meglévő kód eleje ...
+    
+    if (currentTypeFilter === 'show-kiallitas') {
+        // Csak a Kiállítás kártyát mutatjuk és rögtön kinyitjuk
+        const kiallitasCard = document.getElementById('show-kiallitas');
+        if(kiallitasCard) {
+            kiallitasCard.style.display = 'block';
+            kiallitasCard.classList.add('open');
+        }
+        // Badge nullázása ha Update-re kattintott
+    } else if (currentTypeFilter === 'type-update') {
+        localStorage.setItem('lastSeenUpdateCount', currentUpdateTotal);
+        document.getElementById('updateBadge').style.display = 'none';
+        // Itt mutasd az értesítéseket és a blog posztokat
+    }
+}
+
+window.publishBlog = async function() {
+    const title = document.getElementById("blogTitle").value.trim();
+    const desc = document.getElementById("blogDesc").value.trim();
+    const loc = document.getElementById("blogLocation").value.trim();
+    if(!title || !desc) return alert("Cím és leírás kötelező!");
+
+    const newRef = push(ref(db, "blogPosts"));
+    await set(newRef, {
+        title: title,
+        desc: desc,
+        location: loc,
+        timeRaw: Date.now(),
+        dateStr: getBudapestTimeStr()
+    });
+    alert("Közzétéve az Update-ben!");
+    document.getElementById("blogTitle").value = "";
+    document.getElementById("blogDesc").value = "";
+};
+
 
 // 🛠 DOM BETÖLTÉSE UTÁNI FŐ FÜGGVÉNY (Eseménykezelők)
 function initApp() {
