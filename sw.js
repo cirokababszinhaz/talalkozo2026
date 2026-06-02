@@ -1,5 +1,5 @@
 // FIGYELEM: Átírtuk v4-re, mert lettek új támogatók és módosult a szöveg!
-const CACHE_NAME = 'talalkozo-cache-v26';
+const CACHE_NAME = 'talalkozo-cache-v20';
 
 // Ide be kell írni minden fájlt, amit offline is látni akarunk
 const ASSETS_TO_CACHE = [
@@ -14,7 +14,6 @@ const ASSETS_TO_CACHE = [
   './dixie.png',
   './spaletta.png',
   './babszinhaz.png',
-'./max.png',
   './tamogato1.png',
   './tamogato2.png',
   './tamogato3.png',
