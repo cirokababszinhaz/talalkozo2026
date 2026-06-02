@@ -39,9 +39,9 @@ let isGastroMode = false;
 let isPhotoWide = false;
 let currentGbTotal = 0;
 let resizedImageDataUrl = null;
-let helpResizedImageDataUrl = null; 
+let helpResizedImageDataUrl = null; // ÚJ VÁLTOZÓ SEGÍTSÉGKÉRÉSHEZ
 
-// CSOPORTOS ELŐADÁSOK LEKÉPEZÉSE ÉRTESÍTÉSEKHEZ
+// CSOPORTOS ELŐADÁSOK LEKÉPEZÉSE ÉRTESÍTÉSEKHEZ (Kiemelve globális szintre, így minden fv. eléri!)
 const SHOW_GROUPS = {
     'show-tragedia-hetfo-d': ['show-tragedia-hetfo-d', 'show-tragedia-hetfo-e'],
     'show-tragedia-hetfo-e': ['show-tragedia-hetfo-d', 'show-tragedia-hetfo-e'],
@@ -85,7 +85,7 @@ function debounce(func, wait) {
 }
 
 // ==========================================
-// 🔔 ÉRTESÍTÉSEK & "UPDATE" BLOG LOGIKÁJA
+// 🔔 ÉRTESÍTÉSEK LOGIKÁJA
 // ==========================================
 onValue(ref(db, "alertsList"), (snap) => {
     document.querySelectorAll('.event-card').forEach(card => card.classList.remove('has-alert'));
@@ -96,29 +96,20 @@ onValue(ref(db, "alertsList"), (snap) => {
         if(topBar) topBar.style.display = "none";
         if(tabsWrap) tabsWrap.style.top = "0px";
         globalAlerts = [];
-        const updateBadge = document.getElementById('updateBadge');
-        if(updateBadge) updateBadge.style.display = 'none';
         return;
     }
     const data = snap.val();
     globalAlerts = Object.keys(data).map(key => ({ id: key, ...data[key] })).sort((a,b) => b.timeRaw - a.timeRaw);
     
-    // Csak a valódi (nem blog) értesítéseket számoljuk felülre
-    const realAlerts = globalAlerts.filter(a => !a.isBlog);
-
     if(topBar) {
-        if (realAlerts.length > 0) {
-            topBar.textContent = `🔔 Értesítések (${realAlerts.length})`;
-            topBar.style.display = "block";
-            setTimeout(() => { if(tabsWrap) tabsWrap.style.top = topBar.offsetHeight + "px"; }, 50);
-        } else {
-            topBar.style.display = "none";
-            if(tabsWrap) tabsWrap.style.top = "0px";
-        }
+        topBar.textContent = `🔔 Értesítések (${globalAlerts.length})`;
+        topBar.style.display = "block";
+        setTimeout(() => { if(tabsWrap) tabsWrap.style.top = topBar.offsetHeight + "px"; }, 50);
     }
 
     globalAlerts.forEach(alert => {
         if (alert.targetId && alert.targetId !== "all") {
+            // JAVÍTÁS: Csoportos előadások esetében mindegyik érintett kártyát megjelöljük
             const targets = SHOW_GROUPS[alert.targetId] || [alert.targetId];
             targets.forEach(tId => {
                 const targetCard = document.getElementById(tId);
@@ -126,35 +117,12 @@ onValue(ref(db, "alertsList"), (snap) => {
             });
         }
     });
-
-    // Update gomb számlálójának kezelése (az összes értesítést és blogbejegyzést számolja)
-    const totalUpdates = globalAlerts.length;
-    let seenUpdates = parseInt(localStorage.getItem('lastSeenUpdateCount') || '0');
-    let unreadUpdates = totalUpdates - seenUpdates;
-
-    if (currentTypeFilter === 'type-update') {
-        localStorage.setItem('lastSeenUpdateCount', totalUpdates.toString());
-        unreadUpdates = 0;
-    }
-
-    const updateBadge = document.getElementById('updateBadge');
-    if (updateBadge) {
-        if (unreadUpdates > 0) {
-            updateBadge.innerText = unreadUpdates;
-            updateBadge.style.display = 'block';
-        } else {
-            updateBadge.style.display = 'none';
-        }
-    }
-
-    // JAVÍTVA: Csak akkor ugrik fel ablakban, ha VALÓDI havária értesítés érkezett (nem ad-hoc blogprogram)
-    if (realAlerts.length > 0) {
-        const newestAlert = realAlerts[0];
-        const lastSeenTime = sessionStorage.getItem("lastSeenAlertTime");
-        if (!lastSeenTime || parseInt(lastSeenTime) < newestAlert.timeRaw) {
-            showPopup(newestAlert);
-            sessionStorage.setItem("lastSeenAlertTime", newestAlert.timeRaw.toString());
-        }
+    const newestAlert = globalAlerts[0];
+    const lastSeenTime = sessionStorage.getItem("lastSeenAlertTime");
+    
+    if (!lastSeenTime || parseInt(lastSeenTime) < newestAlert.timeRaw) {
+        showPopup(newestAlert);
+        sessionStorage.setItem("lastSeenAlertTime", newestAlert.timeRaw.toString());
     }
 });
 
@@ -200,6 +168,7 @@ function openAlertsModal(targetId = null) {
 
     let filteredAlerts = globalAlerts;
     if (targetId) {
+        // JAVÍTÁS: Ha csoportos előadásról van szó, kiszűrjük az összes hozzá tartozó értesítést (Globális leképezőből)
         const group = SHOW_GROUPS[targetId] || [targetId];
         filteredAlerts = globalAlerts.filter(a => group.includes(a.targetId));
         modalTitle.textContent = "Értesítés a programhoz";
@@ -223,50 +192,6 @@ function openAlertsModal(targetId = null) {
 function closeAlertsModal() {
     const alertsModal = document.getElementById("alertsModal");
     if(alertsModal) alertsModal.classList.remove("visible");
-}
-
-// LIVE "UPDATE" BLOGFOLYAM RENDERELESE
-function renderUpdatesBlog() {
-    const container = document.getElementById('updatesBlogContainer');
-    if(!container) return;
-    container.innerHTML = "";
-    
-    if (globalAlerts.length === 0) {
-        container.innerHTML = "<p style='text-align:center; padding:30px; font-size:14px; color:var(--muted); font-weight: 600;'>Jelenleg nincs hír vagy új program.</p>";
-        return;
-    }
-    
-    globalAlerts.forEach(post => {
-        const isAlert = !post.title; 
-        let cardHtml = "";
-        
-        if (isAlert) {
-            cardHtml = `
-            <div class="event-card" style="border-left-color: var(--red); margin-bottom:15px;">
-              <div class="card-header" style="background: rgba(192,57,43,0.06); padding: 14px 16px;">
-                <div class="event-title" style="color: var(--red); font-size:16px; font-family:'Playfair Display', serif;">🚨 Rendkívüli Értesítés</div>
-                <div class="event-company" style="font-size:11px; margin-top:2px;">${post.timestamp}</div>
-              </div>
-              <div class="card-details-inner" style="padding:16px;">
-                <div class="details-text" style="font-size:14px; font-weight:600; line-height:1.5;">${escapeHTML(post.message)}</div>
-                ${post.photoUrl ? `<img src="${post.photoUrl}" style="max-width:100%; border-radius:4px; margin-top:12px; display:block; border: 1px solid var(--border);">` : ''}
-              </div>
-            </div>`;
-        } else {
-            cardHtml = `
-            <div class="event-card" style="border-left-color: var(--gold); margin-bottom:15px;">
-              <div class="card-header" style="background: rgba(196,145,58,0.06); padding: 14px 16px;">
-                <div class="event-title" style="color: var(--teal-dark); font-size:16px; font-family:'Playfair Display', serif;">✨ ${escapeHTML(post.title)}</div>
-                <div class="event-company" style="font-size:11px; margin-top:2px;">${post.timestamp}</div>
-              </div>
-              <div class="card-details-inner" style="padding:16px;">
-                <div class="details-text" style="font-size:14px; line-height:1.5; font-weight: 500;">${escapeHTML(post.message)}</div>
-                ${post.photoUrl ? `<img src="${post.photoUrl}" style="max-width:100%; border-radius:4px; margin-top:12px; display:block; border: 1px solid var(--border);">` : ''}
-              </div>
-            </div>`;
-        }
-        container.innerHTML += cardHtml;
-    });
 }
 
 // ==========================================
@@ -317,6 +242,7 @@ onValue(gbRef, (snap) => {
     renderGuestbook(data, "gbGridModal");
     renderGuestbook(data, "gbGridPostFest"); 
     
+    // ÚJ RÉSZ: Olvasatlan üzenetek számolása
     if (data) {
         const gbArr = Object.keys(data);
         currentGbTotal = gbArr.length;
@@ -339,6 +265,7 @@ function openGuestbook() {
     const guestbookModal = document.getElementById('guestbookModal');
     if(guestbookModal) guestbookModal.classList.add('visible');
     
+    // ÚJ RÉSZ: Elmentjük, hogy már mindet látta, és eltüntetjük a pöttyöt
     localStorage.setItem('lastSeenGbCount', currentGbTotal.toString());
     const badge = document.getElementById('gbBadge');
     if(badge) badge.style.display = 'none';
@@ -395,7 +322,6 @@ function getDeviceUUID() {
     return uuid;
 }
 
-// JAVÍTVA: METAADATOK HOZZÁADVA A VENDÉGKÖNYV KÉPFELTÖLTÉSHEZ
 async function submitGuestbook() {
     const nowTime = Date.now();
     const lastPost = localStorage.getItem('last_gb_post_time');
@@ -428,8 +354,7 @@ async function submitGuestbook() {
         if (resizedImageDataUrl) {
             try {
                 const photoRef = sRef(storage, 'guestbook/' + Date.now() + '.jpg');
-                // Hozzáadva: { contentType: 'image/jpeg' }
-                await uploadString(photoRef, resizedImageDataUrl, 'data_url', { contentType: 'image/jpeg' });
+                await uploadString(photoRef, resizedImageDataUrl, 'data_url');
                 photoUrl = await getDownloadURL(photoRef);
             } catch (imgError) {
                 console.error("Képfeltöltési hiba:", imgError);
@@ -612,6 +537,7 @@ function revokeCheckin(e) {
 }
 
 onValue(checkinRef, (snap) => {
+    // Alaphelyzetbe állítjuk az összes helyszín listáját a térkép alatt
     Object.keys(venueNames).forEach(id => {
         const container = document.getElementById('checkins-' + id);
         if(container) container.innerHTML = '';
@@ -619,6 +545,7 @@ onValue(checkinRef, (snap) => {
 
     const ciBadge = document.getElementById('ciBadge');
 
+    // Ha nincs senki bejelentkezve, elrejtjük a számlálót
     if(!snap.exists()) {
         if(ciBadge) ciBadge.style.display = 'none';
         return;
@@ -628,7 +555,7 @@ onValue(checkinRef, (snap) => {
     const now = Date.now();
     const TWO_HOURS = 2 * 60 * 60 * 1000;
     
-    let totalActiveCheckins = 0; 
+    let totalActiveCheckins = 0; // Ez fogja számolni az összes aktív embert
 
     for (let venueId in data) {
         const venueContainer = document.getElementById('checkins-' + venueId);
@@ -637,8 +564,9 @@ onValue(checkinRef, (snap) => {
         
         Object.keys(checkins).forEach(key => {
             const checkinData = checkins[key];
+            // Csak a 2 órán belüli bejelentkezéseket vesszük figyelembe
             if (now - checkinData.timeRaw < TWO_HOURS) {
-                totalActiveCheckins++; 
+                totalActiveCheckins++; // Növeljük a globális számlálót
                 
                 if(venueContainer) {
                     if(!hasCheckin) {
@@ -658,6 +586,7 @@ onValue(checkinRef, (snap) => {
         });
     }
 
+    // Frissítjük a gomb melletti kis piros számlálót
     if(ciBadge) {
         if (totalActiveCheckins > 0) {
             ciBadge.innerText = totalActiveCheckins;
@@ -781,6 +710,81 @@ function toggleGastroCard() {
     if(wrap) wrap.scrollIntoView({ behavior: 'smooth' });
 }
 
+function generateQuote() {
+// ÚJ GA4 MÉRÉS:
+    trackEvent('quote_viewed');
+    const quotes = [
+        "A színház ott kezdődik, ahol a mindennapok véget érnek.",
+        "A mese a gyerekek egyetlen komoly dolga.",
+        "A báb hallgat, de mindent elmond. Te meg próbálj nem belebeszélni!",
+        "A paraván mögött mindenki egyenlő. Kivéve aki tudja, hol a hosszabbító.",
+        "Ha elszakad a zsinór, az még nem tragédia. Ha elszáll a hangosítás is, az már költészet.",
+        "Egy Találkozó nem attól jó, hogy mit látsz, hanem hogy kivel beszéled ki utána.",
+        "A legjobb jelenetek néha a színpadon kívül történnek. Például a harmadik fröccs után.",
+        "A báb súlya nem kilóban mérhető. Hanem a vastapsokban.",
+        "Ha minden működik, az gyanús. Valami biztos kimaradt.",
+        "A közönség nem lát mindent. Szerencsére!",
+        "A bábok nem fáradnak el. De te igen, szóval igyál még een kávét.",
+        "Egy jó Találkozón nem csak előadásokat gyűjtesz, hanem történeteket is.",
+        "A báb akkor él, amikor elfelejted, hogy te mozgatod.",
+        "Minden előadás egy kicsit más. Akkor is, ha ugyanaz.",
+        "A kötetlen beszélgetés a Találkozó szíve. A színpad csak a dobbanás.",
+        "A fröccs dramaturgiája egyszerű: első felvonás – beszélgetés, második – őszinteség.",
+        "A kávézóban dőlnek el a szakmai viták. És néha a székek is.",
+        "A legjobb kritikák nem íródnak le. Csak elhangzanak két korty között.",
+        "A legőszintébb beszélgetések nem a szakmai programon, hanem utána kezdődnek.",
+        "A kávézó nem szünet. Az a második felvonás.",
+        "Aki az esti beszélgetéseket kihagyja, a történet felét sem érti.",
+        "Egy Találkozó addig tart, amíg van mit inni és kivel megbeszélni.",
+        "A rendezői koncepció addig tiszta, amíg meg nem érkezik a díszlet.",
+        "Nem az a kérdés, hogy működik-e. Hanem hogy elhisszük-e, hogy működik.",
+        "Ha valamit háromszor kell megmagyarázni, az már biztosan szándékos.",
+        "A próbán még keresed a megoldást. A Találkozón már magyarázod.",
+        "Ez nem hiba, hanem stiláris döntés. Csak még nem döntöttük el.",
+        "A dramaturg akkor nyugodt, ha mindenki más ideges.",
+        "A minimalizmus ott kezdődik, ahol elfogyott a költségvetés.",
+        "Ha nem érted, az valószínűleg mély.",
+        "A báb akkor működik jól, ha nem esik szét. Minden más már esztétika.",
+        "A színész mindent megold. Ha nem, akkor azt is megoldja.",
+        "A technika mindig akkor romlik el, amikor végre működne.",
+        "Ez egy tudatos csend. Csak kicsit hosszabb lett.",
+        "Ha improvizáció, akkor szabad. Ha nem működik, akkor kísérlet.",
+        "Ezt majd a fény megoldja. Spoiler: A fény nem oldja meg.",
+        "A próbafolyamat vége: amikor már nincs több idő új ötletekre.",
+        "A kompromisszum az a hely, ahol mindenki egy kicsit elégedetlen.",
+        "Ha mindenki érti, akkor valamit biztosan túlegyszerűsítettünk.",
+        "A produkció kész van. Csak még dolgozunk rajta.",
+        "A bemutató után mindenki fáradt. Kivéve azt, akinek még bontania kell.",
+        "A Találkozó harmadik tagján már mindenki tegez mindenkit. Néha saját magát is.",
+        "Az előadás hossza relatív. A pakolásé nem.",
+        "A legjobb beszélgetés ott kezdődik, ahol elfogyott a hivatalos program.",
+        "Minden Találkozón van egy ember, aki tudja, hol van a hosszabbító. Ő a valódi főszereplő.",
+        "A kávézó-záróra után születnek a legnagyobb esztétikai felismerések.",
+        "A technikai rider egy kívánságlista. A valóság pedig performansz.",
+        "A negyedik kávé már nem élénkít. Az egy segélykiáltás.",
+        "A díszlet addig könnyű, amíg fel nem kell vinni a harmadikra lift nélkül.",
+        "A Találkozó-barátságok intenzitása vetekszik a turnébusz légkondijának kiszámíthatatlanságával.",
+        "Az igazi szakmai elismerés: amikor valaki kölcsönad egy gaffer szalagot.",
+        "Mindenki kísérletezik. Van, aki nyilvánosan.",
+        "A legnagyobb hazugság a színházban: 'öt perc és kész vagyunk.'",
+        "A Találkozó végére minden telefontöltő közkinccsé válik.",
+        "A bábos szakma fele művészet, fele logisztika.",
+        "Az előadás akkor igazán kortárs, ha a technikus sem tudja pontosan, mi történik.",
+        "Az éjszakai szakmázás reggelre rendszerint filozófiává nemesedik.",
+        "A színház varázslat. A Találkozó túlélőtúra.",
+        "A legnagyobb szakmai bizalom: amikor valaki rád bízza a saját bábját.",
+        "Minden Találkozó végén elhangzik: 'legközelebb kevesebbet vállalunk.'",
+        "A művészet örök. A catering viszont elfogy.",
+        "Az alternatív megoldás általában azt jelenti, hogy eltört valami."
+    ];
+    const q = quotes[Math.floor(Math.random() * quotes.length)];
+    const qText = document.getElementById('quoteText');
+    if(qText) qText.innerText = q;
+    
+    const modal = document.getElementById('quoteModal');
+    if(modal) modal.classList.add('visible');
+}
+
 function toggleFavoritesView() {
     isFavoritesMode = !isFavoritesMode;
     const btn = document.getElementById('favFilterBtn');
@@ -809,14 +813,6 @@ function toggleTypeFilter(type) {
     if (currentTypeFilter) { 
         const targetBtn = document.querySelector(`.filter-btn[data-filter="${currentTypeFilter}"]`);
         if(targetBtn) targetBtn.classList.add('active'); 
-    }
-
-    // ÚJ: Ha az Update szűrőt választották, nullázzuk a számlálót
-    if (currentTypeFilter === 'type-update') {
-        const totalUpdates = globalAlerts.length;
-        localStorage.setItem('lastSeenUpdateCount', totalUpdates.toString());
-        const badge = document.getElementById('updateBadge');
-        if(badge) badge.style.display = 'none';
     }
 
     doSearch();
@@ -864,8 +860,8 @@ function showDay(index, btn) {
         const bHol = document.getElementById('btnHolEgyek');
         if(bHol) bHol.classList.remove('active');
         
-        const sg = document.getElementById('secretGastroCard');
-        if(sg) sg.style.display = 'none';
+        const sGast = document.getElementById('secretGastroCard');
+        if(sGast) sGast.style.display = 'none';
     }
     
     doSearch();
@@ -882,7 +878,6 @@ function doSearch() {
     const dayPanels = document.querySelectorAll('.day-panel');
     const tabsWrap = document.getElementById('tabsWrap');
     const scrollHint = document.getElementById('scrollHint');
-    const blogContainer = document.getElementById('updatesBlogContainer');
 
     if(query === "laszlo") {
         const vitez = document.getElementById('vitezLaszlo');
@@ -920,13 +915,12 @@ function doSearch() {
         if(tabsWrap) tabsWrap.style.display = 'none';
         if(scrollHint) scrollHint.style.display = 'none';
         document.querySelectorAll('.day-panel').forEach(p => p.style.display = 'none');
-        if(blogContainer) blogContainer.style.display = 'none';
         
         const nRm = document.getElementById('noResultsMsg');
         if(nRm) nRm.style.display = 'none';
         
-        const sg = document.getElementById('secretGastroCard');
-        if(sg) sg.style.display = 'none';
+        const sGc = document.getElementById('secretGastroCard');
+        if(sGc) sGc.style.display = 'none';
         
         const sBc = document.getElementById('secretBufeCard');
         if(sBc) sBc.style.display = 'block';
@@ -943,7 +937,6 @@ function doSearch() {
         if(tabsWrap) tabsWrap.style.display = 'none';
         if(scrollHint) scrollHint.style.display = 'none';
         document.querySelectorAll('.day-panel').forEach(p => p.style.display = 'none');
-        if(blogContainer) blogContainer.style.display = 'none';
         
         const nRm = document.getElementById('noResultsMsg');
         if(nRm) nRm.style.display = 'none';
@@ -951,42 +944,31 @@ function doSearch() {
         const sBc = document.getElementById('secretBufeCard');
         if(sBc) sBc.style.display = 'none';
         
-        const sg = document.getElementById('secretGastroCard');
-        if(sg) sg.style.display = 'block';
+        const sGc = document.getElementById('secretGastroCard');
+        if(sGc) sGc.style.display = 'block';
         
         trackEvent('easter_egg_found', { type: 'titkos_gastro' });
         return;
     } else {
         if (!isGastroMode) { 
-            const sg = document.getElementById('secretGastroCard');
-            if(sg) sg.style.display = 'none'; 
+            const sGc = document.getElementById('secretGastroCard');
+            if(sGc) sGc.style.display = 'none'; 
         }
     }
 
-    // VISSZAÁLLÍTÓ LOGIKA: Ha a felhasználó nincs az Update fülön, tegyük láthatóvá a füleket és a scroll hintet!
-    if (currentTypeFilter !== 'type-update') {
-        if (blogContainer) blogContainer.style.display = 'none';
-        if (query === "") {
-            if (tabsWrap) tabsWrap.style.display = 'flex';
-            if (window.innerWidth <= 650 && scrollHint) scrollHint.style.display = 'block';
-        }
-    } else {
-        // Ha pedig az Update fülön vagyunk, kényszerítsük az elrejtést
-        if(tabsWrap) tabsWrap.style.display = 'none';
-        if(scrollHint) scrollHint.style.display = 'none';
-        dayPanels.forEach(panel => panel.style.display = 'none');
+    if (!isGastroMode) { 
+        const sGc = document.getElementById('secretGastroCard');
+        if(sGc) sGc.style.display = 'none'; 
+    } 
+    else { return; }
+
+    if (query === "" && !isFavoritesMode && !currentTypeFilter) {
+        if(tabsWrap) tabsWrap.style.display = 'flex';
+        if (window.innerWidth <= 650 && scrollHint) scrollHint.style.display = 'block';
         
         const nRm = document.getElementById('noResultsMsg');
         if(nRm) nRm.style.display = 'none';
-
-        if(blogContainer) {
-            blogContainer.style.display = 'block';
-            renderUpdatesBlog();
-        }
-        return; 
-    }
-
-    if (query === "" && !isFavoritesMode && !currentTypeFilter) {
+        
         dayPanels.forEach(panel => {
             panel.style.display = '';
             const dayTitle = panel.querySelector('.search-day-title');
@@ -1034,7 +1016,8 @@ function doSearch() {
             
             let isMatchType = true;
             if(currentTypeFilter) {
-                isMatchType = card.classList.contains(currentTypeFilter);
+                if(currentTypeFilter === 'public') { isMatchType = card.querySelector('.badge-public') !== null; } 
+                else { isMatchType = card.classList.contains(currentTypeFilter); }
             }
 
             if(isMatchSearch && isMatchFav && isMatchType) {
@@ -1067,33 +1050,123 @@ function doSearch() {
     }
 }
 
-// ==========================================
-// 🛠️ EGYSÉGES KACSINTÓS PDF LETÖLTÉS MINDEN GOMBRA
-// ==========================================
-function initPdfTriggers() {
-    const pdfOverlay = document.getElementById('pdfOverlay');
-    document.querySelectorAll('.pdf-dl-btn').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault(); 
-            const targetUrl = this.href;
-            trackEvent('pdf_downloaded', { url: targetUrl });
-            if (pdfOverlay) {
-                pdfOverlay.classList.add('show');
-                setTimeout(() => {
-                    pdfOverlay.classList.remove('show');
-                    window.location.href = targetUrl; 
-                }, 1800);
-            } else {
-                window.location.href = targetUrl;
-            }
-        });
+// APP TELEPÍTÉS LOGIKÁJA
+let deferredPrompt;
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if(!isStandalone) {
+        const btn = document.getElementById('installAppBtn');
+        if(btn) btn.style.display = 'inline-flex';
+    }
+});
+
+// Új globális változók a badge-hez
+let lastSeenUpdateCount = parseInt(localStorage.getItem('lastSeenUpdateCount') || '0');
+let currentUpdateTotal = 0;
+
+// Update badge és Blog posztok figyelése
+onValue(ref(db, "blogPosts"), (snap) => {
+    const blogData = snap.exists() ? snap.val() : {};
+    const alertCount = globalAlerts.length;
+    const blogCount = Object.keys(blogData).length;
+    currentUpdateTotal = alertCount + blogCount;
+
+    const badge = document.getElementById('updateBadge');
+    if(badge) {
+        let unread = currentUpdateTotal - lastSeenUpdateCount;
+        if(unread > 0) {
+            badge.innerText = unread;
+            badge.style.display = 'block';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+    renderBlogPosts(blogData);
+});
+
+// Blog posztok kirakása (az index.html-ben csinálj nekik egy divet: id="blogContainer")
+function renderBlogPosts(data) {
+    const container = document.getElementById('blogContainer');
+    if(!container) return;
+    container.innerHTML = "";
+    const posts = Object.values(data).sort((a,b) => b.timeRaw - a.timeRaw);
+    posts.forEach(p => {
+        container.innerHTML += `
+            <div class="event-card type-update open" style="border-left-color: var(--red);">
+                <div class="card-header">
+                    <div class="event-title">${escapeHTML(p.title)}</div>
+                    <div class="event-company">${escapeHTML(p.location)} | ${p.dateStr}</div>
+                </div>
+                <div class="card-details-inner" style="padding-top:0;">
+                    <div class="details-text">${escapeHTML(p.desc)}</div>
+                </div>
+            </div>
+        `;
     });
 }
 
+// Hol egyek? PDF megnyitás kacsintással
+const otherRestBtn = document.getElementById('btnOtherRestaurants');
+if(otherRestBtn) {
+    otherRestBtn.addEventListener('click', () => {
+        const overlay = document.getElementById('pdfOverlay');
+        overlay.classList.add('show');
+        setTimeout(() => {
+            overlay.classList.remove('show');
+            window.location.href = "IDE_A_GOOGLE_DRIVE_LINK";
+        }, 1800);
+    });
+}
+
+// doSearch frissítése a Kiállítás és Update szűrőkhöz
+function doSearch() {
+    // ... meglévő kód eleje ...
+    
+    if (currentTypeFilter === 'show-kiallitas') {
+        // Csak a Kiállítás kártyát mutatjuk és rögtön kinyitjuk
+        const kiallitasCard = document.getElementById('show-kiallitas');
+        if(kiallitasCard) {
+            kiallitasCard.style.display = 'block';
+            kiallitasCard.classList.add('open');
+        }
+        // Badge nullázása ha Update-re kattintott
+    } else if (currentTypeFilter === 'type-update') {
+        localStorage.setItem('lastSeenUpdateCount', currentUpdateTotal);
+        document.getElementById('updateBadge').style.display = 'none';
+        // Itt mutasd az értesítéseket és a blog posztokat
+    }
+}
+
+window.publishBlog = async function() {
+    const title = document.getElementById("blogTitle").value.trim();
+    const desc = document.getElementById("blogDesc").value.trim();
+    const loc = document.getElementById("blogLocation").value.trim();
+    if(!title || !desc) return alert("Cím és leírás kötelező!");
+
+    const newRef = push(ref(db, "blogPosts"));
+    await set(newRef, {
+        title: title,
+        desc: desc,
+        location: loc,
+        timeRaw: Date.now(),
+        dateStr: getBudapestTimeStr()
+    });
+    alert("Közzétéve az Update-ben!");
+    document.getElementById("blogTitle").value = "";
+    document.getElementById("blogDesc").value = "";
+};
+
+
 // 🛠 DOM BETÖLTÉSE UTÁNI FŐ FÜGGVÉNY (Eseménykezelők)
 function initApp() {
+    // Service Worker
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW hiba', err));
 
+    // Telepítés gomb iPhone fallback
     if (isIOS && !isStandalone) { 
         const btn = document.getElementById('installAppBtn');
         if(btn) btn.style.display = 'inline-flex'; 
@@ -1172,7 +1245,7 @@ function initApp() {
     const helpPhotoInput = document.getElementById('helpPhotoInput');
     if(helpPhotoInput) helpPhotoInput.addEventListener('change', handleHelpPhotoSelect);
 
-    // Megosztás Gomb (Web Share API) – JAVÍTVA: A három pont (...) helyett a teljes működő kódot kiírtuk!
+// Megosztás Gomb (Web Share API)
     const btnShare = document.getElementById('btnShare');
     if(btnShare) {
         btnShare.addEventListener('click', async () => {
@@ -1208,10 +1281,13 @@ function initApp() {
     document.querySelectorAll('.card-header').forEach(header => {
         header.addEventListener('click', function(e) {
             if(!e.target.closest('.star-btn') && !e.target.closest('.mini-pulse-alert')) { 
+                
+                // ÚJ GA4 MÉRÉS BEILLESZTÉSE:
                 const card = this.closest('.event-card');
-                if (card && !card.classList.contains('open')) { 
+                if (card && !card.classList.contains('open')) { // Csak a nyitást mérjük, a becsukást nem
                     trackEvent('show_expanded', { show_id: card.id });
                 }
+
                 toggleCard(this); 
             }
         });
@@ -1224,8 +1300,10 @@ function initApp() {
             
 const routeBtn = e.target.closest('.route-btn');
             if (routeBtn) {
+                // Kinyerjük a gomb feletti helyszín nevet
                 const venueTitleEl = routeBtn.closest('.gastro-venue-item, .map-venue-flex')?.querySelector('.venue-item-title');
                 const venueName = venueTitleEl ? venueTitleEl.innerText.trim() : "Ismeretlen";
+                
                 trackEvent('navigation_requested', { venue_name: venueName });
             }
 
@@ -1247,7 +1325,7 @@ if (fbBtn) {
     if (isStandaloneMode || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
         e.preventDefault();
         e.stopPropagation();
-        // window.open megnyitja
+        // window.open meghívása kényszeríti az OS-t, hogy külső ablakban/appban nyissa meg
         window.open(url, '_system'); 
     }
     return; 
@@ -1277,6 +1355,7 @@ if (fbBtn) {
         });
     }
 
+    // Delegált esemény a módosítás/visszavonás/térképhez ugrás gombokra
     const myCheckinStatus = document.getElementById('myCheckinStatus');
     if(myCheckinStatus) {
         myCheckinStatus.addEventListener('click', (e) => {
@@ -1286,8 +1365,24 @@ if (fbBtn) {
         });
     }
 
-    // PDF Kacsintó inicializálása
-    initPdfTriggers();
+    // Kacsintós PDF letöltés (Javítva PC-re)
+    const pdfBtn = document.querySelector('.pdf-dl-btn');
+    const pdfOverlay = document.getElementById('pdfOverlay');
+    if(pdfBtn && pdfOverlay) {
+        pdfBtn.addEventListener('click', function(e) {
+            e.preventDefault(); 
+            
+            // ÚJ GA4 MÉRÉS BEILLESZTÉSE:
+            trackEvent('pdf_downloaded');
+
+            const targetUrl = this.href;
+            pdfOverlay.classList.add('show');
+            setTimeout(() => {
+                pdfOverlay.classList.remove('show');
+                window.location.href = targetUrl;
+            }, 1800);
+        });
+    }
 
     // Touch animációk logókhoz
     document.querySelectorAll('.gastro-logo, .sponsor-logo').forEach(logo => {
@@ -1322,6 +1417,7 @@ if (fbBtn) {
         }, 1000);
     }
 
+    // Offline / Online állapot figyelése
     function updateOnlineStatus() {
         if (!navigator.onLine) { document.body.classList.add('is-offline'); } 
         else { document.body.classList.remove('is-offline'); }
@@ -1330,11 +1426,13 @@ if (fbBtn) {
     window.addEventListener('offline', updateOnlineStatus);
     updateOnlineStatus();
 
+    // Alap inicializálás
     restoreCheckinUI();
     initPostFestivalMode();
     checkLiveEvents();
     setInterval(checkLiveEvents, 60000);
     
+    // Görgertés figyelése a gombhoz
     window.addEventListener('scroll', () => {
         const jumpBtn = document.getElementById('jumpBtn');
         if(jumpBtn) {
@@ -1343,6 +1441,14 @@ if (fbBtn) {
         }
     });
 
+    // PWA Automatikus Újratöltés
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            window.location.reload();
+        });
+    }
+
+    // Analytics observer
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -1395,11 +1501,11 @@ async function submitHelpRequest() {
     let photoUrl = "";
 
     try {
+        // HA VAN KÉP, FELTÖLTJÜK A STORAGE-BA
         if (helpResizedImageDataUrl) {
             try {
                 const photoRef = sRef(storage, 'questions/' + Date.now() + '.jpg');
-                // JAVÍTVA: Metaadatok ({ contentType: 'image/jpeg' }) elküldve
-                await uploadString(photoRef, helpResizedImageDataUrl, 'data_url', { contentType: 'image/jpeg' });
+                await uploadString(photoRef, helpResizedImageDataUrl, 'data_url');
                 photoUrl = await getDownloadURL(photoRef);
             } catch (imgError) {
                 console.error("Képfeltöltési hiba:", imgError);
@@ -1414,10 +1520,11 @@ async function submitHelpRequest() {
             text: text,
             timeRaw: Date.now(),
             dateStr: dateStr,
-            photoUrl: photoUrl, 
+            photoUrl: photoUrl, // Mentjük a kép linkjét is!
             resolved: false
         });
 
+        // Mezők ürítése és visszaállítása
         nameEl.value = "";
         emailEl.value = "";
         textEl.value = "";
@@ -1486,29 +1593,4 @@ function handleHelpPhotoSelect(event) {
             }
         }
     }
-}
-
-// ==========================================
-// 🌍 GLOBÁLIS WINDOW EXPORT (Claude AI javaslata alapján)
-// Biztosítja, hogy az inline onclick események és az ES modul is tökéletesen együttműködjön!
-// ==========================================
-window.showDay = showDay;
-window.toggleCard = toggleCard;
-window.openCheckin = openCheckin;
-window.toggleTypeFilter = toggleTypeFilter;
-window.toggleFavoritesView = toggleFavoritesView;
-window.toggleGastroCard = toggleGastroCard;
-window.openGuestbook = openGuestbook;
-window.generateQuote = generateQuote;
-window.submitHelpRequest = submitHelpRequest;
-window.handleHelpPhotoSelect = handleHelpPhotoSelect;
-window.submitGuestbook = submitGuestbook;
-window.handlePhotoSelect = handlePhotoSelect;
-window.submitCheckin = submitCheckin;
-
-// BIZTOSÍTJUK A BETÖLTÉST (Ez marad a legalsó sor)
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initApp);
-} else {
-    initApp();
 }

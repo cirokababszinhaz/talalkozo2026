@@ -32,12 +32,10 @@
 </head>
 <body>
 
-<!-- KACSINTÓS PDF ÁTMENET OVERLAY -->
 <div id="pdfOverlay" class="pdf-overlay">
   <img src="./kacsinto-szem.gif" alt="Kacsintás">
 </div>
 
-<!-- VITÉZ LÁSZLÓ EASTER EGG -->
 <div id="vitezLaszlo" class="vitez-laszlo">
   <div class="vitez-bubble">Szervusztok, Pajtikák!</div>
   <img src="https://www.hungarikum.hu/sites/default/files/vit%C3%A9zl3.jpg" alt="Vitéz László" class="w-100 border-radius-10">
@@ -137,12 +135,12 @@
       <input type="email" id="helpEmailInput" placeholder="E-mail címed..." class="checkin-input" style="text-align: left;">
       <textarea id="helpTextInput" placeholder="Miben segíthetünk?..." maxlength="300" class="checkin-select" style="min-height: 100px; margin-bottom: 15px; resize: vertical;"></textarea>
       
-      <!-- FOTÓ CSATOLÁSA A SEGÍTSÉGKÉRÉSHEZ -->
+      <!-- ÚJ: FOTÓ CSATOLÁSA GOMB -->
       <input type="file" id="helpPhotoInput" accept="image/*" class="hidden-file-input">
       <label for="helpPhotoInput" class="hero-btn gb-photo-btn" id="helpPhotoBtn" style="width: 100%; border-color: var(--teal); color: var(--teal); justify-content: center; cursor: pointer; text-align: center; margin-bottom: 10px;">
-         📸 FOTÓ KIVÁLASZTÁSA (Opcionális)
+         📸 FOTÓ CSATOLÁSA (Opcionális)
       </label>
-      <div id="helpPhotoPreview" class="gb-photo-preview" style="font-size: 10px; color: var(--green); text-align: center; margin-bottom: 10px; font-weight: 700; display: none;">✓ Fotó csatoltva!</div>
+      <div id="helpPhotoPreview" class="gb-photo-preview" style="font-size: 10px; color: var(--green); text-align: center; margin-bottom: 10px; font-weight: 700; display: none;">✓ Fotó csatolva!</div>
       
       <button class="modal-submit" id="helpSubmitBtn" style="background: var(--teal);">Kérdés elküldése</button>
       <button class="modal-close modal-close-transparent" id="helpCloseBtn">Mégse</button>
@@ -158,6 +156,7 @@
   </div>
   <div class="header-right">
     <div class="easter-trigger easter-trigger-flex">
+      
       <!-- Két statikus szem, az egyik tükrözve -->
       <img src="./szem-alap.png" class="header-eye" alt="Szem" style="transform: scaleX(-1);">
       <img src="./szem-alap.png" class="header-eye" alt="Szem">
@@ -169,13 +168,13 @@
 </header>
 
 <div class="hero">
-  <div class="hero-eyebrow">Magyarországi Bábszínházak</div>
-  <h1 id="heroTitle">17. Találkozója</h1>
+  <div class="hero-eyebrow" id="heroEyebrow">Magyarországi Bábszínházak</div>
+  <h1 id="heroTitle">17. <em>Találkozója</em></h1>
   <div class="hero-date text-white">2026. június 13–18. &nbsp;·&nbsp; Kecskemét</div>
   
   <div class="hero-buttons" id="heroButtons">
-    <!-- Tűéles PDF link és kacsintós letöltés -->
     <a href="https://drive.google.com/file/d/1O8W0bRcJH9RGepTay2Tqt7pRRo3dnHjS/view?usp=sharing" target="_blank" class="pdf-dl-btn">📄 Töltsd le a programot egyben (PDF)</a>
+    
     <button id="installAppBtn" class="hero-btn hero-btn-gold">📲 Telepítsd a telefonodra!</button>
     
     <a class="hero-btn" href="https://www.facebook.com/magyarorszagibabszinhazaktalalkozoja/" target="_blank">
@@ -185,24 +184,19 @@
   </div>
 </div>
 
-<!-- SZŰRŐK ÉS GAZDAGÍTOTT KERESŐSÁV ÁTRENDEZVE -->
-<div class="search-wrap" id="searchWrap" style="padding-top: 20px;">
-  
-  <!-- 1. HELY: SZŰRŐK (LEGEND BAR) - LEGFELÜL -->
-  <div class="legend-bar" id="legendBar" style="background: transparent; border-top: none; padding: 0 0 10px 0; width: 100%;">
-    <button class="filter-btn" data-filter="type-show"><div class="legend-dot dot-show"></div>Előadás</button>
-    <button class="filter-btn" data-filter="type-forum"><div class="legend-dot dot-forum"></div>Szakmai fórum</button>
-    <!-- Módosítva: Kiállítás -->
-    <button class="filter-btn" data-filter="type-exhibition"><div class="legend-dot dot-social"></div>Kiállítás</button>
-    <!-- Módosítva: Update (Saját számlálóval!) -->
-    <button class="filter-btn" data-filter="type-update" style="position: relative;">
-      <div class="legend-dot dot-public" style="border-color: var(--red);"></div>Update
-      <span id="updateBadge" class="gb-notification-badge" style="display: none; top: -8px; right: -8px; background: var(--red);">0</span>
-    </button>
-  </div>
+<div class="legend-bar" id="legendBar">
+  <button class="filter-btn" data-filter="type-show"><div class="legend-dot dot-show"></div>Előadás</button>
+  <button class="filter-btn" data-filter="type-forum"><div class="legend-dot dot-forum"></div>Szakmai fórum</button>
+  <button class="filter-btn" data-filter="show-kiallitas"><div class="legend-dot dot-social"></div>Kiállítás</button>
+  <button class="filter-btn" data-filter="type-update" style="position: relative;">
+     <div class="legend-dot dot-public" style="border-color: var(--red);"></div>Update
+     <span id="updateBadge" class="gb-notification-badge" style="display: none;">0</span>
+  </button>
+</div>
 
-  <!-- 2. HELY: GYORSLINKEK - KÖZÉPEN (Megosztás gomb kitörölve!) -->
-  <div class="quick-links" style="margin-bottom: 12px;">
+<div class="search-wrap" id="searchWrap">
+  <!-- Kedvenceim / Emlékkönyv stb gombok -->
+  <div class="quick-links">
     <div class="ql-wrapper"><button class="ql-btn" id="favFilterBtn">★ Kedvenceim</button></div>
     <div class="ql-wrapper">
       <button class="ql-btn" id="btnGuestbook" style="position: relative;">
@@ -211,22 +205,30 @@
       </button>
     </div>
     <div class="ql-wrapper"><button class="ql-btn" id="btnQuote">🎭 Napi motiváció</button></div>
+    <div class="ql-wrapper"><button class="ql-btn" id="btnCheckin" style="position: relative;">
+      📍 Itt vagyok! <span id="ciBadge" class="gb-notification-badge" style="display: none;">0</span>
+    </button></div>
     <div class="ql-wrapper"><button class="ql-btn" id="btnHolEgyek">🍔 Hol egyek?</button></div>
-    <div class="ql-wrapper">
-       <button class="ql-btn" id="btnCheckin" style="position: relative;">
-          📍 Itt vagyok!
-          <span id="ciBadge" class="gb-notification-badge" style="display: none;">0</span>
-       </button>
-       <div class="checkin-status" id="myCheckinStatus" style="display: none;"></div>
-    </div>
   </div>
-
-  <!-- 3. HELY: KERESŐSÁV - LEGALUL -->
-  <div class="search-input-box">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-    <input type="text" id="searchInput" placeholder="Keresés...">
+    <div class="ql-wrapper">
+   <button class="ql-btn" id="btnCheckin" style="position: relative;">
+      📍 Itt vagyok!
+      <!-- Új létszám számláló buborék -->
+      <span id="ciBadge" class="gb-notification-badge" style="display: none;">0</span>
+   </button>
+   <!-- d-none helyett tiszta inline stílussal indítunk -->
+   <div class="checkin-status" id="myCheckinStatus" style="display: none;"></div>
+</div>
   </div>
 </div>
+
+
+<div class="search-input-box" style="margin-top: 15px;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    <input type="text" id="searchInput" placeholder="Keresés a programok között...">
+  </div>
+</div>
+
 
 <div class="tabs-wrap" id="tabsWrap">
   <div class="tabs">
@@ -251,9 +253,6 @@
 
 <div class="content" id="mainContent">
 
-<!-- DYNAMIC LIVE "UPDATE" TIMELINE BLOG CONTAINER -->
-<div id="updatesBlogContainer" style="display: none; margin-bottom: 20px;"></div>
-
 <div id="noResultsMsg" class="no-results-msg">
   <img src="./szem-nincs.png" alt="Kereső szem" class="no-results-eye">
   <span class="no-results-subtitle">A keresésre nincs találat.</span>
@@ -275,8 +274,8 @@
   </div>
 </div>
 
-<!-- GASZTRO KÁRTYA (JAVÍTVA: ID beillesztve!) -->
-<div class="secret-card-container" id="secretGastroCard">
+<!-- GASZTRO KÁRTYA -->
+<div id="secretGastroCard" class="secret-card-container">
   <div class="event-card type-social secret-gastro-card">
     <div class="card-header pointer-events-none">
       <div class="event-title">🍔 Hol egyek?</div>
@@ -355,10 +354,27 @@
         </div>
       </div>
 
-      <!-- TOVÁBBI NEM KEDVEZMÉNYES ÉTTERMEK GOMB -->
-      <div style="margin-top: 25px; text-align: center;">
-         <a class="pdf-dl-btn" href="https://drive.google.com/file/d/1O8W0bRcJH9RGepTay2Tqt7pRRo3dnHjS/view?usp=sharing" target="_blank" style="display: inline-block; background: var(--teal); color: #fff; width: auto; padding: 12px 24px;">További nem kedvezményes, közeli éttermek 🍔</a>
+
+<div class="gastro-venue-item last">
+        <div class="gastro-venue-row">
+          <div class="gastro-venue-left">
+             <img src="./babszinhaz.png" class="gastro-logo" loading="lazy" alt="Max Kávézó és Pizzéria">
+             <div>
+                <a href="https://www.facebook.com/MaxKavezoEsPizzeria" target="_blank" class="venue-item-title">Babszínház Kávézó</a>
+                <div class="venue-item-address">Deák Ferenc tér 6. <br><span class="text-red-bold">10% kedvezmény mindenre</span></div>
+             </div>
+          </div>
+          <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=46.908986309304055, 19.690213229863996" target="_blank">📍 Útvonal</a>
+        </div>
+        <div class="gastro-open-hours">
+           <strong class="gastro-open-title">Nyitvatartás:</strong>
+Nyitvatartás: Szo: 10:00–24:00 | V: 10:00–22:00 | H-Sze: 10:00–23:00 | Csü: 10:00–24:00        </div>
       </div>
+<strong class="gastro-open-title">Nagyobb létszámú látogatás esetén érdemes előző napon jelezni, hány fő szeretne ott enni!</div>
+
+<button id="btnOtherRestaurants" class="hero-btn" style="width: 100%; color: var(--teal); border-color: var(--teal); margin-top: 20px;">
+  🍴 További nem kedvezményes, közeli éttermek
+</button>
     </div>
   </div>
 </div>
@@ -420,8 +436,7 @@
   </div>
 
 <div class="slot-time">13:00 – 17:00</div>
-  <!-- Átjelölve type-exhibition kategóriára -->
-  <div class="event-card type-exhibition" id="show-kiallitas" data-start="2026-06-13T13:00:00+02:00" data-end="2026-06-13T17:00:00+02:00">
+  <div class="event-card type-social" id="show-kiallitas" data-start="2026-06-13T13:00:00+02:00" data-end="2026-06-13T17:00:00+02:00">
     <div class="card-header">
       <div class="card-header-row">
         <div><div class="event-title">🖼️ NYITÓKÉP - Látványtervező hallgatók kiállítása</div><div class="event-company">Megnyitó</div></div>
@@ -431,20 +446,6 @@
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
-      
-      <!-- KIÁLLÍTÁS NYITVATARTÁSA BEILLESZTVE -->
-      <div class="details-section">
-        <div class="details-label">Kiállítás nyitvatartása</div>
-        <div class="details-text" style="font-weight:700; line-height:1.6;">
-           13. szombat: 13-16<br>
-           14. vasárnap: 10-16<br>
-           15. hétfő: 10-16<br>
-           16. kedd: 10-16<br>
-           17. szerda: 10-16<br>
-           18. csütörtök: 10-16
-        </div>
-      </div>
-
       <div class="details-section">
         <div class="details-label">NYITÓKÉP</div>
         <div class="details-text">
@@ -528,7 +529,7 @@
         <div class="details-label">Alkotók</div>
         <div class="details-text">Írta, alkotta és játssza: Russa Karina</div>
       </div>
-      <div class="details-section">
+<div class="details-section">
         <div class="details-label">Korosztály</div>
         <div class="details-text">14+</div>
       </div>
@@ -556,7 +557,12 @@
       </div>
     </div>
     <div class="card-details"><div class="card-details-inner">
-      <!-- LEÍRÁS TÖRÖLVE A KÉRÉS ALAPJÁN -->
+      <div class="details-section">
+        <div class="details-label">Leírás</div>
+        <div class="details-text">
+          Hölgyeim és uraim, kedves gyerekek, engedjétek meg, hogy bemutatkozzam: Atanáznak hívnak. A foglalkozásom pedig: lámpaláz. Talán többen ismertek, mint hinnétek. Ha volt már veled olyan, hogy sok ember előtt kellett beszélned, zenélned, táncolnod, vagy akár csak bemutatkoznod – de hirtelen képtelen voltál megmozdulni, remegett a lábad, remegett a hangod és hirtelen még a nevedet is elfelejtetted – az azt jelenti, hogy már találkoztál velem. Ebben az előadásban én leszek a főszereplő. Meg egy kicsit te is. De nem kell izgulnod. És ha mégis izgulsz, az is oké. Van egy-két trükk a zsebemben, ami neked is segíteni fog.
+        </div>
+      </div>
       <div class="details-section">
         <div class="details-label">Alkotók</div>
         <div class="details-text">
@@ -592,10 +598,7 @@
   <div class="event-card type-social" data-start="2026-06-13T19:00:00+02:00" data-end="2026-06-13T20:30:00+02:00">
     <div class="card-header">
       <div class="event-title">🍽️ Vacsora</div>
-      <!-- JAVÍTVA: TISZTA HTML KÓDRA CSERÉLVE ÉS BEZÁRVA -->
-      <div class="podcast-promo" title="A Ciróka Bábszínház podcastja">
-         Szünetben hallgasd: <a href="https://open.spotify.com/show/5i145Tg1u0hGvR8dPBR956" target="_blank">🎧 BábszínPod</a>
-      </div>
+      <div class="podcast-promo" title="A Ciróka Bábszínház podcastja">Szünetben hallgasd: <a href="https://open.spotify.com/show/5i145Tg1u0hGvR8dPBR956" target="_blank">🎧 BábszínPod</a></div>
     </div>
   </div>
   
@@ -603,6 +606,8 @@
   <div class="event-card type-forum" data-start="2026-06-13T20:30:00+02:00" data-end="2026-06-13T22:30:00+02:00">
     <div class="card-header"><div class="event-title">💬 Szakmai megbeszélés</div></div>
   </div>
+
+  
 </div>
 
 <!-- VASÁRNAP – jún. 14. -->
@@ -789,10 +794,7 @@
   <div class="event-card type-social" data-start="2026-06-14T19:00:00+02:00" data-end="2026-06-14T20:30:00+02:00">
     <div class="card-header">
       <div class="event-title">🍽️ Vacsora</div>
-      <!-- JAVÍTVA: TISZTA HTML KÓDRA CSERÉLVE ÉS BEZÁRVA -->
-      <div class="podcast-promo" title="A Ciróka Bábszínház podcastja">
-         Szünetben hallgasd: <a href="https://open.spotify.com/show/5i145Tg1u0hGvR8dPBR956" target="_blank">🎧 BábszínPod</a>
-      </div>
+      <div class="podcast-promo" title="A Ciróka Bábszínház podcastja">Szünetben hallgasd: <a href="https://open.spotify.com/show/5i145Tg1u0hGvR8dPBR956" target="_blank">🎧 BábszínPod</a></div>
     </div>
   </div>
   
@@ -920,7 +922,7 @@
           Rendezőasszisztens: Sipos Berta Őszike<br>
           Rendező: Kocsis Pál (Jászai Mari-díjas)<br><br>
           Játsszák: Czéh Dániel, Gidófalvi Imola, Horváth Márk, Markó-Valentyik Anna (Junior Prima-díjas), Szakács Nadin e.h., Zöldi Ákos Tamás e.h.<br><br>
-          *Az előadásban elhangzik Kiss Judit Ágnes Éva monológja című verse.*
+          <em>Az előadásban elhangzik Kiss Judit Ágnes Éva monológja című verse.</em>
         </div>
       </div>
       <div class="details-section">
@@ -1005,7 +1007,17 @@
           Zene: Tarr Bernadett<br>
           Fénytervező: Jankó Mátyás<br>
           Rendező-koreográfus: Kovács Domokos<br><br>
-          Szereplők: Bambi – Bársonyosi Dávid | Bambi anyukája – Bánky Sára | Bambi apukája – Vitányi-Juhász István | Ena néni – Ragán Edit | Faline – Dunai Julia | Gobó – Sebestény Bernát | Marena – Darvas Emőke | Ronno – Urszinyi Ádám | Vadász – Rab Viki | A Vadász Kutyája – Szukenyik Tamás
+          Szereplők:<br>
+          Bambi – Bársonyosi Dávid<br>
+          Bambi anyukája – Bánky Sára<br>
+          Bambi apukája – Vitányi-Juhász István<br>
+          Ena néni – Ragán Edit<br>
+          Faline – Dunai Julia<br>
+          Gobó – Sebestény Bernát<br>
+          Marena – Darvas Emőke<br>
+          Ronno – Urszinyi Ádám<br>
+          Vadász – Rab Viki<br>
+          A Vadász Kutyája – Szukenyik Tamás
         </div>
       </div>
       <div class="details-section">
@@ -1083,7 +1095,7 @@
           Rendezőasszisztens: Sipos Berta Őszike<br>
           Rendező: Kocsis Pál (Jászai Mari-díjas)<br><br>
           Játsszák: Czéh Dániel, Gidófalvi Imola, Horváth Márk, Markó-Valentyik Anna (Junior Prima-díjas), Szakács Nadin e.h., Zöldi Ákos Tamás e.h.<br><br>
-          *Az előadásban elhangzik Kiss Judit Ágnes Éva monológja című verse.*
+          <em>Az előadásban elhangzik Kiss Judit Ágnes Éva monológja című verse.</em>
         </div>
       </div>
       <div class="details-section">
@@ -1102,10 +1114,7 @@
   <div class="event-card type-social" data-start="2026-06-15T19:00:00+02:00" data-end="2026-06-15T20:30:00+02:00">
     <div class="card-header">
       <div class="event-title">🍽️ Vacsora</div>
-      <!-- JAVÍTVA: TISZTA HTML KÓDRA CSERÉLVE ÉS BEZÁRVA -->
-      <div class="podcast-promo" title="A Ciróka Bábszínház podcastja">
-         Szünetben hallgasd: <a href="https://open.spotify.com/show/5i145Tg1u0hGvR8dPBR956" target="_blank">🎧 BábszínPod</a>
-      </div>
+      <div class="podcast-promo" title="A Ciróka Bábszínház podcastja">Szünetben hallgasd: <a href="https://open.spotify.com/show/5i145Tg1u0hGvR8dPBR956" target="_blank">🎧 BábszínPod</a></div>
     </div>
   </div>
   
@@ -1213,12 +1222,8 @@
   <div class="slot-time">12:00 – 14:00</div>
   <div class="event-card type-social" data-start="2026-06-16T12:00:00+02:00" data-end="2026-06-16T14:00:00+02:00">
     <div class="card-header">
-      <div class="card-header-row">
-        <div>
-          <div class="event-title">🍴 Ebédszünet</div>
-          <div class="event-company">Műhelylátogatások és pihenő</div>
-        </div>
-      </div>
+      <div class="event-title">🍴 Ebédszünet</div>
+      <div class="podcast-promo" title="A Ciróka Bábszínház podcastja">Szünetben hallgasd: <a href="https://open.spotify.com/show/5i145Tg1u0hGvR8dPBR956" target="_blank">🎧 BábszínPod</a></div>
     </div>
   </div>
 
@@ -1337,7 +1342,9 @@
       </div>
     </div></div>
     <div class="event-footer">
-      <div class="event-meta"><span class="badge badge-venue">Hírös Agóra</span></div>
+      <div class="event-meta">
+        <span class="badge badge-venue">Hírös Agóra</span>
+      </div>
       <a class="fb-event-btn" href="https://www.facebook.com/events/3255523264835190" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
@@ -1347,10 +1354,7 @@
   <div class="event-card type-social" data-start="2026-06-16T19:00:00+02:00" data-end="2026-06-16T20:30:00+02:00">
     <div class="card-header">
       <div class="event-title">🍽️ Vacsora</div>
-      <!-- JAVÍTVA: TISZTA HTML KÓDRA CSERÉLVE ÉS BEZÁRVA -->
-      <div class="podcast-promo" title="A Ciróka Bábszínház podcastja">
-         Szünetben hallgasd: <a href="https://open.spotify.com/show/5i145Tg1u0hGvR8dPBR956" target="_blank">🎧 BábszínPod</a>
-      </div>
+      <div class="podcast-promo" title="A Ciróka Bábszínház podcastja">Szünetben hallgasd: <a href="https://open.spotify.com/show/5i145Tg1u0hGvR8dPBR956" target="_blank">🎧 BábszínPod</a></div>
     </div>
   </div>
   
@@ -1400,11 +1404,13 @@
       <a class="fb-event-btn" href="https://www.facebook.com/events/1468420997545705" target="_blank"><svg width="12" height="12"><use href="#fb-icon"/></svg>Esemény</a>
     </div>
   </div>
+
 </div>
 
 <!-- SZERDA – jún. 17. -->
 <div class="day-panel" id="day-4">
-  <div class="slot-time">9:00 – 10:30</div>
+
+<div class="slot-time">9:00 – 10:30</div>
   <div class="event-card type-forum" data-start="2026-06-17T09:00:00+02:00" data-end="2026-06-17T10:30:00+02:00">
     <div class="card-header">
       <div class="card-header-row">
@@ -1566,7 +1572,7 @@
           Tervező: Kárpáti Panna<br>
           Zeneszerző: Vranik Krisztián, Jankó Mátyás<br>
           Fénytervező: Váradi András, Selmeczi Mercédesz<br>
-          Koreográfus: Kovács Domokos<br>
+          Konzulens: Fejes Kitty<br>
           Rendező: Kovács Domokos<br><br>
           Szereplők: Kovács Domokos, L. Nagy Attila
         </div>
@@ -1606,7 +1612,7 @@
           Hang és videó: Labus Gida<br>
           Dramaturg: Hajós Zsuzsa<br>
           Rendezőasszisztens: Nikodémusz Hajnalka<br>
-          Készítették: Tóth Andrea, Tóth Eszter, Kiss Attila Etele, Kalácska Gábor, Kisgyörgy Balázs, Tímári Blanka<br><br>
+          Készítették: Tóth Andrea, Tóth Eszter, Kiss Attila Etele, Kalácska Gábor, Kisgyörgy Balázs, Tímári Blanka<br>
           Hang, fény: Bujdosó Zoltán, Patkós Péter<br><br>
           Hangban közreműködnek: Szegedi Rókusi Általános Iskola énekkara<br><br>
           Szereplők: Balasi Jolán, Presits Tamás, Schneider Jankó, Nikodémusz Hajnalka
@@ -1628,10 +1634,7 @@
   <div class="event-card type-social" data-start="2026-06-17T19:00:00+02:00" data-end="2026-06-17T20:30:00+02:00">
     <div class="card-header">
       <div class="event-title">🍽️ Vacsora</div>
-      <!-- JAVÍTVA: TISZTA HTML KÓDRA CSERÉLVE ÉS BEZÁRVA -->
-      <div class="podcast-promo" title="A Ciróka Bábszínház podcastja">
-         Szünetben hallgasd: <a href="https://open.spotify.com/show/5i145Tg1u0hGvR8dPBR956" target="_blank">🎧 BábszínPod</a>
-      </div>
+      <div class="podcast-promo" title="A Ciróka Bábszínház podcastja">Szünetben hallgasd: <a href="https://open.spotify.com/show/5i145Tg1u0hGvR8dPBR956" target="_blank">🎧 BábszínPod</a></div>
     </div>
   </div>
   
@@ -1648,7 +1651,7 @@
     <div class="card-header">
       <div class="card-header-row">
         <div>
-          <div class="event-title">Capitalism for children <span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-title">Capitalism for children<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">Trafó - SzínMűHely Alapítvány</div>
         </div>
         <div class="header-actions">
@@ -1693,7 +1696,7 @@
     <div class="card-header">
       <div class="card-header-row">
         <div>
-          <div class="event-title">Csodaszarvas <span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-title">Csodaszarvas<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">Fabók Mancsi Bábszínháza - Cimborák Bábszínház</div>
         </div>
         <div class="header-actions">
@@ -1730,7 +1733,7 @@
     <div class="card-header">
       <div class="card-header-row">
         <div>
-          <div class="event-title">Lenka és a szemüveges lány <span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-title">Lenka és a szemüveges lány<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">JuBo Társulat</div>
         </div>
         <div class="header-actions">
@@ -1769,7 +1772,7 @@
     <div class="card-header">
       <div class="card-header-row">
         <div>
-          <div class="event-title">Tryangle <span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-title">Tryangle<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">ESZME</div>
         </div>
         <div class="header-actions">
@@ -1809,7 +1812,7 @@
     <div class="card-header">
       <div class="card-header-row">
         <div>
-          <div class="event-title">Én, a vámpír <span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-title">Én, a vámpír<span class="live-badge">MOST ZAJLIK</span></div>
           <div class="event-company">Mesebolt Bábszínház</div>
         </div>
         <div class="header-actions">
@@ -1846,10 +1849,7 @@
   <div class="event-card type-social" data-start="2026-06-18T19:00:00+02:00" data-end="2026-06-18T21:00:00+02:00">
     <div class="card-header">
       <div class="event-title">🍽️ Vacsora</div>
-      <!-- JAVÍTVA: TISZTA HTML KÓDRA CSERÉLVE ÉS BEZÁRVA -->
-      <div class="podcast-promo" title="A Ciróka Bábszínház podcastja">
-         Szünetben hallgasd: <a href="https://open.spotify.com/show/5i145Tg1u0hGvR8dPBR956" target="_blank">🎧 BábszínPod</a>
-      </div>
+      <div class="podcast-promo" title="A Ciróka Bábszínház podcastja">Szünetben hallgasd: <a href="https://open.spotify.com/show/5i145Tg1u0hGvR8dPBR956" target="_blank">🎧 BábszínPod</a></div>
     </div>
   </div>
   
@@ -1877,58 +1877,67 @@
 <div class="info-box-bottom" id="infoBoxBottom">
   <h3>Közérdekű Információk</h3>
 
-  <!-- FRISSÍTETT ÉS KÁRTYÁSÍTOTT NÉVJEGYEK -->
   <div class="info-grid">
     <div class="info-item">
-      <span class="info-name">Kiszely Ágnes</span>
-      <span class="info-title">igazgató</span>
-      <a href="tel:+36309075265" class="info-phone">+36 30 907 5265</a>
+        <span class="name-label">Kiszely Ágnes</span>
+        <strong>igazgató</strong>
+        <a href="tel:+36309075265">+36 30 907 5265</a>
     </div>
+
+<div class="info-grid">
     <div class="info-item">
-      <span class="info-name">Kuthy Ágnes</span>
-      <span class="info-title">művészeti vezető</span>
-      <a href="tel:+36308310713" class="info-phone">+36 30 831 0713</a>
+        <span class="name-label">Kuthy Ágnes</span>
+        <strong>művészeti vezető</strong>
+        <a href="tel:+36308310713">+36308310713</a>
     </div>
+
+<div class="info-grid">
     <div class="info-item">
-      <span class="info-name">Bodor Éva</span>
-      <span class="info-title">fesztiválszervező</span>
-      <a href="tel:+36204195584" class="info-phone">+36 20 419 5584</a>
+        <span class="name-label">Bodor Éva</span>
+        <strong>fesztiválszervező</strong>
+        <a href="tel:+36204195584">+36204195584</a>
     </div>
+
+    <div class="info-grid">
     <div class="info-item">
-      <span class="info-name">Váriné Dósa Eszter</span>
-      <span class="info-title">művészeti titkár</span>
-      <a href="tel:+36309075318" class="info-phone">+36 30 907 5318</a>
-    </div>
+        <span class="name-label">Váriné Dósa Eszter</span>
+        <strong>művészeti titkár</strong>
+        <a href="tel:+36309075318">+36 30 907 5318</a></div>
+
+    <div class="info-grid">
     <div class="info-item">
-      <span class="info-name">Borsosné Oláh Nóra</span>
-      <span class="info-title">szerződések</span>
-      <a href="tel:+36707996647" class="info-phone">+36 70 799 6647</a>
-    </div>
+        <span class="name-label">Borsosné Oláh Nóra</span>
+        <strong>szerződések</strong>
+        <a href="tel:+36707996647">+36 70 799 6647</a></div>
+
+    <div class="info-grid">
     <div class="info-item">
-      <span class="info-name">Harkai György</span>
-      <span class="info-title">kommunikáció</span>
-      <a href="tel:+36304359149" class="info-phone">+36 30 435 9149</a>
+        <span class="name-label">Harkai György</span>
+        <strong>kommunikáció</strong>
+        <a href="tel:+36304359149">+36 30 435 9149</a></div>
+
+
+<div class="info-item tech-staff">
+        <span class="name-label">Műszaki ügyelet</span>
+        <strong>Bujdosó Zsolt</strong>
+        <a href="tel:+36706200139">+36 70 620 0139</a>
     </div>
-    <div class="info-item">
-      <span class="info-title info-workshop-title">Műszaki Ügyelet</span>
-      <span class="info-name">Bujdosó Zsolt</span>
-      <a href="tel:+36706200139" class="info-phone">+36 70 620 0139</a>
-    </div>
-    <div class="info-item">
-      <span class="info-title info-workshop-title">Faműhely</span>
-      <span class="info-name">Dudás Péter</span>
-      <a href="tel:+36305944476" class="info-phone">+36 30 594 4476</a>
-    </div>
-    <div class="info-item">
-      <span class="info-title info-workshop-title">Varróműhely</span>
-      <span class="info-name">Emőd Kriszta</span>
-      <a href="tel:+36209446533" class="info-phone">+36 20 944 6533</a>
-    </div>
+
+<div class="info-item tech-staff">
+        <span class="name-label">Faműhely</span>
+        <strong>Dudás Péter</strong>
+        <a href="tel:+36305944476">+36 30 594 4476</a></div>
+
+<div class="info-item tech-staff">
+        <span class="name-label">Varróműhely</span>
+        <strong>Emőd Kriszta</strong>
+        <a href="tel:+36209446533">+36 20 944 6533</a></div>
   </div>
 
-  <!-- ÚJ GOMB SEGÍTSÉGKÉRÉSHEZ -->
+  <!-- ÚJ GOMB SEGÍTSÉGKÉRÉSHEZ (A rács alatt, de még a térkép felett helyezkedik el) -->
   <button class="pdf-dl-btn" id="btnHelp" style="margin-top: 20px; display: block; width: 100%; text-align: center; background: var(--teal); border: none;">Kérdésed van? Segítünk! 💬</button>
 
+  <!-- A térkép konténere megmarad a dobozon belül -->
   <div class="map-container" style="margin-top: 30px;">
     <div class="map-title">📍 Helyszínek</div>
     
@@ -1997,7 +2006,7 @@
       </div>
     </div>
 
-  <div class="venue-item">
+    <div class="venue-item">
       <div class="map-venue-row">
         <div class="map-venue-flex">
           <div>
@@ -2010,7 +2019,7 @@
       </div>
     </div>
 
-     <div class="venue-item border-none">
+    <div class="venue-item border-none">
       <div class="map-venue-row">
         <div class="map-venue-flex">
           <div>
@@ -2026,7 +2035,7 @@
   </div>
 </div>
 
-<!-- TÁMOGATÓI SZEKCIÓ (Színes, megőrzött hover animációval) -->
+<!-- TÁMOGATÓI SZEKCIÓ -->
 <div class="sponsors-box" id="sponsorsBox">
   <div class="sponsors-title">Támogatóink és Partnereink</div>
   <div class="sponsors-grid">
@@ -2035,6 +2044,7 @@
     <img src="./tamogato3.png" class="sponsor-logo" alt="Támogató" loading="lazy">
     <img src="./tamogato4.png" class="sponsor-logo" alt="Támogató" loading="lazy">
     <img src="./tamogato5.png" class="sponsor-logo" alt="Támogató" loading="lazy">
+<!-- Itt bújik meg a szem a támogatók között! -->
     <!-- 1. INTERAKTÍV SZEM -->
     <div class="sponsor-tooltip-wrap">
       <img src="./szem-nincs2.png" class="sponsor-logo" alt="Meglepetés" loading="lazy">
@@ -2049,7 +2059,6 @@
       <span class="sponsor-tooltip-text">Szoboszlay Eszter</span>
     </div>
   </div>
-</div> <!-- JAVÍTVA: Konténer lezárva, így a footer nem esik szét! -->
 
 <footer>
   <a href="https://ciroka.hu" target="_blank">ciroka.hu</a>
@@ -2068,7 +2077,6 @@
   </div>
 </footer>
 
-<!-- JAVÍTVA: Kényszerített betöltés Cache Buster-rel -->
-<script type="module" src="app.js?v=26"></script>
+<script type="module" src="app.js"></script>
 </body>
 </html>

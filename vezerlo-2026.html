@@ -55,16 +55,6 @@
 
   footer { background: var(--teal-dark); text-align: center; padding: 20px; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.35); font-weight: 600; }
 
-  /* KÁRTYÁS ELKÜLÖNÍTÉS AZ ÁTLÁTHATÓSÁGÉRT */
-  .admin-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 24px;
-    margin-bottom: 24px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-  }
-
   /* MARIONETT MÓD ADMIN */
   .marionette-mode { animation: sway 3s infinite ease-in-out; transform-origin: top center; overflow: visible !important; }
   .marionette-mode::before, .marionette-mode::after { content:''; position:fixed; top:0; width:1px; background:rgba(0,0,0,0.4); height:100vh; z-index: 9999; pointer-events:none;}
@@ -72,7 +62,7 @@
   .marionette-mode::after { right: 20%; }
   @keyframes sway { 0%, 100% { transform: rotate(-1.5deg); } 50% { transform: rotate(1.5deg); } }
 
-  /* ÚJ KÉRDÉSEK STÍLUSAI */
+/* ÚJ KÉRDÉSEK STÍLUSAI */
   .question-item { border-left-color: var(--gold); }
   .question-item.resolved-item { opacity: 0.35; filter: grayscale(50%); border-left-color: var(--muted); transition: opacity 0.3s; }
   .question-item.resolved-item .alert-text { text-decoration: line-through; color: var(--muted); }
@@ -83,7 +73,7 @@
   .resolve-btn { background: var(--teal); color: #fff; padding: 6px 10px; border-radius: 3px; font-size: 10px; font-weight: 700; text-transform: uppercase; border: none; cursor: pointer; margin-right: 5px;}
   .resolve-btn:hover { background: var(--teal-dark); }
 
-  /* Mobilbarát kártyák a vezérlőpulton */
+/* Mobilbarát kártyák a vezérlőpulton */
   @media (max-width: 480px) {
     .alert-item {
       flex-direction: column;
@@ -133,92 +123,81 @@
 </div>
 
 <div id="adminPanel">
-  <h2>Értesítések és Hírek</h2>
-  <div class="subtitle">Havária, ad-hoc programok és segítségnyújtás</div>
+  <h2>Értesítések kezelése</h2>
+  <div class="subtitle">Havária és módosítások</div>
 
-  <!-- 1. KÁRTYA: RENDKÍVÜLI ÉRTESÍTÉSEK -->
-  <div class="admin-card">
-    <div class="section-title" style="color: var(--red);">🚨 Rendkívüli Értesítés (Havária)</div>
-    <label>Érintett program (Opcionális)</label>
-    <select id="alertTarget">
-      <option value="all">-- Általános (nem kötődik konkrét előadáshoz) --</option>
-      <!-- Szombat -->
-      <option value="show-eye-catching">Eye catching</option>
-      <option value="show-lathatatlan">A láthatatlan jóbarát</option>
-      <option value="show-atanaz">Atanáz, a lámpaláz</option>
-      <option value="show-honvagy">Örökölt honvágy</option>
-      <!-- Vasárnap -->
-      <option value="show-cseresznyefa">Én és a cseresznyefa</option>
-      <option value="show-piroska">Piroska és a farkas</option>
-      <option value="show-kosziv">A kőszív</option>
-      <option value="show-juhasz">Az igazmondó juhász</option>
-      <option value="show-frida">Itt vagyok, hát élek, Frida</option>
-      <!-- Hétfő -->
-      <option value="show-doboz-hetfo">A doboz (Délelőtt)</option>
-      <option value="show-tragedia-hetfo-d">Az ember tragédiája (Délelőtt)</option>
-      <option value="show-graffalo">Graffaló</option>
-      <option value="show-bambi">Bambi</option>
-      <option value="show-doboz-hetfo-e">A doboz (Délután)</option>
-      <option value="show-tragedia-hetfo-e">Az ember tragédiája (Délután)</option>
-      <!-- Kedd -->
-      <option value="show-lud">Ha már lúd…</option>
-      <option value="show-golya">Fekete gólya, fehér gólya, szürke gólya</option>
-      <option value="show-lepke">A lepkegyűjtő</option>
-      <option value="show-sarkany">Sárkánykirály</option>
-      <!-- Szerda -->
-      <option value="show-halasz">A szegény halász, meg a túlsokra vágyó felesége</option>
-      <option value="show-hapci">Hapci király</option>
-      <option value="show-lenka-sze">Lenka és a Szemüveges lány (Szerda)</option>
-      <option value="show-tryangle-sze">Tryangle (Szerda)</option>
-      <option value="show-patkanyfogo">A Patkányfogó Projekt</option>
-      <!-- Csütörtök -->
-      <option value="show-capitalism">Capitalism for children</option>
-      <option value="show-csodaszarvas">Csodaszarvas</option>
-      <option value="show-lenka-csut">Lenka és a Szemüveges lány (Csütörtök)</option>
-      <option value="show-tryangle-csut">Tryangle (Csütörtök)</option>
-      <option value="show-vampir">Én, a vámpír</option>
-    </select>
+  <div class="section-title">Új értesítés közzététele</div>
+  <label>Érintett program (Opcionális)</label>
+  <select id="alertTarget">
+    <option value="all">-- Általános (nem kötődik konkrét előadáshoz) --</option>
+    <!-- Szombat -->
+    <option value="show-eye-catching">Eye catching</option>
+    <option value="show-lathatatlan">A láthatatlan jóbarát</option>
+    <option value="show-atanaz">Atanáz, a lámpaláz</option>
+    <option value="show-honvagy">Örökölt honvágy</option>
+    <!-- Vasárnap -->
+    <option value="show-cseresznyefa">Én és a cseresznyefa</option>
+    <option value="show-piroska">Piroska és a farkas</option>
+    <option value="show-kosziv">A kőszív</option>
+    <option value="show-juhasz">Az igazmondó juhász</option>
+    <option value="show-frida">Itt vagyok, hát élek, Frida</option>
+    <!-- Hétfő -->
+    <option value="show-tragedia-hetfo-d">Az ember tragédiája (Délelőtt)</option>
+    <option value="show-doboz-hetfo">A doboz (Délelőtt)</option>
+    <option value="show-graffalo">Graffaló</option>
+    <option value="show-bambi">Bambi</option>
+    <option value="show-tragedia-hetfo-e">Az ember tragédiája (Délután)</option>
+    <option value="show-doboz-hetfo-e">A doboz (Délután)</option>
+    <!-- Kedd -->
+    <option value="show-lud">Ha már lúd…</option>
+    <option value="show-golya">Fekete gólya, fehér gólya, szürke gólya</option>
+    <option value="show-lepke">A lepkegyűjtő</option>
+    <option value="show-sarkany">Sárkánykirály</option>
+    <!-- Szerda -->
+    <option value="show-halasz">A szegény halász, meg a túlsokra vágyó felesége</option>
+    <option value="show-hapci">Hapci király</option>
+    <option value="show-lenka-sze">Lenka és a Szemüveges lány (Szerda)</option>
+    <option value="show-tryangle-sze">Tryangle (Szerda)</option>
+    <option value="show-patkanyfogo">A Patkányfogó Projekt</option>
+    <!-- Csütörtök -->
+    <option value="show-capitalism">Capitalism for children</option>
+    <option value="show-csodaszarvas">Csodaszarvas</option>
+    <option value="show-lenka-csut">Lenka és a Szemüveges lány (Csütörtök)</option>
+    <option value="show-tryangle-csut">Tryangle (Csütörtök)</option>
+    <option value="show-vampir">Én, a vámpír</option>
+  </select>
 
-    <label>Üzenet szövege</label>
-    <textarea id="alertText" placeholder="Pl.: A Bambi előadás helyszíne megváltozott..."></textarea>
-    
-    <input type="file" id="alertPhotoInput" accept="image/*" style="position: absolute; opacity: 0; width: 1px; height: 1px; z-index: -1;" onchange="window.handleAlertPhotoSelect(event)">
-    <label for="alertPhotoInput" class="btn btn-outline" id="alertPhotoBtn" style="cursor: pointer; border-color: var(--red); color: var(--red);">
-      📸 FOTÓ CSATOLÁSA (Opcionális)
-    </label>
-    <div id="alertPhotoPreview" style="font-size:10px; color:var(--green); text-align:center; margin-bottom:15px; font-weight:700; display:none;">✓ Fotó előkészítve!</div>
+  <label>Üzenet szövege</label>
+  <textarea id="alertText" placeholder="Pl.: A Bambi előadás helyszíne megváltozott..."></textarea>
+  
+  <input type="file" id="alertPhotoInput" accept="image/*" style="position: absolute; opacity: 0; width: 1px; height: 1px; z-index: -1;" onchange="window.handleAlertPhotoSelect(event)">
+  <label for="alertPhotoInput" class="btn btn-outline" id="alertPhotoBtn" style="cursor: pointer;">
+    📸 FOTÓ CSATOLÁSA (Opcionális)
+  </label>
+  <div id="alertPhotoPreview" style="font-size:10px; color:var(--green); text-align:center; margin-bottom:15px; font-weight:700; display:none;">✓ Fotó előkészítve!</div>
 
-    <button class="btn btn-primary" id="publishAlertBtn" onclick="window.publishAlert()">🔔 Értesítés közzététele</button>
-    <div class="feedback" id="publishFeedback"></div>
-  </div>
-
-  <!-- 2. KÁRTYA: AD-HOC PROGRAM / BLOG BEJEGYZÉSEK -->
-  <div class="admin-card">
-    <div class="section-title" style="color: var(--gold);">✨ Ad-hoc program vagy Újdonság (Élő Blog)</div>
-    <p style="font-size:11px; color:var(--muted); margin-bottom:15px;">Minden olyan hír, ami nem havária, hanem pl. egy ad-hoc koncert, hirtelen kiderülő kávézói program, vagy új adatok.</p>
-    
-    <label>Hír vagy új program címe</label>
-    <input type="text" id="blogTitleInput" placeholder="Pl.: Rendkívüli örömzenélés ma este!">
-
-    <label>Szöveges tartalom / részletek</label>
-    <textarea id="blogTextInput" placeholder="Részletes leírás, pontos időpont, fellépők..."></textarea>
-
-    <input type="file" id="blogPhotoInput" accept="image/*" style="position: absolute; opacity: 0; width: 1px; height: 1px; z-index: -1;" onchange="window.handleBlogPhotoSelect(event)">
-    <label for="blogPhotoInput" class="btn btn-outline" id="blogPhotoBtn" style="cursor: pointer; border-color: var(--gold); color: var(--gold);">
-      📸 KÉP CSATOLÁSA (Opcionális)
-    </label>
-    <div id="blogPhotoPreview" style="font-size:10px; color:var(--green); text-align:center; margin-bottom:15px; font-weight:700; display:none;">✓ Kép előkészítve!</div>
-
-    <button class="btn btn-primary" id="publishBlogBtn" onclick="window.publishBlog()" style="background: var(--gold);">✨ Újdonság közzététele</button>
-    <div class="feedback" id="publishBlogFeedback"></div>
-  </div>
+  <button class="btn btn-primary" id="publishAlertBtn" onclick="window.publishAlert()">🔔 Közzététel</button>
+  <div class="feedback" id="publishFeedback"></div>
 
   <div class="divider"></div>
 
-  <div class="section-title">Aktív értesítések és ad-hoc programok</div>
+  <div class="section-title">Aktív értesítések</div>
   <div id="activeAlertsContainer">Nincs aktív értesítés.</div>
 
-  <!-- Helyezze ezt közvetlenül az "Emlékkönyv moderálás" h2 címe fölé: -->
+  <div class="divider"></div>
+<h2>Ad-hoc Program / Blog-bejegyzés</h2>
+<div class="subtitle">Új esemény hozzáadása az Update hírfolyamhoz</div>
+
+<label>Program címe</label>
+<input type="text" id="blogTitle" placeholder="Pl.: Meglepetés koncert a kávézóban!">
+<label>Rövid leírás / Fellépők</label>
+<textarea id="blogDesc" placeholder="Részletes infók az eseményről..."></textarea>
+<label>Helyszín</label>
+<input type="text" id="blogLocation" placeholder="Pl.: Ciróka udvar">
+
+<button class="btn btn-primary" id="publishBlogBtn" onclick="window.publishBlog()">🚀 Ad-hoc program közzététele</button>
+
+<!-- Helyezze ezt közvetlenül az "Emlékkönyv moderálás" h2 címe fölé: -->
   <div class="divider"></div>
   <h2>Beérkezett kérdések</h2>
   <div class="subtitle">Segítségnyújtás és válaszadás</div>
@@ -239,7 +218,6 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getDatabase, ref, push, set, remove, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
   import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  // JAVÍTVA: Helyes modulvégződésű (.js) betöltés a Storage-hoz!
   import { getStorage, ref as sRef, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
   const firebaseConfig = {
@@ -305,6 +283,7 @@
     return new Date().toLocaleString("hu-HU", {timeZone: "Europe/Budapest", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"});
   }
 
+  // --- KÉP KIVÁLASZTÁSA ÉRTESÍTÉSHEZ ---
   window.handleAlertPhotoSelect = function(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -338,98 +317,65 @@
     }
   };
 
-  window.handleBlogPhotoSelect = function(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    if (!file.type.startsWith('image/')) { alert("Kérlek, csak képet válassz ki!"); return; }
-
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = function(e) {
-      const img = new Image();
-      img.src = e.target.result;
-      img.onload = function() {
-        const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 800; const MAX_HEIGHT = 800;
-        let width = img.width; let height = img.height;
-        
-        if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
-        else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
-        
-        canvas.width = width; canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
-        
-        window.blogResizedImage = canvas.toDataURL('image/jpeg', 0.7);
-        
-        const btn = document.getElementById('blogPhotoBtn');
-        document.getElementById('blogPhotoPreview').style.display = 'block';
-        btn.style.borderColor = 'var(--green)';
-        btn.style.color = 'var(--green)';
-        btn.innerText = '✓ FOTÓ CSATOLVA';
-      }
-    }
-  };
-
   function initAdmin() {
     onValue(ref(db, "alertsList"), (snap) => {
       const container = document.getElementById("activeAlertsContainer");
       container.innerHTML = "";
-      if (!snap.exists()) { container.innerHTML = "<p style='font-size:12px;color:var(--muted)'>Nincs aktív értesítés vagy ad-hoc program.</p>"; return; }
+      if (!snap.exists()) { container.innerHTML = "<p style='font-size:12px;color:var(--muted)'>Nincs aktív értesítés.</p>"; return; }
       const data = snap.val();
       const alertsArray = Object.keys(data).map(key => ({ id: key, ...data[key] })).sort((a,b) => b.timeRaw - a.timeRaw);
       alertsArray.forEach(alert => {
-        let isBlog = alert.isBlog || false;
-        let badgeText = isBlog ? "AD-HOC PROGRAM / BLOG" : "RENDKÍVÜLI ÉRTESÍTÉS";
-        let targetName = alert.targetId === "all" ? "Általános" : (alert.targetId ? document.querySelector(`#alertTarget option[value="${alert.targetId}"]`).textContent : "Nincs (Blogbejegyzés)");
+        let targetName = alert.targetId === "all" ? "Általános" : document.querySelector(`#alertTarget option[value="${alert.targetId}"]`).textContent;
         let imgHtml = alert.photoUrl ? `<img src="${alert.photoUrl}" class="gb-photo" style="margin-bottom:8px;">` : '';
         
         container.innerHTML += `
-          <div class="alert-item" style="border-left-color: ${isBlog ? 'var(--gold)' : 'var(--red)'};">
+          <div class="alert-item">
             <div>
-              <div class="alert-meta">[${badgeText}] | ${alert.timestamp} | Cél: ${targetName}</div>
+              <div class="alert-meta">${alert.timestamp} | Célpont: ${targetName}</div>
               ${imgHtml}
-              <div class="alert-text"><strong>${alert.title ? escapeHTML(alert.title) + ': ' : ''}</strong>${escapeHTML(alert.message)}</div>
+              <div class="alert-text">${escapeHTML(alert.message)}</div>
             </div>
             <button class="del-btn" onclick="window.deleteAlert('${alert.id}')">Törlés</button>
           </div>`;
       });
     });
 
-    onValue(ref(db, "questions"), (snap) => {
-      const container = document.getElementById("questionsAdminContainer");
-      container.innerHTML = "";
-      if (!snap.exists()) { container.innerHTML = "<p style='font-size:12px;color:var(--muted)'>Nincs beérkezett kérdés.</p>"; return; }
+
+// Az initAdmin() végére, vagy a többi figyelő mellé másolja be:
+  onValue(ref(db, "questions"), (snap) => {
+    const container = document.getElementById("questionsAdminContainer");
+    container.innerHTML = "";
+    if (!snap.exists()) { container.innerHTML = "<p style='font-size:12px;color:var(--muted)'>Nincs beérkezett kérdés.</p>"; return; }
+    
+    const data = snap.val();
+    const qArray = Object.keys(data).map(key => ({ id: key, ...data[key] })).sort((a,b) => b.timeRaw - a.timeRaw);
+    
+    qArray.forEach(q => {
+      const isResolved = q.resolved || false;
+      const resolvedClass = isResolved ? "resolved-item" : "";
+      const resolveText = isResolved ? "Megnyitás" : "✓ Kész (Kipipál)";
       
-      const data = snap.val();
-      const qArray = Object.keys(data).map(key => ({ id: key, ...data[key] })).sort((a,b) => b.timeRaw - a.timeRaw);
+      // HA VAN FOTÓ, MEGJELENÍTJÜK
+      let imgHtml = q.photoUrl ? `<img src="${q.photoUrl}" class="gb-photo" style="margin-bottom:8px;">` : '';
       
-      qArray.forEach(q => {
-        const isResolved = q.resolved || false;
-        const resolvedClass = isResolved ? "resolved-item" : "";
-        const resolveText = isResolved ? "Megnyitás" : "✓ Kész (Kipipál)";
-        
-        // JAVÍTVA: KÉPEK MEGJELENÍTÉSE AZ ADMINON IS
-        let imgHtml = q.photoUrl ? `<img src="${q.photoUrl}" class="gb-photo" style="margin-bottom:8px;">` : '';
-        
-        container.innerHTML += `
-          <div class="alert-item question-item ${resolvedClass}">
-            <div style="width:100%;">
-              <div class="alert-meta">${q.dateStr} | Feladó: ${escapeHTML(q.name)} (${escapeHTML(q.email)})</div>
-              <div class="alert-text" style="margin-bottom: 12px; font-size: 14px;">${escapeHTML(q.text)}</div>
-              ${imgHtml}
-              <div style="margin-top: 10px;">
-                <!-- Email küldés gomb -->
-                <a href="mailto:${encodeURIComponent(q.email)}?subject=Válasz a 17. Bábszínházi Találkozó segítségkérésre" class="reply-btn">✉ Válaszolok</a>
-                <!-- Állapotváltó gomb -->
-                <button class="resolve-btn" onclick="window.toggleResolveQuestion('${q.id}', ${isResolved})">${resolveText}</button>
-                <!-- Törlés gomb -->
-                <button class="del-btn" style="background:#fee; color:var(--red);" onclick="window.deleteQuestion('${q.id}')">Törlés</button>
-              </div>
+      container.innerHTML += `
+        <div class="alert-item question-item ${resolvedClass}">
+          <div style="width:100%;">
+            <div class="alert-meta">${q.dateStr} | Feladó: ${escapeHTML(q.name)} (${escapeHTML(q.email)})</div>
+            <div class="alert-text" style="margin-bottom: 12px; font-size: 14px;">${escapeHTML(q.text)}</div>
+            ${imgHtml}
+            <div style="margin-top: 10px;">
+              <!-- Email küldés gomb -->
+              <a href="mailto:${encodeURIComponent(q.email)}?subject=Válasz a 17. Bábszínházi Találkozó segítségkérésre" class="reply-btn">✉ Válaszolok</a>
+              <!-- Állapotváltó gomb -->
+              <button class="resolve-btn" onclick="window.toggleResolveQuestion('${q.id}', ${isResolved})">${resolveText}</button>
+              <!-- Törlés gomb -->
+              <button class="del-btn" style="background:#fee; color:var(--red);" onclick="window.deleteQuestion('${q.id}')">Törlés</button>
             </div>
-          </div>`;
-      });
+          </div>
+        </div>`;
     });
+  });
 
     onValue(ref(db, "guestbook"), (snap) => {
       const container = document.getElementById("guestbookAdminContainer");
@@ -452,14 +398,14 @@
     });
   }
 
-  // JAVÍTVA: METAADATOK HOZZÁADVA ({ contentType: 'image/jpeg' })
+  // --- ÉRTESÍTÉS KÖZZÉTÉTELE FOTÓVAL ---
   window.publishAlert = async function() {
     const text = document.getElementById("alertText").value.trim();
     const target = document.getElementById("alertTarget").value;
     const fb = document.getElementById("publishFeedback");
     const btn = document.getElementById("publishAlertBtn");
     
-    if (!text && !window.alertResizedImage) { showFeedback(fb, "Írj be een üzenetet vagy csatolj fotót!", "err"); return; }
+    if (!text && !window.alertResizedImage) { showFeedback(fb, "Írj be egy üzenetet vagy csatolj fotót!", "err"); return; }
     
     btn.disabled = true;
     btn.innerText = "Feltöltés...";
@@ -468,7 +414,7 @@
       let photoUrl = "";
       if (window.alertResizedImage) {
          const photoRef = sRef(storage, 'alerts/' + Date.now() + '.jpg');
-         await uploadString(photoRef, window.alertResizedImage, 'data_url', { contentType: 'image/jpeg' });
+         await uploadString(photoRef, window.alertResizedImage, 'data_url');
          photoUrl = await getDownloadURL(photoRef);
       }
 
@@ -481,6 +427,7 @@
         photoUrl: photoUrl 
       });
 
+      // Űrlap nullázása
       document.getElementById("alertText").value = "";
       document.getElementById("alertPhotoInput").value = "";
       document.getElementById('alertPhotoPreview').style.display = 'none';
@@ -499,56 +446,7 @@
     }
   };
 
-  // JAVÍTVA: METAADATOK HOZZÁADVA ({ contentType: 'image/jpeg' })
-  window.publishBlog = async function() {
-    const title = document.getElementById("blogTitleInput").value.trim();
-    const text = document.getElementById("blogTextInput").value.trim();
-    const fb = document.getElementById("publishBlogFeedback");
-    const btn = document.getElementById("publishBlogBtn");
-    
-    if (!title || !text) { showFeedback(fb, "A címet és a szöveget is kötelező kitölteni!", "err"); return; }
-    
-    btn.disabled = true;
-    btn.innerText = "Feltöltés...";
-
-    try {
-      let photoUrl = "";
-      if (window.blogResizedImage) {
-         const photoRef = sRef(storage, 'alerts/' + Date.now() + '.jpg');
-         await uploadString(photoRef, window.blogResizedImage, 'data_url', { contentType: 'image/jpeg' });
-         photoUrl = await getDownloadURL(photoRef);
-      }
-
-      const newRef = push(ref(db, "alertsList"));
-      await set(newRef, { 
-        title: title,
-        message: text, 
-        isBlog: true, 
-        timestamp: getBudapestTimeStr(), 
-        timeRaw: Date.now(),
-        photoUrl: photoUrl 
-      });
-
-      document.getElementById("blogTitleInput").value = "";
-      document.getElementById("blogTextInput").value = "";
-      document.getElementById("blogPhotoInput").value = "";
-      document.getElementById('blogPhotoPreview').style.display = 'none';
-      const pBtn = document.getElementById('blogPhotoBtn');
-      pBtn.style.borderColor = 'var(--teal)';
-      pBtn.style.color = 'var(--teal)';
-      pBtn.innerText = '📸 KÉP CSATOLÁSA (Opcionális)';
-      window.blogResizedImage = null;
-
-      showFeedback(fb, "✓ Újdonság közzétéve!", "ok");
-    } catch(e) { 
-      showFeedback(fb, "Hiba a feltöltésnél!", "err"); 
-    } finally {
-      btn.disabled = false;
-      btn.innerText = "✨ Újdonság közzététele";
-    }
-  };
-
-  window.deleteAlert = async function(id) { if(confirm("Biztosan törlöd ezt a bejegyzést?")) await remove(ref(db, "alertsList/" + id)); };
+  window.deleteAlert = async function(id) { if(confirm("Biztosan törlöd ezt az értesítést?")) await remove(ref(db, "alertsList/" + id)); };
   window.deleteGbMessage = async function(id) { if(confirm("Biztosan törlöd ezt az emlékkönyv bejegyzést?")) await remove(ref(db, "guestbook/" + id)); };
 
   function showFeedback(el, msg, type) {
@@ -556,6 +454,7 @@
     setTimeout(() => el.style.display = "none", 4000);
   }
 
+// Regisztrálja a globális kattintási eseményeket a script alján:
   window.toggleResolveQuestion = async function(id, currentStatus) {
     await update(ref(db, "questions/" + id), { resolved: !currentStatus });
   };
