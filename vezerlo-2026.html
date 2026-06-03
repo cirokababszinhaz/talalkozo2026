@@ -486,7 +486,7 @@
       let photoUrl = "";
       if (window.alertResizedImage) {
          const photoRef = sRef(storage, 'alerts/' + Date.now() + '.jpg');
-         await uploadString(photoRef, window.alertResizedImage, 'data_url');
+         await uploadString(photoRef, window.adhocResizedImage, 'data_url', { contentType: 'image/jpeg' });
          photoUrl = await getDownloadURL(photoRef);
       }
 
