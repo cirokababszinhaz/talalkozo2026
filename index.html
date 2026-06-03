@@ -42,7 +42,11 @@
 </div>
 
 <div id="toastMsg" class="toast-msg"></div>
-<button class="jump-btn" id="jumpBtn">⏱</button>
+<div class="bottom-right-actions">
+  <button class="fab-btn" id="btnQuote" title="Napi motiváció">🎭</button>
+  <button class="fab-btn" id="btnShare" title="Oszd meg a programot!">🚀</button>
+  <button class="jump-btn" id="jumpBtn">⏱</button>
+</div>
 
 <div id="topAlertBar">🔔 Értesítések (0)</div>
 
@@ -200,9 +204,7 @@
          📖 Emlékkönyv
          <span id="gbBadge" class="gb-notification-badge" style="display: none;">0</span>
       </button>
-    </div>
-    <div class="ql-wrapper"><button class="ql-btn" id="btnQuote">🎭 Napi motiváció</button></div>
-    <div class="ql-wrapper"><button class="ql-btn" id="btnShare">🚀 Oszd meg a programot!</button></div>
+   </div>
     <div class="ql-wrapper"><button class="ql-btn" id="btnHolEgyek">🍔 Hol egyek?</button></div>
     <div class="ql-wrapper">
        <button class="ql-btn" id="btnCheckin" style="position: relative;">
@@ -328,6 +330,27 @@
            Szo-H: Zárva | K: 16:00-22:00 | Sze-Cs: 11:30-22:00
         </div>
       </div>
+
+<div class="gastro-venue-item">
+        <div class="gastro-venue-row">
+          <div class="gastro-venue-left">
+             <img src="./max.png" class="gastro-logo" loading="lazy" alt="Max Kávézó">
+             <div>
+                <a href="https://www.maxpizza.hu/" target="_blank" class="venue-item-title">Max Kávézó és Pizzéria</a>
+                <div class="venue-item-address">Széchenyi tér 9. <br>
+                  <span class="text-red-bold">délben 10% kedvezmény a menüre<br>este 10% kedvezmény a pizzákra (felszolgálási díj nélkül)</span>
+                </div>
+             </div>
+          </div>
+          <a class="route-btn" href="https://www.google.com/maps/dir/?api=1&destination=46.908986309304055,19.690213229863996" target="_blank">📍 Útvonal</a>
+        </div>
+        <div class="gastro-open-hours">
+           <strong class="gastro-open-title">Nyitvatartás:</strong>
+           Szo: 10:00–24:00 | V: 10:00–22:00 | H-Sze: 10:00–23:00 | Csü: 10:00–24:00
+           <div style="font-size: 11px; margin-top: 5px; color: var(--muted); line-height: 1.3;">Nagyobb létszámú látogatás esetén érdemes előző napon jelezni, hány fő szeretne ott enni!</div>
+        </div>
+      </div>
+
       
       <div class="gastro-venue-item last">
         <div class="gastro-venue-row">
@@ -345,6 +368,11 @@
            Szo: 9:00–13:00 | V: Zárva | H-Cs: 8:00–18:00
         </div>
       </div>
+<!-- ÚJ: TOVÁBBI ÉTTERMEK GOMB -->
+      <button id="btnOtherRestaurants" class="hero-btn" style="width: 100%; color: var(--teal); border-color: var(--teal); margin-top: 20px;">
+         🍴 További nem kedvezményes, közeli éttermek
+      </button>
+
     </div>
   </div>
 </div>
@@ -431,6 +459,7 @@
         <div class="details-text">
           <strong>Helyszín:</strong> Tudomány és Művészetek Háza, Kecskemét, Rákóczi út 2.<br>
           <strong>Megtekinthető:</strong> 2026. június 13 - június 21.<br>
+          <strong>Nyitvatartás:</strong> 13. szombat: 13-16 óra | 14. vasárnap – 18. csütörtök: 10-16 óra<br>
           <strong>Megnyitja:</strong> a Színház- és Filmművészeti Egyetem első éves színművész-bábszínész osztálya, valamint Varjas Zsófia, Kocsis Eszter, Palya Gábor és Hoffer Károly
         </div>
       </div>
@@ -1844,15 +1873,51 @@
   <h3>Közérdekű Információk</h3>
 
   <div class="info-grid">
-    <div class="info-item"><strong>Kiszely Ágnes igazgató</strong><a href="tel:+36309075265">+36 30 907 5265</a></div>
-    <div class="info-item"><strong>Kuthy Ágnes művészeti vezető</strong><a href="tel:+36308310713">+36 30 831 0713</a></div>
-    <div class="info-item"><strong>Bodor Éva fesztiválszervező</strong><a href="tel:+36204195584">+36 20 419 5584</a></div>
-    <div class="info-item"><strong>Váriné Dósa Eszter művészeti titkár</strong><a href="tel:+36309075318">+36 30 907 5318</a></div>
-    <div class="info-item"><strong>Borsosné Oláh Nóra (szerződések)</strong><a href="tel:+36707996647">+36 70 799 6647</a></div>
-    <div class="info-item"><strong>Harkai György kommunikáció</strong><a href="tel:+36304359149">+36 30 435 9149</a></div>
-    <div class="info-item"><strong>Műszaki Ügyelet (Bujdosó Zsolt)</strong><a href="tel:+36706200139">+36 70 620 0139</a></div>
-    <div class="info-item"><strong>Faműhely (Dudás Péter)</strong><a href="tel:+36305944476">+36 30 594 4476</a></div>
-    <div class="info-item"><strong>Varróműhely (Emőd Kriszta)</strong><a href="tel:+36209446533">+36 20 944 6533</a></div>
+    <div class="info-item">
+      <span class="info-name">Kiszely Ágnes</span>
+      <span class="info-title">igazgató</span>
+      <a href="tel:+36309075265" class="info-phone">+36 30 907 5265</a>
+    </div>
+    <div class="info-item">
+      <span class="info-name">Kuthy Ágnes</span>
+      <span class="info-title">művészeti vezető</span>
+      <a href="tel:+36308310713" class="info-phone">+36 30 831 0713</a>
+    </div>
+    <div class="info-item">
+      <span class="info-name">Bodor Éva</span>
+      <span class="info-title">fesztiválszervező</span>
+      <a href="tel:+36204195584" class="info-phone">+36 20 419 5584</a>
+    </div>
+    <div class="info-item">
+      <span class="info-name">Váriné Dósa Eszter</span>
+      <span class="info-title">művészeti titkár</span>
+      <a href="tel:+36309075318" class="info-phone">+36 30 907 5318</a>
+    </div>
+    <div class="info-item">
+      <span class="info-name">Borsosné Oláh Nóra</span>
+      <span class="info-title">szerződések</span>
+      <a href="tel:+36707996647" class="info-phone">+36 70 799 6647</a>
+    </div>
+    <div class="info-item">
+      <span class="info-name">Harkai György</span>
+      <span class="info-title">kommunikáció</span>
+      <a href="tel:+36304359149" class="info-phone">+36 30 435 9149</a>
+    </div>
+    <div class="info-item">
+      <span class="info-title-bold">Műszaki Ügyelet</span>
+      <span class="info-name">Bujdosó Zsolt</span>
+      <a href="tel:+36706200139" class="info-phone">+36 70 620 0139</a>
+    </div>
+    <div class="info-item">
+      <span class="info-title-bold">Faműhely</span>
+      <span class="info-name">Dudás Péter</span>
+      <a href="tel:+36305944476" class="info-phone">+36 30 594 4476</a>
+    </div>
+    <div class="info-item">
+      <span class="info-title-bold">Varróműhely</span>
+      <span class="info-name">Emőd Kriszta</span>
+      <a href="tel:+36209446533" class="info-phone">+36 20 944 6533</a>
+    </div>
   </div>
 
   <button class="pdf-dl-btn" id="btnHelp" style="margin-top: 20px; display: block; width: 100%; text-align: center; background: var(--teal); border: none;">Kérdésed van? Segítünk! 💬</button>
