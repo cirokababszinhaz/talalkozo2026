@@ -473,41 +473,53 @@ footer a { color: var(--gold-light); text-decoration: none; }
   transform: translateX(-50%) translateY(-5px);
 }
 
-/* Jobb alsó lebegő műveletsáv */
-.bottom-right-actions {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  z-index: 1500;
+/* Sima kerek lebegő ugrógomb jobb alul */
+.jump-btn { 
+  position: fixed; 
+  bottom: 20px; 
+  right: 20px; 
+  background: var(--teal); 
+  color: #fff; 
+  width: 50px; 
+  height: 50px; 
+  border-radius: 50%; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
+  cursor: pointer; 
+  z-index: 900; 
+  opacity: 0; 
+  pointer-events: none; 
+  transition: .3s; 
+  border: none; 
+  font-size: 24px;
 }
-.fab-btn, .jump-btn {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--teal);
-  color: #fff;
+.jump-btn.show { 
+  opacity: 1; 
+  pointer-events: auto; 
+}
+
+/* Titkos gombok a lábléc jobb alsó sarkában */
+.footer-secret-actions {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  display: flex;
+  gap: 12px;
+}
+.footer-secret-btn {
+  background: none;
   border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  font-size: 18px;
+  opacity: 0.5; /* 50%-ban halványítva eleve */
   cursor: pointer;
-  transition: transform 0.2s, background 0.2s;
+  transition: opacity 0.2s, transform 0.2s;
+  padding: 5px;
 }
-.fab-btn:hover, .jump-btn:hover {
-  background: var(--gold-light);
-  color: #000;
-  transform: scale(1.1);
-}
-.jump-btn {
-  display: none; /* Alapból elrejtve, JS kapcsolja be */
-}
-.jump-btn.show {
-  display: flex;
+.footer-secret-btn:hover {
+  opacity: 1; /* Teljes fényerő rámutatáskor */
+  transform: scale(1.15);
 }
 
 /* Formázott közérdekű elérhetőségek */

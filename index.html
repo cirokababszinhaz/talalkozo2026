@@ -43,8 +43,6 @@
 
 <div id="toastMsg" class="toast-msg"></div>
 <div class="bottom-right-actions">
-  <button class="fab-btn" id="btnQuote" title="Napi motiváció">🎭</button>
-  <button class="fab-btn" id="btnShare" title="Oszd meg a programot!">🚀</button>
   <button class="jump-btn" id="jumpBtn">⏱</button>
 </div>
 
@@ -456,11 +454,14 @@
       </div>
       <div class="details-section">
         <div class="details-label">Infók</div>
-        <div class="details-text">
-          <strong>Helyszín:</strong> Tudomány és Művészetek Háza, Kecskemét, Rákóczi út 2.<br>
-          <strong>Megtekinthető:</strong> 2026. június 13 - június 21.<br>
-          <strong>Nyitvatartás:</strong> 13. szombat: 13-16 óra | 14. vasárnap – 18. csütörtök: 10-16 óra<br>
-          <strong>Megnyitja:</strong> a Színház- és Filmművészeti Egyetem első éves színművész-bábszínész osztálya, valamint Varjas Zsófia, Kocsis Eszter, Palya Gábor és Hoffer Károly
+        <div class="details-text" style="line-height: 1.8;">
+          <strong>Helyszín:</strong> Tudomány és Művészetek Háza, Kecskemét, Rákóczi út 2.<br><br>
+          <strong>Megtekinthető:</strong> 2026. június 13 - június 21.<br><br>
+          <strong>Nyitvatartás:</strong><br>
+          • június 13. szombat: 13:00 – 16:00<br>
+          • június 14. vasárnap – június 18. csütörtök: 10:00 – 16:00<br><br>
+          <strong>Megnyitók / Közreműködők:</strong><br>
+          A Színház- és Filmművészeti Egyetem első éves színművész-bábszínész osztálya, valamint Varjas Zsófia, Kocsis Eszter, Palya Gábor és Hoffer Károly.
         </div>
       </div>
     </div></div>
@@ -2054,8 +2055,13 @@
   <div class="podcast-promo" title="A Ciróka Bábszínház podcastja" style="margin-top:20px;">
     <a href="https://open.spotify.com/show/5i145Tg1u0hGvR8dPBR956" target="_blank" style="color:rgba(255,255,255,0.6); font-size:12px; font-weight:600;"><span style="font-size:16px; vertical-align:middle;">🎧</span> BábszínPod</a>
   </div>
-</footer>
 
+  <!-- ÚJ: HALVÁNYÍTOTT TITKOS AKCIÓGOMBOK A JOBB ALSÓ SAROKBAN -->
+  <div class="footer-secret-actions">
+    <button class="footer-secret-btn" id="btnQuote" title="Napi motiváció">🎭</button>
+    <button class="footer-secret-btn" id="btnShare" title="Oszd meg a programot!">🚀</button>
+  </div>
+</footer>
 <script type="module" src="app.js"></script>
 </body>
 </html>

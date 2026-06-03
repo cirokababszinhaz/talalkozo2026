@@ -1213,8 +1213,10 @@ function initApp() {
     }
 
     if (isIOS && !isStandalone) { 
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile && !isStandalone) {
         const btn = document.getElementById('installAppBtn');
-        if(btn) btn.style.display = 'inline-flex'; 
+        if(btn) btn.style.display = 'inline-flex';
     }
 
     const installBtn = document.getElementById('installAppBtn');
@@ -1227,6 +1229,8 @@ function initApp() {
                 deferredPrompt = null;
             } else if (isIOS) {
                 showToast("Apple iOS: Lent a böngészőben bökj a [Megosztás ⬆] ikonra, majd a [Főképernyőhöz adás ➕] gombra!");
+            } else {
+                showToast("Android: Bökj a böngésző jobb felső sarkában a 3 pontra, majd a [Telepítés] vagy [Főképernyőhöz adás] lehetőségre!");
             }
         });
     }
@@ -1466,6 +1470,12 @@ function initApp() {
             else jumpBtn.classList.remove('show');
         }
     });
+// PWA Automatikus Újratöltés új verzió észlelésekor
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            window.location.reload();
+        });
+    }
 }
 
 if (document.readyState === 'loading') {
