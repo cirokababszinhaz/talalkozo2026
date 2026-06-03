@@ -518,130 +518,6 @@ function restoreCheckinUI() {
     }
 }
 
-function openCheckin() { 
-    const modal = document.getElementById('checkinModal');
-    if(modal) modal.classList.add('visible'); 
-}
-
-function submitCheckin() {
-    const nameEl = document.getElementById('checkinNameInput');
-    const venueEl = document.getElementById('ciVenue');
-    if(!nameEl || !venueEl) return;
-
-    const nameInput = nameEl.value.trim();
-    if(nameInput.length < 2) { showToast('Légyszi adj meg egy nevet!'); return; }
-    
-    const venueId = venueEl.value;
-
-    const oldVenue = localStorage.getItem('myCheckinVenue');
-    const oldId = localStorage.getItem('myCheckinId');
-    if (oldVenue && oldId) { remove(ref(db, `checkins/${oldVenue}/${oldId}`)); }
-    
-    const submitBtn = document.getElementById('ciSubmitBtn');
-    if(submitBtn) submitBtn.innerText = "Töltés...";
-    
-    const newRef = push(ref(db, 'checkins/' + venueId));
-    
-    set(newRef, { name: nameInput, timeRaw: Date.now() })
-        .then(() => {
-            localStorage.setItem('myCheckinName', nameInput);
-            localStorage.setItem('myCheckinVenue', venueId);
-            localStorage.setItem('myCheckinId', newRef.key);
-            localStorage.setItem('myCheckinTime', Date.now().toString()); 
-
-            const modal = document.getElementById('checkinModal');
-            if(modal) modal.classList.remove('visible');
-            
-            if(submitBtn) submitBtn.innerText = "Fellövöm a térképre!";
-            
-            trackEvent('check_in_used', { venue: venueId }); 
-            showToast("Sikeres becsekkolás!");
-            updateCheckinUI(venueId);
-        })
-        .catch((err) => {
-            if(submitBtn) submitBtn.innerText = "Fellövöm a térképre!";
-            showToast("Hiba a mentésnél: " + err.message);
-        });
-}
-
-function revokeCheckin(e) {
-    if(e) e.stopPropagation();
-    const venueId = localStorage.getItem('myCheckinVenue');
-    const checkinId = localStorage.getItem('myCheckinId');
-    
-    if(venueId && checkinId) {
-        remove(ref(db, `checkins/${venueId}/${checkinId}`)).then(() => {
-            localStorage.removeItem('myCheckinName');
-            localStorage.removeItem('myCheckinVenue');
-            localStorage.removeItem('myCheckinId');
-            localStorage.removeItem('myCheckinTime');
-            
-            const nameEl = document.getElementById('checkinNameInput');
-            if(nameEl) nameEl.value = ""; 
-            
-            showToast("Becsekkolás visszavonva!");
-            updateCheckinUI(null);
-        }).catch((err) => showToast("Nem sikerült törölni: " + err.message));
-    }
-}
-
-onValue(checkinRef, (snap) => {
-    Object.keys(venueNames).forEach(id => {
-        const container = document.getElementById('checkins-' + id);
-        if(container) container.innerHTML = '';
-    });
-
-    const ciBadge = document.getElementById('ciBadge');
-
-    if(!snap.exists()) {
-        if(ciBadge) ciBadge.style.display = 'none';
-        return;
-    }
-    
-    const data = snap.val();
-    const now = Date.now();
-    const TWO_HOURS = 2 * 60 * 60 * 1000;
-    
-    let totalActiveCheckins = 0;
-
-    for (let venueId in data) {
-        const venueContainer = document.getElementById('checkins-' + venueId);
-        let hasCheckin = false;
-        const checkins = data[venueId];
-        
-        Object.keys(checkins).forEach(key => {
-            const checkinData = checkins[key];
-            if (now - checkinData.timeRaw < TWO_HOURS) {
-                totalActiveCheckins++;
-                
-                if(venueContainer) {
-                    if(!hasCheckin) {
-                        if (venueId === 'bufe') {
-                            venueContainer.innerHTML = '<div style="font-size:10px; color:var(--muted); margin-bottom:5px; font-weight:600; width: 100%;">Frissítő beszerzés kávézóban/étteremben:</div>';
-                        } else {
-                            venueContainer.innerHTML = '<div style="font-size:10px; color:var(--muted); margin-bottom:5px; font-weight:600; width: 100%;">Akik itt vannak:</div>';
-                        }
-                        hasCheckin = true;
-                    }
-                    const span = document.createElement('span');
-                    span.className = 'checkin-bubble';
-                    span.innerText = escapeHTML(checkinData.name);
-                    venueContainer.appendChild(span);
-                }
-            }
-        });
-    }
-
-    if(ciBadge) {
-        if (totalActiveCheckins > 0) {
-            ciBadge.innerText = totalActiveCheckins;
-            ciBadge.style.display = 'block';
-        } else {
-            ciBadge.style.display = 'none';
-        }
-    }
-});
-
 // ==========================================
 // 🚀 INICIALIZÁLÁS ÉS BÖNGÉSZŐ LOGIKA
 // ==========================================
@@ -773,7 +649,7 @@ function generateQuote() {
         "A bábok nem fáradnak el. De te igen, szóval igyál még egy kávét.",
         "Egy jó Találkozón nem csak előadásokat gyűjtesz, hanem történeteket is.",
         "A báb akkor él, amikor elfelejted, hogy te mozgatod.",
-        "Minden előadás یک kicsit más. Akkor is, ha ugyanaz.",
+        "Minden előadás egy kicsit más. Akkor is, ha ugyanaz.",
         "A kötetlen beszélgetés a Találkozó szíve. A színpad csak a dobbanás.",
         "A fröccs dramaturgiája egyszerű: első felvonás – beszélgetés, második – őszinteség.",
         "A kávézóban dőlnek el a szakmai viták. És néha a székek is.",
@@ -799,7 +675,7 @@ function generateQuote() {
         "A bemutató után mindenki fáradt. Kivéve azt, akinek még bontania kell.",
         "Az előadás hossza relatív. A pakolásé nem.",
         "A legjobb beszélgetés ott kezdődik, ahol elfogyott a hivatalos program.",
-        "Minden Találkozón van een ember, aki tudja, hol van a hosszabbító. Ő a valódi főszereplő.",
+        "Minden Találkozón van egy ember, aki tudja, hol van a hosszabbító. Ő a valódi főszereplő.",
         "A technikai rider egy kívánságlista. A valóság pedig performansz.",
         "A negyedik kávé már nem élénkít. Az egy segélykiáltás.",
         "A díszlet addig könnyű, amíg fel nem kell vinni a harmadikra lift nélkül.",
