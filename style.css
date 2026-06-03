@@ -6,6 +6,7 @@
   --gold: #c4913a; --gold-light: #d4a84a; 
   --text: #111111; --muted: #4a443d; 
   --border: rgba(26,92,88,0.15); --red: #c0392b; --orange: #e67e22; 
+  --green: #1a7a4a;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -49,12 +50,9 @@ body {
   overflow-x: hidden; 
   transition: transform 0.5s ease; 
   overscroll-behavior-y: contain;
-
-  /* ÚJ SOR: EGYEDI KURZOR! (A 16 16 azt jelenti, hogy a kép közepe lesz a kattintási pont) */
   cursor: url('./kurzor.png') 16 16, auto; 
 }
 
-/* Opcionális: Ha azt akarod, hogy a linkek felett is cserélődjön (pl. a mutatóujj ikon helyett) */
 a, button, .clickable, .card-header, .filter-btn, .hero-btn {
   cursor: url('./kurzor.png') 16 16, pointer !important;
 }
@@ -105,8 +103,8 @@ h1 em { color: var(--gold-light); font-style: italic; }
   display: none !important;
 }
 
-/* SZŰRŐ GOMBOK */
-.legend-bar { background: var(--teal-dark); display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.1); }
+/* SZŰRŐ GOMBOK - MÓDOSÍTVA: BORDER BOTTOM */
+.legend-bar { background: var(--teal-dark); display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
 .filter-btn { display: flex; align-items: center; gap: 6px; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--teal-dark); font-weight: 600; cursor: pointer; transition: .2s; user-select: none; background: #fff; padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border); }
 .filter-btn:hover { background: var(--surface); }
 .filter-btn.active { background: var(--gold-light); color: #000; border-color: var(--gold-light); font-weight: 700; }
@@ -124,7 +122,7 @@ h1 em { color: var(--gold-light); font-style: italic; }
   padding: 2px 5px; border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.3);
   animation: popIn 0.3s ease;
-  pointer-events: none; /* Hogy ne zavarjon be a kattintásba */
+  pointer-events: none;
 }
 
 /* TABS ÉS MOBIL SCROLL HINT */
@@ -295,6 +293,8 @@ h1 em { color: var(--gold-light); font-style: italic; }
 
 .checkin-subtitle { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
 .checkin-input { width: 100%; padding: 14px; text-align: center; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 16px; border: 2px solid var(--border); border-radius: 4px; outline: none; margin-bottom: 15px; }
+.checkin-subtitle { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+.checkin-input { width: 100%; padding: 14px; text-align: center; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 16px; border: 2px solid var(--border); border-radius: 4px; outline: none; margin-bottom: 15px; }
 .checkin-select { width: 100%; padding: 14px; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 14px; border: 2px solid var(--border); border-radius: 4px; outline: none; }
 
 .alert-card { padding: 16px; border: 2px solid rgba(192,57,43,0.3); background: rgba(192,57,43,0.05); border-radius: 4px; margin-bottom: 12px; }
@@ -358,10 +358,9 @@ footer a { color: var(--gold-light); text-decoration: none; }
    SZEM GRAFIKÁK ÉS ANIMÁCIÓK
    ========================================= */
 
-/* 1. HÁTTÉR VÍZJEL (Váltakozó, elszórt minta) */
+/* HÁTTÉR VÍZJEL */
 .bg-watermark {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  /* Két képet használunk egymáson elcsúsztatva */
   background-image: url('./szem-hatter.png'), url('./szem-nincs.png');
   background-position: 0 0, 100px 120px;
   background-size: 200px, 140px;
@@ -372,7 +371,8 @@ footer a { color: var(--gold-light); text-decoration: none; }
 @media (prefers-color-scheme: dark) {
   .bg-watermark { opacity: 0.03; filter: grayscale(1) invert(1); }
 }
-/* 2. NINCS TALÁLAT SZEM ANIMÁCIÓ */
+
+/* NINCS TALÁLAT SZEM ANIMÁCIÓ */
 .no-results-eye {
   max-width: 120px;
   margin: 0 auto 15px;
@@ -386,14 +386,14 @@ footer a { color: var(--gold-light); text-decoration: none; }
   75% { transform: translateX(15px) rotate(8deg) scale(1.05); }
 }
 
-/* PISLOGÓ/STATIKUS SZEMEK A FEJLÉCBEN */
+/* FEJLÉC SZEMEK */
 .header-eye { 
-  width: 28px; /* Állítsd be, mekkorák legyenek */
+  width: 28px; 
   margin-right: 6px; 
   vertical-align: middle; 
 }
 
-/* EGYEDI KURZOR CSAK ASZTALI GÉPEN */
+/* EGYEDI KURZOR */
 @media (pointer: fine) {
   body { cursor: url('./kurzor.png') 16 16, auto; }
   a, button, .clickable, .card-header, .filter-btn, .hero-btn { cursor: url('./kurzor.png') 16 16, pointer !important; }
@@ -418,7 +418,7 @@ footer a { color: var(--gold-light); text-decoration: none; }
   padding: 6px 12px;
   position: absolute;
   z-index: 999;
-  bottom: 125%; /* A kép felett jelenik meg */
+  bottom: 125%;
   left: 50%;
   transform: translateX(-50%);
   opacity: 0;
@@ -446,61 +446,4 @@ footer a { color: var(--gold-light); text-decoration: none; }
   visibility: visible;
   opacity: 1;
   transform: translateX(-50%) translateY(-5px);
-}
-
-/* --- Támogatói logók: Színesek alapból --- */
-.sponsor-logo {
-  max-width: 160px;
-  height: auto;
-  max-height: 70px;
-  object-fit: contain;
-  opacity: 1; 
-  filter: none !important; /* Eltávolítva a grayscale */
-  -webkit-filter: grayscale(0%);
-  transition: transform 0.4s;
-  cursor: pointer;
-  padding: 5px;
-}
-
-/* --- Közérdekű telefonszámok formázása --- */
-.info-item {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 22px;
-  font-size: 14px;
-}
-.info-item .name-label {
-  font-weight: 700;
-  font-size: 16px;
-  color: var(--text);
-  margin-bottom: 2px;
-  order: 1; /* Név kerül legfelülre */
-}
-.info-item strong {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--teal);
-  font-weight: 600;
-  margin-bottom: 4px;
-  order: 2; /* Titulus a név alá */
-}
-.info-item a {
-  color: var(--muted);
-  text-decoration: none;
-  font-weight: 700;
-  order: 3; /* Szám legalul */
-}
-
-/* Műszakiak, műhelyek: Vastagabb felirat */
-.info-item.tech-staff strong {
-  font-weight: 900;
-  color: var(--teal-dark);
-  font-size: 13px;
-}
-
-/* Update szekció kártya stílusa */
-.type-update-card {
-  border-left: 5px solid var(--red) !important;
-  background: rgba(192, 57, 43, 0.05);
 }

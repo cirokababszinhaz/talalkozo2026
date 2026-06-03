@@ -32,6 +32,8 @@ const storage = getStorage(app);
 // 🛠️ GLOBÁLIS ÁLLAPOTOK & LEKÉPEZÉSEK
 // ==========================================
 let globalAlerts = [];
+let globalAdHocEvents = []; // Ad hoc rendkívüli programok
+let globalUpdates = [];     // Egyesített Update lista
 let activeTabBeforeSearch = 0;
 let currentTypeFilter = null;
 let isFavoritesMode = false;
@@ -39,9 +41,9 @@ let isGastroMode = false;
 let isPhotoWide = false;
 let currentGbTotal = 0;
 let resizedImageDataUrl = null;
-let helpResizedImageDataUrl = null; // ÚJ VÁLTOZÓ SEGÍTSÉGKÉRÉSHEZ
+let helpResizedImageDataUrl = null;
 
-// CSOPORTOS ELŐADÁSOK LEKÉPEZÉSE ÉRTESÍTÉSEKHEZ (Kiemelve globális szintre, így minden fv. eléri!)
+// CSOPORTOS ELŐADÁSOK LEKÉPEZÉSE ÉRTESÍTÉSEKHEZ
 const SHOW_GROUPS = {
     'show-tragedia-hetfo-d': ['show-tragedia-hetfo-d', 'show-tragedia-hetfo-e'],
     'show-tragedia-hetfo-e': ['show-tragedia-hetfo-d', 'show-tragedia-hetfo-e'],
@@ -85,7 +87,7 @@ function debounce(func, wait) {
 }
 
 // ==========================================
-// 🔔 ÉRTESÍTÉSEK LOGIKÁJA
+// 🔔 ÉRTESÍTÉSEK ÉS AD HOC LOGIKA
 // ==========================================
 onValue(ref(db, "alertsList"), (snap) => {
     document.querySelectorAll('.event-card').forEach(card => card.classList.remove('has-alert'));
@@ -96,6 +98,7 @@ onValue(ref(db, "alertsList"), (snap) => {
         if(topBar) topBar.style.display = "none";
         if(tabsWrap) tabsWrap.style.top = "0px";
         globalAlerts = [];
+        rebuildUpdatesFeed();
         return;
     }
     const data = snap.val();
@@ -109,7 +112,6 @@ onValue(ref(db, "alertsList"), (snap) => {
 
     globalAlerts.forEach(alert => {
         if (alert.targetId && alert.targetId !== "all") {
-            // JAVÍTÁS: Csoportos előadások esetében mindegyik érintett kártyát megjelöljük
             const targets = SHOW_GROUPS[alert.targetId] || [alert.targetId];
             targets.forEach(tId => {
                 const targetCard = document.getElementById(tId);
@@ -124,7 +126,52 @@ onValue(ref(db, "alertsList"), (snap) => {
         showPopup(newestAlert);
         sessionStorage.setItem("lastSeenAlertTime", newestAlert.timeRaw.toString());
     }
+    rebuildUpdatesFeed();
 });
+
+onValue(ref(db, "adHocEvents"), (snap) => {
+    if (!snap.exists()) {
+        globalAdHocEvents = [];
+    } else {
+        const data = snap.val();
+        globalAdHocEvents = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+    }
+    rebuildUpdatesFeed();
+});
+
+// EGYESÍTETT UPDATE IDŐVONAL REKONSTRUKCIÓ
+function rebuildUpdatesFeed() {
+    const formattedAlerts = globalAlerts.map(a => ({
+        ...a,
+        isAlert: true,
+        sortTime: a.timeRaw
+    }));
+    const formattedAdHoc = globalAdHocEvents.map(e => ({
+        ...e,
+        isAdHoc: true,
+        sortTime: e.timeRaw
+    }));
+    
+    globalUpdates = [...formattedAlerts, ...formattedAdHoc].sort((a,b) => b.sortTime - a.sortTime);
+    
+    const currentUpdatesTotal = globalUpdates.length;
+    const seenUpdates = parseInt(localStorage.getItem('lastSeenUpdateCount') || '0');
+    const unreadUpdates = currentUpdatesTotal - seenUpdates;
+    
+    const badge = document.getElementById('updateBadge');
+    if (badge) {
+        if (unreadUpdates > 0 && currentTypeFilter !== 'update') {
+            badge.innerText = unreadUpdates;
+            badge.style.display = 'block';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+    
+    if (currentTypeFilter === 'update') {
+        doSearch();
+    }
+}
 
 function getShowTitleHTML(targetId) {
     if(!targetId || targetId === "all") return "";
@@ -168,7 +215,6 @@ function openAlertsModal(targetId = null) {
 
     let filteredAlerts = globalAlerts;
     if (targetId) {
-        // JAVÍTÁS: Ha csoportos előadásról van szó, kiszűrjük az összes hozzá tartozó értesítést (Globális leképezőből)
         const group = SHOW_GROUPS[targetId] || [targetId];
         filteredAlerts = globalAlerts.filter(a => group.includes(a.targetId));
         modalTitle.textContent = "Értesítés a programhoz";
@@ -242,7 +288,6 @@ onValue(gbRef, (snap) => {
     renderGuestbook(data, "gbGridModal");
     renderGuestbook(data, "gbGridPostFest"); 
     
-    // ÚJ RÉSZ: Olvasatlan üzenetek számolása
     if (data) {
         const gbArr = Object.keys(data);
         currentGbTotal = gbArr.length;
@@ -265,7 +310,6 @@ function openGuestbook() {
     const guestbookModal = document.getElementById('guestbookModal');
     if(guestbookModal) guestbookModal.classList.add('visible');
     
-    // ÚJ RÉSZ: Elmentjük, hogy már mindet látta, és eltüntetjük a pöttyöt
     localStorage.setItem('lastSeenGbCount', currentGbTotal.toString());
     const badge = document.getElementById('gbBadge');
     if(badge) badge.style.display = 'none';
@@ -537,7 +581,6 @@ function revokeCheckin(e) {
 }
 
 onValue(checkinRef, (snap) => {
-    // Alaphelyzetbe állítjuk az összes helyszín listáját a térkép alatt
     Object.keys(venueNames).forEach(id => {
         const container = document.getElementById('checkins-' + id);
         if(container) container.innerHTML = '';
@@ -545,7 +588,6 @@ onValue(checkinRef, (snap) => {
 
     const ciBadge = document.getElementById('ciBadge');
 
-    // Ha nincs senki bejelentkezve, elrejtjük a számlálót
     if(!snap.exists()) {
         if(ciBadge) ciBadge.style.display = 'none';
         return;
@@ -555,7 +597,7 @@ onValue(checkinRef, (snap) => {
     const now = Date.now();
     const TWO_HOURS = 2 * 60 * 60 * 1000;
     
-    let totalActiveCheckins = 0; // Ez fogja számolni az összes aktív embert
+    let totalActiveCheckins = 0;
 
     for (let venueId in data) {
         const venueContainer = document.getElementById('checkins-' + venueId);
@@ -564,9 +606,8 @@ onValue(checkinRef, (snap) => {
         
         Object.keys(checkins).forEach(key => {
             const checkinData = checkins[key];
-            // Csak a 2 órán belüli bejelentkezéseket vesszük figyelembe
             if (now - checkinData.timeRaw < TWO_HOURS) {
-                totalActiveCheckins++; // Növeljük a globális számlálót
+                totalActiveCheckins++;
                 
                 if(venueContainer) {
                     if(!hasCheckin) {
@@ -586,7 +627,6 @@ onValue(checkinRef, (snap) => {
         });
     }
 
-    // Frissítjük a gomb melletti kis piros számlálót
     if(ciBadge) {
         if (totalActiveCheckins > 0) {
             ciBadge.innerText = totalActiveCheckins;
@@ -694,6 +734,9 @@ function toggleGastroCard() {
         const secGastro = document.getElementById('secretGastroCard');
         if(secGastro) secGastro.style.display = 'block';
         
+        const updPanel = document.getElementById('updateFeedPanel');
+        if(updPanel) updPanel.style.display = 'none';
+        
         currentTypeFilter = null;
         document.querySelectorAll('.filter-btn').forEach(el => el.classList.remove('active'));
         
@@ -705,13 +748,11 @@ function toggleGastroCard() {
         doSearch();
     }
     
-    // Gördítünk a keresősávhoz
     const wrap = document.getElementById('searchWrap');
     if(wrap) wrap.scrollIntoView({ behavior: 'smooth' });
 }
 
 function generateQuote() {
-// ÚJ GA4 MÉRÉS:
     trackEvent('quote_viewed');
     const quotes = [
         "A színház ott kezdődik, ahol a mindennapok véget érnek.",
@@ -724,7 +765,7 @@ function generateQuote() {
         "A báb súlya nem kilóban mérhető. Hanem a vastapsokban.",
         "Ha minden működik, az gyanús. Valami biztos kimaradt.",
         "A közönség nem lát mindent. Szerencsére!",
-        "A bábok nem fáradnak el. De te igen, szóval igyál még een kávét.",
+        "A bábok nem fáradnak el. De te igen, szóval igyál még egy kávét.",
         "Egy jó Találkozón nem csak előadásokat gyűjtesz, hanem történeteket is.",
         "A báb akkor él, amikor elfelejted, hogy te mozgatod.",
         "Minden előadás egy kicsit más. Akkor is, ha ugyanaz.",
@@ -755,7 +796,7 @@ function generateQuote() {
         "Ha mindenki érti, akkor valamit biztosan túlegyszerűsítettünk.",
         "A produkció kész van. Csak még dolgozunk rajta.",
         "A bemutató után mindenki fáradt. Kivéve azt, akinek még bontania kell.",
-        "A Találkozó harmadik tagján már mindenki tegez mindenkit. Néha saját magát is.",
+        "A Találkozó harmadik napján már mindenki tegez mindenkit. Néha saját magát is.",
         "Az előadás hossza relatív. A pakolásé nem.",
         "A legjobb beszélgetés ott kezdődik, ahol elfogyott a hivatalos program.",
         "Minden Találkozón van egy ember, aki tudja, hol van a hosszabbító. Ő a valódi főszereplő.",
@@ -815,6 +856,13 @@ function toggleTypeFilter(type) {
         if(targetBtn) targetBtn.classList.add('active'); 
     }
 
+    // ÚJ: Ha az update sávot választják, nullázzuk a számlálót
+    if (currentTypeFilter === 'update') {
+        localStorage.setItem('lastSeenUpdateCount', globalUpdates.length.toString());
+        const updateBadge = document.getElementById('updateBadge');
+        if (updateBadge) updateBadge.style.display = 'none';
+    }
+
     doSearch();
     const wrap = document.getElementById('searchWrap');
     if(wrap) wrap.scrollIntoView({ behavior: 'smooth' });
@@ -864,6 +912,9 @@ function showDay(index, btn) {
         if(sGast) sGast.style.display = 'none';
     }
     
+    const updPanel = document.getElementById('updateFeedPanel');
+    if(updPanel) updPanel.style.display = 'none';
+    
     doSearch();
     setTimeout(scrollToCurrent, 300); 
 }
@@ -878,6 +929,7 @@ function doSearch() {
     const dayPanels = document.querySelectorAll('.day-panel');
     const tabsWrap = document.getElementById('tabsWrap');
     const scrollHint = document.getElementById('scrollHint');
+    const updateFeedPanel = document.getElementById('updateFeedPanel');
 
     if(query === "laszlo") {
         const vitez = document.getElementById('vitezLaszlo');
@@ -903,7 +955,6 @@ function doSearch() {
         return;
     }
 
-    // IDŐJÁRÁS EASTER EGG
     if(['eso', 'vihar', 'idojaras'].includes(query)) {
         showToast("A bábok nem áznak el, de esernyőt azért hozz magaddal! ☔");
         searchInput.value = "";
@@ -915,6 +966,7 @@ function doSearch() {
         if(tabsWrap) tabsWrap.style.display = 'none';
         if(scrollHint) scrollHint.style.display = 'none';
         document.querySelectorAll('.day-panel').forEach(p => p.style.display = 'none');
+        if(updateFeedPanel) updateFeedPanel.style.display = 'none';
         
         const nRm = document.getElementById('noResultsMsg');
         if(nRm) nRm.style.display = 'none';
@@ -932,11 +984,11 @@ function doSearch() {
         if(sBc) sBc.style.display = 'none';
     }
 
-    // GASZTRO EASTER EGG
     if(['ehes','leves','teszta','szendvics','etterem','kaja', 'pizza', 'hamburger'].includes(query)) {
         if(tabsWrap) tabsWrap.style.display = 'none';
         if(scrollHint) scrollHint.style.display = 'none';
         document.querySelectorAll('.day-panel').forEach(p => p.style.display = 'none');
+        if(updateFeedPanel) updateFeedPanel.style.display = 'none';
         
         const nRm = document.getElementById('noResultsMsg');
         if(nRm) nRm.style.display = 'none';
@@ -956,12 +1008,91 @@ function doSearch() {
         }
     }
 
-    if (!isGastroMode) { 
-        const sGc = document.getElementById('secretGastroCard');
-        if(sGc) sGc.style.display = 'none'; 
-    } 
-    else { return; }
+    if (isGastroMode) return;
 
+    // ==========================================
+    // ⚡ SZŰRÉS: UPDATE NÉZET (RENDKÍVÜLI IDŐVONAL)
+    // ==========================================
+    if (currentTypeFilter === 'update') {
+        if(tabsWrap) tabsWrap.style.display = 'none';
+        if(scrollHint) scrollHint.style.display = 'none';
+        dayPanels.forEach(p => p.style.display = 'none');
+        
+        const noRes = document.getElementById('noResultsMsg');
+        if(noRes) noRes.style.display = 'none';
+        
+        const secBufe = document.getElementById('secretBufeCard');
+        if(secBufe) secBufe.style.display = 'none';
+        
+        const secGastro = document.getElementById('secretGastroCard');
+        if(secGastro) secGastro.style.display = 'none';
+        
+        if (updateFeedPanel) {
+            updateFeedPanel.style.display = 'block';
+            
+            if (globalUpdates.length === 0) {
+                updateFeedPanel.innerHTML = "<p style='font-size:12px; color:var(--muted); text-align:center; padding:30px; width:100%;'>Még nincs bejegyzés ezen a csatornán.</p>";
+            } else {
+                let html = "";
+                globalUpdates.forEach(item => {
+                    if (item.isAlert) {
+                        const showInfo = getShowTitleHTML(item.targetId);
+                        let imgHtml = item.photoUrl ? `<img src="${item.photoUrl}" style="width:100%; border-radius:4px; margin-top:10px; margin-bottom:10px;">` : '';
+                        html += `
+                          <div class="event-card type-show" style="border-left-color: var(--red); background: rgba(192,57,43,0.05); margin-bottom:15px; width: 100%;">
+                            <div class="card-header" style="cursor: default; padding-bottom:5px;">
+                              <div class="event-title" style="color: var(--red); font-family: 'Montserrat', sans-serif; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; margin-bottom:0;">🔔 Rendszerértesítés</div>
+                              <div class="alert-time" style="font-size: 10px; color: var(--muted); margin-bottom: 6px; font-weight: 700;">${item.timestamp}</div>
+                            </div>
+                            <div class="card-details-inner" style="padding-top: 5px;">
+                              ${showInfo}
+                              ${imgHtml}
+                              <div class="details-text" style="font-size: 14px; font-weight: 600;">${escapeHTML(item.message)}</div>
+                            </div>
+                          </div>
+                        `;
+                    } else if (item.isAdHoc) {
+                        let imgHtml = item.photoUrl ? `<img src="${item.photoUrl}" style="width:100%; border-radius:4px; margin-top:10px; margin-bottom:10px;">` : '';
+                        html += `
+                          <div class="event-card type-show open" style="border-left-color: var(--gold-light); margin-bottom:15px; width:100%;">
+                            <div class="card-header" style="cursor: default; padding-bottom:5px;">
+                              <div class="card-header-row">
+                                <div>
+                                  <div class="event-title" style="color: var(--teal-dark);">${escapeHTML(item.title)}</div>
+                                  <div class="event-company">${escapeHTML(item.company)}</div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="card-details-inner" style="padding-top:5px;">
+                              <div class="details-section" style="margin-bottom:10px;">
+                                <div class="details-label">Rendkívüli program infók</div>
+                                <div class="details-text" style="font-size:13px;">
+                                  <strong>Időpont:</strong> ${escapeHTML(item.timeStr)}<br>
+                                  <strong>Helyszín:</strong> ${escapeHTML(item.venue)}
+                                </div>
+                              </div>
+                              <div class="details-section" style="margin-bottom:10px;">
+                                <div class="details-label">Leírás</div>
+                                <div class="details-text" style="font-size:13px;">${escapeHTML(item.description)}</div>
+                              </div>
+                              ${imgHtml}
+                            </div>
+                            <div class="event-footer" style="padding-top:0;">
+                              <div class="event-meta"><span class="badge badge-venue" style="background: rgba(212, 168, 74, 0.15); color: var(--gold); border-color: rgba(212, 168, 74, 0.4);">${escapeHTML(item.venue)}</span></div>
+                            </div>
+                          </div>
+                        `;
+                    }
+                });
+                updateFeedPanel.innerHTML = html;
+            }
+        }
+        return;
+    } else {
+        if (updateFeedPanel) updateFeedPanel.style.display = 'none';
+    }
+
+    // NORMÁL ALAPHELYZET (NINCS UPDATE)
     if (query === "" && !isFavoritesMode && !currentTypeFilter) {
         if(tabsWrap) tabsWrap.style.display = 'flex';
         if (window.innerWidth <= 650 && scrollHint) scrollHint.style.display = 'block';
@@ -1022,6 +1153,12 @@ function doSearch() {
 
             if(isMatchSearch && isMatchFav && isMatchType) {
                 card.style.display = 'block';
+                
+                // KIÁLLÍTÁS SZŰRŐ - AUTOMATIKUS KINYITÁS
+                if(currentTypeFilter === 'type-social' && card.id === 'show-kiallitas') {
+                    card.classList.add('open');
+                }
+
                 let prev = card.previousElementSibling;
                 while(prev && !prev.classList.contains('slot-time')) prev = prev.previousElementSibling;
                 if(prev && prev.classList.contains('slot-time')) prev.style.display = 'block';
@@ -1064,13 +1201,10 @@ window.addEventListener('beforeinstallprompt', (e) => {
     }
 });
 
-
 // 🛠 DOM BETÖLTÉSE UTÁNI FŐ FÜGGVÉNY (Eseménykezelők)
 function initApp() {
-    // Service Worker
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW hiba', err));
 
-    // Telepítés gomb iPhone fallback
     if (isIOS && !isStandalone) { 
         const btn = document.getElementById('installAppBtn');
         if(btn) btn.style.display = 'inline-flex'; 
@@ -1120,7 +1254,6 @@ function initApp() {
     const quoteCloseBtn = document.getElementById('quoteCloseBtn');
     if(quoteCloseBtn) quoteCloseBtn.addEventListener('click', () => { document.getElementById('quoteModal').classList.remove('visible'); });
     
-    // Gyorslinkek
     const favFilterBtn = document.getElementById('favFilterBtn');
     if(favFilterBtn) favFilterBtn.addEventListener('click', toggleFavoritesView);
     
@@ -1136,7 +1269,6 @@ function initApp() {
     const btnCheckin = document.getElementById('btnCheckin');
     if(btnCheckin) btnCheckin.addEventListener('click', openCheckin);
 
-// app.js - tegye az initApp() függvényen belülre a többi gombkezelő mellé:
     const btnHelp = document.getElementById('btnHelp');
     if(btnHelp) btnHelp.addEventListener('click', () => { document.getElementById('helpModal').classList.add('visible'); });
 
@@ -1149,7 +1281,6 @@ function initApp() {
     const helpPhotoInput = document.getElementById('helpPhotoInput');
     if(helpPhotoInput) helpPhotoInput.addEventListener('change', handleHelpPhotoSelect);
 
-// Megosztás Gomb (Web Share API)
     const btnShare = document.getElementById('btnShare');
     if(btnShare) {
         btnShare.addEventListener('click', async () => {
@@ -1171,69 +1302,54 @@ function initApp() {
         });
     }
 
-    // Szűrők
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.addEventListener('click', () => toggleTypeFilter(btn.getAttribute('data-filter')));
     });
 
-    // Fülek (Tabs)
     document.querySelectorAll('.tab-btn').forEach((btn, index) => {
         btn.addEventListener('click', () => showDay(index, btn));
     });
 
-   // Kártya lenyitás (Javított, könnyen kattintható verzió)
     document.querySelectorAll('.card-header').forEach(header => {
         header.addEventListener('click', function(e) {
             if(!e.target.closest('.star-btn') && !e.target.closest('.mini-pulse-alert')) { 
-                
-                // ÚJ GA4 MÉRÉS BEILLESZTÉSE:
                 const card = this.closest('.event-card');
-                if (card && !card.classList.contains('open')) { // Csak a nyitást mérjük, a becsukást nem
+                if (card && !card.classList.contains('open')) { 
                     trackEvent('show_expanded', { show_id: card.id });
                 }
-
                 toggleCard(this); 
             }
         });
     });
 
-  // Delegált eseménykezelők 
     const mainContent = document.getElementById('mainContent');
     if(mainContent) {
         mainContent.addEventListener('click', (e) => {
-            
-const routeBtn = e.target.closest('.route-btn');
+            const routeBtn = e.target.closest('.route-btn');
             if (routeBtn) {
-                // Kinyerjük a gomb feletti helyszín nevet
                 const venueTitleEl = routeBtn.closest('.gastro-venue-item, .map-venue-flex')?.querySelector('.venue-item-title');
                 const venueName = venueTitleEl ? venueTitleEl.innerText.trim() : "Ismeretlen";
-                
                 trackEvent('navigation_requested', { venue_name: venueName });
             }
 
-            // Facebook gombok megnyitása
             const fbBtn = e.target.closest('.fb-event-btn');
-if (fbBtn) {
-    const url = fbBtn.getAttribute('href');
-    // Ha nincs valódi link, letiltjuk a kattintást és szólunk
-    if (!url || url === '#' || url === '') {
-        e.preventDefault();
-        e.stopPropagation();
-        showToast("Ehhez a programhoz jelenleg nincs Facebook esemény!");
-        return; 
-    }
+            if (fbBtn) {
+                const url = fbBtn.getAttribute('href');
+                if (!url || url === '#' || url === '') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showToast("Ehhez a programhoz jelenleg nincs Facebook esemény!");
+                    return; 
+                }
 
-    // JAVÍTÁS MOBILRA ÉS PWA-RA:
-    // Ha standalone (telepített) módban fut az app, kényszerítjük a külső böngésző/app megnyitását
-    const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    if (isStandaloneMode || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-        e.preventDefault();
-        e.stopPropagation();
-        // window.open meghívása kényszeríti az OS-t, hogy külső ablakban/appban nyissa meg
-        window.open(url, '_system'); 
-    }
-    return; 
-}
+                const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+                if (isStandaloneMode || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.open(url, '_system'); 
+                }
+                return; 
+            }
 
             if(e.target.matches('.badge-venue')) {
                 filterVenue(e.target, e);
@@ -1259,7 +1375,6 @@ if (fbBtn) {
         });
     }
 
-    // Delegált esemény a módosítás/visszavonás/térképhez ugrás gombokra
     const myCheckinStatus = document.getElementById('myCheckinStatus');
     if(myCheckinStatus) {
         myCheckinStatus.addEventListener('click', (e) => {
@@ -1269,16 +1384,12 @@ if (fbBtn) {
         });
     }
 
-    // Kacsintós PDF letöltés (Javítva PC-re)
     const pdfBtn = document.querySelector('.pdf-dl-btn');
     const pdfOverlay = document.getElementById('pdfOverlay');
     if(pdfBtn && pdfOverlay) {
         pdfBtn.addEventListener('click', function(e) {
             e.preventDefault(); 
-            
-            // ÚJ GA4 MÉRÉS BEILLESZTÉSE:
             trackEvent('pdf_downloaded');
-
             const targetUrl = this.href;
             pdfOverlay.classList.add('show');
             setTimeout(() => {
@@ -1288,7 +1399,6 @@ if (fbBtn) {
         });
     }
 
-    // Touch animációk logókhoz
     document.querySelectorAll('.gastro-logo, .sponsor-logo').forEach(logo => {
         logo.addEventListener('touchstart', function() {
             this.classList.add('active-touch');
@@ -1296,7 +1406,6 @@ if (fbBtn) {
         });
     });
 
-    // Csillagok állapotának visszaállítása
     document.querySelectorAll('.event-card').forEach(card => {
         if(card.id && localStorage.getItem('fav_' + card.id)) {
             const star = card.querySelector('.star-btn');
@@ -1304,7 +1413,6 @@ if (fbBtn) {
         }
     });
 
-    // Checkin URL feldolgozása
     const urlParams = new URLSearchParams(window.location.search);
     const checkinVenueId = urlParams.get('checkin');
     if(checkinVenueId && venueNames[checkinVenueId]) {
@@ -1321,7 +1429,6 @@ if (fbBtn) {
         }, 1000);
     }
 
-    // Offline / Online állapot figyelése
     function updateOnlineStatus() {
         if (!navigator.onLine) { document.body.classList.add('is-offline'); } 
         else { document.body.classList.remove('is-offline'); }
@@ -1330,13 +1437,11 @@ if (fbBtn) {
     window.addEventListener('offline', updateOnlineStatus);
     updateOnlineStatus();
 
-    // Alap inicializálás
     restoreCheckinUI();
     initPostFestivalMode();
     checkLiveEvents();
     setInterval(checkLiveEvents, 60000);
     
-    // Görgertés figyelése a gombhoz
     window.addEventListener('scroll', () => {
         const jumpBtn = document.getElementById('jumpBtn');
         if(jumpBtn) {
@@ -1345,14 +1450,12 @@ if (fbBtn) {
         }
     });
 
-    // PWA Automatikus Újratöltés
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.addEventListener('controllerchange', () => {
             window.location.reload();
         });
     }
 
-    // Analytics observer
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -1363,10 +1466,8 @@ if (fbBtn) {
     });
     const sponsorBox = document.getElementById('sponsorsBox');
     if (sponsorBox) observer.observe(sponsorBox);
-
 }
 
-// BIZTOSÍTJUK A BETÖLTÉST
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initApp);
 } else {
@@ -1405,7 +1506,6 @@ async function submitHelpRequest() {
     let photoUrl = "";
 
     try {
-        // HA VAN KÉP, FELTÖLTJÜK A STORAGE-BA
         if (helpResizedImageDataUrl) {
             try {
                 const photoRef = sRef(storage, 'questions/' + Date.now() + '.jpg');
@@ -1424,11 +1524,10 @@ async function submitHelpRequest() {
             text: text,
             timeRaw: Date.now(),
             dateStr: dateStr,
-            photoUrl: photoUrl, // Mentjük a kép linkjét is!
+            photoUrl: photoUrl, 
             resolved: false
         });
 
-        // Mezők ürítése és visszaállítása
         nameEl.value = "";
         emailEl.value = "";
         textEl.value = "";
@@ -1497,101 +1596,4 @@ function handleHelpPhotoSelect(event) {
             }
         }
     }
-}
-
-let globalBlogPosts = [];
-// Blog (Ad-hoc) posztok figyelése
-onValue(ref(db, "blogPosts"), (snap) => {
-    globalBlogPosts = snap.exists() ? Object.values(snap.val()) : [];
-    refreshUpdateBadge();
-});
-
-function refreshUpdateBadge() {
-    const total = globalAlerts.length + globalBlogPosts.length;
-    let seen = parseInt(localStorage.getItem('lastSeenUpdateCount') || '0');
-    let unread = total - seen;
-    const badge = document.getElementById('updateBadge');
-    if(badge) {
-        badge.innerText = unread;
-        badge.style.display = unread > 0 ? 'block' : 'none';
-    }
-}
-
-// A JAVÍTOTT doSearch függvény:
-function doSearch() {
-    const searchInput = document.getElementById('searchInput');
-    const query = searchInput.value.toLowerCase().trim();
-    const updateContainer = document.getElementById('updateFeedContainer');
-    const dayPanels = document.querySelectorAll('.day-panel');
-    const tabsWrap = document.getElementById('tabsWrap');
-
-    // Alaphelyzetbe állítás
-    updateContainer.style.display = 'none';
-    dayPanels.forEach(p => p.style.display = 'none');
-    tabsWrap.style.display = 'flex';
-
-    // 1. UPDATE MÓD
-    if (currentTypeFilter === 'type-update') {
-        tabsWrap.style.display = 'none';
-        updateContainer.style.display = 'block';
-        renderUpdateFeed();
-        // Számláló nullázása
-        localStorage.setItem('lastSeenUpdateCount', (globalAlerts.length + globalBlogPosts.length).toString());
-        document.getElementById('updateBadge').style.display = 'none';
-        return;
-    }
-
-    // 2. KIÁLLÍTÁS MÓD
-    if (currentTypeFilter === 'kiallitas') {
-        tabsWrap.style.display = 'none';
-        const card = document.getElementById('show-kiallitas');
-        if(card) {
-            card.closest('.day-panel').style.display = 'block';
-            card.style.display = 'block';
-            card.classList.add('open');
-            card.scrollIntoView({ behavior: 'smooth' });
-        }
-        return;
-    }
-
-    // 3. NORMÁL KERESÉS (az eredeti logikád visszatöltve)
-    // ... itt a kódod többi része, ami a napokat és kártyákat szűri ...
-}
-
-function renderUpdateFeed() {
-    const container = document.getElementById('updateFeedContainer');
-    container.innerHTML = '<h3 class="search-day-title" style="display:block;">Friss hírek és változások</h3>';
-    
-    // Értesítések (Piros fejléccel)
-    globalAlerts.forEach(a => {
-        container.innerHTML += `
-            <div class="event-card type-update open type-update-card">
-                <div class="card-header"><div class="event-title">🔔 Értesítés: ${a.timestamp}</div></div>
-                <div class="card-details-inner" style="padding-top:0;"><div class="details-text"><strong>${escapeHTML(a.message)}</strong></div></div>
-            </div>`;
-    });
-
-    // Blog posztok (🆕 jellel)
-    globalBlogPosts.sort((a,b) => b.timeRaw - a.timeRaw).forEach(p => {
-        container.innerHTML += `
-            <div class="event-card type-show open" style="border-left-color: var(--gold);">
-                <div class="card-header">
-                    <div class="event-title">🆕 ${escapeHTML(p.title)}</div>
-                    <div class="event-company">${escapeHTML(p.location)} | ${p.dateStr}</div>
-                </div>
-                <div class="card-details-inner" style="padding-top:0;"><div class="details-text">${escapeHTML(p.desc)}</div></div>
-            </div>`;
-    });
-}
-
-// PDF megnyitás kacsintással
-const otherRestBtn = document.getElementById('btnOtherRestaurants');
-if(otherRestBtn) {
-    otherRestBtn.addEventListener('click', () => {
-        document.getElementById('pdfOverlay').classList.add('show');
-        setTimeout(() => {
-            document.getElementById('pdfOverlay').classList.remove('show');
-            window.location.href = "https://drive.google.com/your-pdf-link"; // IDE TEDD A LINKET
-        }, 1800);
-    });
 }
