@@ -547,10 +547,10 @@ footer a { color: var(--gold-light); text-decoration: none; }
 }
 .info-title-bold {
   font-size: 13px;
-  color: var(--teal);
+  color: var(--red); /* Új pirosas kiemelő szín */
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  font-weight: 800; /* Kifejezetten vastagabb */
+  font-weight: 800;
   margin-bottom: 2px;
 }
 .info-phone {
@@ -558,4 +558,13 @@ footer a { color: var(--gold-light); text-decoration: none; }
   text-decoration: none;
   font-size: 13px;
   font-weight: 600;
+}
+
+#btnOtherRestaurants {
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+#btnOtherRestaurants:hover {
+  background-color: var(--teal-dark) !important;
+  color: #ffffff !important;
+  border-color: var(--teal-dark) !important;
 }

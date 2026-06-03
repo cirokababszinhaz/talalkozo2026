@@ -1060,11 +1060,11 @@ function doSearch() {
                     } else if (item.isAdHoc) {
                         let imgHtml = item.photoUrl ? `<img src="${item.photoUrl}" style="width:100%; border-radius:4px; margin-top:10px; margin-bottom:10px;">` : '';
                         html += `
-                          <div class="event-card type-show open" style="border-left-color: var(--gold-light); margin-bottom:15px; width:100%;">
+                          <div class="event-card type-show open" style="border-left-color: var(--gold-light); background: rgba(196,145,58,0.06); margin-bottom:15px; width:100%;">
                             <div class="card-header" style="cursor: default; padding-bottom:5px;">
                               <div class="card-header-row">
                                 <div>
-                                  <div class="event-title" style="color: var(--teal-dark);">${escapeHTML(item.title)}</div>
+                                  <div class="event-title" style="color: var(--gold);">${escapeHTML(item.title)}</div>
                                   <div class="event-company">${escapeHTML(item.company)}</div>
                                 </div>
                               </div>

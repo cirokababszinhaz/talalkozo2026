@@ -375,7 +375,10 @@
       const data = snap.val();
       const alertsArray = Object.keys(data).map(key => ({ id: key, ...data[key] })).sort((a,b) => b.timeRaw - a.timeRaw);
       alertsArray.forEach(alert => {
-        let targetName = alert.targetId === "all" ? "Általános" : document.querySelector(`#alertTarget option[value="${alert.targetId}"]`).textContent;
+        // Biztonságos lekérdezés a null-pointer hiba elkerülésére:
+        const optionEl = alert.targetId !== "all" ? document.querySelector(`#alertTarget option[value="${alert.targetId}"]`) : null;
+        let targetName = alert.targetId === "all" ? "Általános" : (optionEl ? optionEl.textContent : `Egyedi célpont (${alert.targetId})`);
+        
         let imgHtml = alert.photoUrl ? `<img src="${alert.photoUrl}" class="gb-photo" style="margin-bottom:8px;">` : '';
         
         container.innerHTML += `
@@ -402,7 +405,13 @@
         const isResolved = q.resolved || false;
         const resolvedClass = isResolved ? "resolved-item" : "";
         const resolveText = isResolved ? "Megnyitás" : "✓ Kész (Kipipál)";
-        let imgHtml = q.photoUrl ? `<img src="${q.photoUrl}" class="gb-photo" style="margin-bottom:8px;">` : '';
+        
+        // Biztonságos kép-megjelenítés és kattintható közvetlen link:
+        let imgHtml = q.photoUrl ? `
+          <div style="margin: 10px 0;">
+            <a href="${q.photoUrl}" target="_blank" style="display:inline-block; font-size:11px; color:var(--teal); font-weight:700; margin-bottom:5px; text-decoration:underline;">🔍 Csatolt fotó megnyitása új lapon</a><br>
+            <img src="${q.photoUrl}" class="gb-photo" style="max-width: 150px; border-radius: 4px; border: 1px solid var(--border); display: block;">
+          </div>` : '';
         
         container.innerHTML += `
           <div class="alert-item question-item ${resolvedClass}">
@@ -508,17 +517,31 @@
     }
   };
 
-  // PUBLISH AD HOC
+  // PUBLISH AD HOC - Biztonságos, hibatűrő verzió
   window.publishAdhoc = async function() {
-    const title = document.getElementById("adhocTitle").value.trim();
-    const company = document.getElementById("adhocCompany").value.trim();
-    const timeStr = document.getElementById("adhocTimeStr").value.trim();
-    const venue = document.getElementById("adhocVenue").value.trim();
-    const description = document.getElementById("adhocDescription").value.trim();
+    const titleEl = document.getElementById("adhocTitle");
+    const companyEl = document.getElementById("adhocCompany");
+    const timeStrEl = document.getElementById("adhocTimeStr");
+    const venueEl = document.getElementById("adhocVenue");
+    const descEl = document.getElementById("adhocDescription");
     const fb = document.getElementById("adhocFeedback");
     const btn = document.getElementById("publishAdhocBtn");
     
-    if (!title || !description) { showFeedback(fb, "A cím és leírás megadása kötelező!", "err"); return; }
+    if(!titleEl || !descEl) {
+      alert("Hiba: Az űrlap elemei nem találhatóak a képernyőn!");
+      return;
+    }
+
+    const title = titleEl.value.trim();
+    const company = companyEl ? companyEl.value.trim() : "";
+    const timeStr = timeStrEl ? timeStrEl.value.trim() : "";
+    const venue = venueEl ? venueEl.value.trim() : "";
+    const description = descEl.value.trim();
+    
+    if (!title || !description) { 
+      showFeedback(fb, "A cím és leírás megadása kötelező!", "err"); 
+      return; 
+    }
     
     btn.disabled = true;
     btn.innerText = "Feltöltés...";
@@ -526,39 +549,52 @@
     try {
       let photoUrl = "";
       if (window.adhocResizedImage) {
-         const photoRef = sRef(storage, 'adhoc/' + Date.now() + '.jpg');
-         await uploadString(photoRef, window.adhocResizedImage, 'data_url');
-         photoUrl = await getDownloadURL(photoRef);
+         try {
+           const photoRef = sRef(storage, 'adhoc/' + Date.now() + '.jpg');
+           await uploadString(photoRef, window.adhocResizedImage, 'data_url');
+           photoUrl = await getDownloadURL(photoRef);
+         } catch(uploadErr) {
+           console.error("Csatolt kép feltöltési hiba:", uploadErr);
+         }
       }
 
       const newRef = push(ref(db, "adHocEvents"));
       await set(newRef, { 
-        title,
-        company,
-        timeStr,
-        venue,
-        description,
+        title: title,
+        company: company,
+        timeStr: timeStr,
+        venue: venue,
+        description: description,
         timestamp: getBudapestTimeStr(), 
         timeRaw: Date.now(),
-        photoUrl
+        photoUrl: photoUrl
       });
 
-      document.getElementById("adhocTitle").value = "";
-      document.getElementById("adhocCompany").value = "";
-      document.getElementById("adhocTimeStr").value = "";
-      document.getElementById("adhocVenue").value = "";
-      document.getElementById("adhocDescription").value = "";
-      document.getElementById("adhocPhotoInput").value = "";
-      document.getElementById('adhocPhotoPreview').style.display = 'none';
+      // Mezők alaphelyzetbe állítása
+      titleEl.value = "";
+      if(companyEl) companyEl.value = "";
+      if(timeStrEl) timeStrEl.value = "";
+      if(venueEl) venueEl.value = "";
+      descEl.value = "";
+      
+      const fileInput = document.getElementById("adhocPhotoInput");
+      if(fileInput) fileInput.value = "";
+      
+      const preview = document.getElementById('adhocPhotoPreview');
+      if(preview) preview.style.display = 'none';
+      
       const pBtn = document.getElementById('adhocPhotoBtn');
-      pBtn.style.borderColor = 'var(--teal)';
-      pBtn.style.color = 'var(--teal)';
-      pBtn.innerText = '📸 FOTÓ CSATOLÁSA (Opcionális)';
+      if(pBtn) {
+        pBtn.style.borderColor = 'var(--teal)';
+        pBtn.style.color = 'var(--teal)';
+        pBtn.innerText = '📸 FOTÓ CSATOLÁSA (Opcionális)';
+      }
       window.adhocResizedImage = null;
 
       showFeedback(fb, "✓ Ad hoc program közzétéve!", "ok");
     } catch(e) { 
-      showFeedback(fb, "Hiba a közzététel során!", "err"); 
+      console.error("Adatbázis hiba:", e);
+      showFeedback(fb, "Hiba a mentésnél: " + e.message, "err"); 
     } finally {
       btn.disabled = false;
       btn.innerText = "⚡ Program közzététele";
