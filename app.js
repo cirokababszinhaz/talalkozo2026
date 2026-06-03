@@ -403,7 +403,7 @@ async function submitGuestbook() {
         if (resizedImageDataUrl) {
             try {
                 const photoRef = sRef(storage, 'guestbook/' + Date.now() + '.jpg');
-                await uploadString(photoRef, helpResizedImageDataUrl, 'data_url', { contentType: 'image/jpeg' });
+                await uploadString(photoRef, resizedImageDataUrl, 'data_url', { contentType: 'image/jpeg' });
                 photoUrl = await getDownloadURL(photoRef);
             } catch (imgError) {
                 console.error("Képfeltöltési hiba:", imgError);
@@ -766,16 +766,22 @@ function generateQuote() {
         "A paraván mögött mindenki egyenlő. Kivéve aki tudja, hol a hosszabbító.",
         "Ha elszakad a zsinór, az még nem tragédia. Ha elszáll a hangosítás is, az már költészet.",
         "Egy Találkozó nem attól jó, hogy mit látsz, hanem hogy kivel beszéled ki utána.",
+        "A legjobb jelenetek néha a színpadon kívül történnek. Például a harmadik fröccs után.",
         "A báb súlya nem kilóban mérhető. Hanem a vastapsokban.",
         "Ha minden működik, az gyanús. Valami biztos kimaradt.",
+        "A közönség nem lát mindent. Szerencsére!",
         "A bábok nem fáradnak el. De te igen, szóval igyál még egy kávét.",
         "Egy jó Találkozón nem csak előadásokat gyűjtesz, hanem történeteket is.",
         "A báb akkor él, amikor elfelejted, hogy te mozgatod.",
-        "Minden előadás egy kicsit más. Akkor is, ha ugyanaz.",
+        "Minden előadás یک kicsit más. Akkor is, ha ugyanaz.",
         "A kötetlen beszélgetés a Találkozó szíve. A színpad csak a dobbanás.",
+        "A fröccs dramaturgiája egyszerű: első felvonás – beszélgetés, második – őszinteség.",
         "A kávézóban dőlnek el a szakmai viták. És néha a székek is.",
         "A legjobb kritikák nem íródnak le. Csak elhangzanak két korty között.",
+        "A legőszintébb beszélgetések nem a szakmai programon, hanem utána kezdődnek.",
         "A kávézó nem szünet. Az a második felvonás.",
+        "Aki az esti beszélgetéseket kihagyja, a történet felét sem érti.",
+        "Egy Találkozó addig tart, amíg van mit inni és kivel megbeszélni.",
         "A rendezői koncepció addig tiszta, amíg meg nem érkezik a díszlet.",
         "Nem az a kérdés, hogy működik-e. Hanem hogy elhisszük-e, hogy működik.",
         "Ha valamit háromszor kell megmagyarázni, az már biztosan szándékos.",
@@ -793,7 +799,7 @@ function generateQuote() {
         "A bemutató után mindenki fáradt. Kivéve azt, akinek még bontania kell.",
         "Az előadás hossza relatív. A pakolásé nem.",
         "A legjobb beszélgetés ott kezdődik, ahol elfogyott a hivatalos program.",
-        "Minden Találkozón van egy ember, aki tudja, hol van a hosszabbító. Ő a valódi főszereplő.",
+        "Minden Találkozón van een ember, aki tudja, hol van a hosszabbító. Ő a valódi főszereplő.",
         "A technikai rider egy kívánságlista. A valóság pedig performansz.",
         "A negyedik kávé már nem élénkít. Az egy segélykiáltás.",
         "A díszlet addig könnyű, amíg fel nem kell vinni a harmadikra lift nélkül.",
@@ -1317,6 +1323,82 @@ function initApp() {
     document.querySelectorAll('.tab-btn').forEach((btn, index) => {
         btn.addEventListener('click', () => showDay(index, btn));
     });
+
+    const mainContent = document.getElementById('mainContent');
+    if(mainContent) {
+        mainContent.addEventListener('click', (e) => {
+            const routeBtn = e.target.closest('.route-btn');
+            if (routeBtn) {
+                const venueTitleEl = routeBtn.closest('.gastro-venue-item, .map-venue-flex')?.querySelector('.venue-item-title');
+                const venueName = venueTitleEl ? venueTitleEl.innerText.trim() : "Ismeretlen";
+                trackEvent('navigation_requested', { venue_name: venueName });
+            }
+
+            const fbBtn = e.target.closest('.fb-event-btn');
+            if (fbBtn) {
+                const url = fbBtn.getAttribute('href');
+                if (!url || url === '#' || url === '') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showToast("Ehhez a programhoz jelenleg nincs Facebook esemény!");
+                    return; 
+                }
+
+                const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+                if (isStandaloneMode || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.open(url, '_system'); 
+                }
+                return; 
+            }
+
+            if(e.target.matches('.badge-venue')) {
+                filterVenue(e.target, e);
+            } else if(e.target.matches('.badge-public')) {
+                e.stopPropagation();
+                toggleTypeFilter('public');
+            } else if (e.target.matches('.mini-pulse-alert')) {
+                e.stopPropagation();
+                openAlertsModal(e.target.closest('.event-card').id);
+            } else if (e.target.matches('.star-btn')) {
+                e.stopPropagation();
+                const card = e.target.closest('.event-card');
+                if (localStorage.getItem('fav_' + card.id)) {
+                    localStorage.removeItem('fav_' + card.id);
+                    e.target.classList.remove('active');
+                } else {
+                    localStorage.setItem('fav_' + card.id, 'true');
+                    e.target.classList.add('active');
+                    trackEvent('added_to_favorites', { show_id: card.id });
+                }
+                if (isFavoritesMode) doSearch();
+            }
+        });
+    }
+
+    const myCheckinStatus = document.getElementById('myCheckinStatus');
+    if(myCheckinStatus) {
+        myCheckinStatus.addEventListener('click', (e) => {
+            if(e.target.matches('.checkin-action-modify')) { openCheckin(); } 
+            else if (e.target.matches('.checkin-action-revoke')) { revokeCheckin(e); }
+            else if (e.target.closest('.jump-to-map')) { document.getElementById('infoBoxBottom').scrollIntoView({behavior: 'smooth'}); }
+        });
+    }
+
+    const pdfBtn = document.querySelector('.pdf-dl-btn');
+    if(pdfBtn && pdfOverlay) {
+        pdfBtn.addEventListener('click', function(e) {
+            e.preventDefault(); 
+            trackEvent('pdf_downloaded');
+            const targetUrl = this.href;
+            pdfOverlay.classList.add('show');
+            setTimeout(() => {
+                pdfOverlay.classList.remove('show');
+                window.location.href = targetUrl;
+            }, 1800);
+        });
+    }
 
     document.querySelectorAll('.event-card').forEach(card => {
         if(card.id && localStorage.getItem('fav_' + card.id)) {
