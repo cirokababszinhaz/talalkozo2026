@@ -1207,10 +1207,17 @@ window.addEventListener('beforeinstallprompt', (e) => {
     }
 });
 
-// 🛠 DOM BETÖLTÉSE UTÁNI FŐ FÜGGVÉNY (Eseménykezelők)
+// 🛠 DOM BETÖLTÉSE UTÁNI FŐ FÜGGVÉNY (Javított, biztonságos verzió)
 function initApp() {
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW hiba', err));
+    // Globális elemek hatókörön belüli elérése
+    const pdfOverlay = document.getElementById('pdfOverlay');
 
+    // Service Worker regisztráció
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW hiba', err));
+    }
+
+    // Telepítés gomb iPhone fallback
     if (isIOS && !isStandalone) { 
         const btn = document.getElementById('installAppBtn');
         if(btn) btn.style.display = 'inline-flex'; 
@@ -1230,20 +1237,6 @@ function initApp() {
         });
     }
 
-// További éttermek megnyitása kacsintós átmenettel
-    const btnOtherRestaurants = document.getElementById('btnOtherRestaurants');
-    if (btnOtherRestaurants && pdfOverlay) {
-        btnOtherRestaurants.addEventListener('click', function(e) {
-            e.preventDefault();
-            trackEvent('other_restaurants_viewed');
-            const targetUrl = "https://docs.google.com/document/d/1uGhMC5mGxbIhS-BF3gTzn9MWPPRStqPHV198v9_Vi30/edit?usp=sharing";
-            pdfOverlay.classList.add('show');
-            setTimeout(() => {
-                pdfOverlay.classList.remove('show');
-                window.open(targetUrl, '_blank');
-            }, 1800);
-        });
-    }
     const searchInput = document.getElementById('searchInput');
     if(searchInput) searchInput.addEventListener('keyup', debounce(doSearch, 300));
     
@@ -1274,6 +1267,7 @@ function initApp() {
     const quoteCloseBtn = document.getElementById('quoteCloseBtn');
     if(quoteCloseBtn) quoteCloseBtn.addEventListener('click', () => { document.getElementById('quoteModal').classList.remove('visible'); });
     
+    // Gyorslinkek
     const favFilterBtn = document.getElementById('favFilterBtn');
     if(favFilterBtn) favFilterBtn.addEventListener('click', toggleFavoritesView);
     
@@ -1301,6 +1295,22 @@ function initApp() {
     const helpPhotoInput = document.getElementById('helpPhotoInput');
     if(helpPhotoInput) helpPhotoInput.addEventListener('change', handleHelpPhotoSelect);
 
+    // További éttermek megnyitása kacsintós átmenettel
+    const btnOtherRestaurants = document.getElementById('btnOtherRestaurants');
+    if (btnOtherRestaurants && pdfOverlay) {
+        btnOtherRestaurants.addEventListener('click', function(e) {
+            e.preventDefault();
+            trackEvent('other_restaurants_viewed');
+            const targetUrl = "https://docs.google.com/document/d/1uGhMC5mGxbIhS-BF3gTzn9MWPPRStqPHV198v9_Vi30/edit?usp=sharing";
+            pdfOverlay.classList.add('show');
+            setTimeout(() => {
+                pdfOverlay.classList.remove('show');
+                window.open(targetUrl, '_blank');
+            }, 1800);
+        });
+    }
+
+    // Megosztás Gomb (Web Share API)
     const btnShare = document.getElementById('btnShare');
     if(btnShare) {
         btnShare.addEventListener('click', async () => {
@@ -1322,9 +1332,9 @@ function initApp() {
         });
     }
 
-    // Szűrők regisztrálása biztonságos lefutással
+    // Szűrők regisztrálása biztonságos lefutással (dupla kattintás ellen)
     document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.onclick = null; // Esetleges korábbi direkt kezelők tisztítása
+        btn.onclick = null;
         btn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -1336,8 +1346,8 @@ function initApp() {
     document.querySelectorAll('.tab-btn').forEach((btn, index) => {
         btn.addEventListener('click', () => showDay(index, btn));
     });
-    });
 
+    // Kártya lenyitás
     document.querySelectorAll('.card-header').forEach(header => {
         header.addEventListener('click', function(e) {
             if(!e.target.closest('.star-btn') && !e.target.closest('.mini-pulse-alert')) { 
@@ -1350,6 +1360,7 @@ function initApp() {
         });
     });
 
+    // Delegált eseménykezelők 
     const mainContent = document.getElementById('mainContent');
     if(mainContent) {
         mainContent.addEventListener('click', (e) => {
@@ -1403,6 +1414,7 @@ function initApp() {
         });
     }
 
+    // Delegált esemény a módosítás/visszavonás/térképhez ugrás gombokra
     const myCheckinStatus = document.getElementById('myCheckinStatus');
     if(myCheckinStatus) {
         myCheckinStatus.addEventListener('click', (e) => {
@@ -1412,8 +1424,8 @@ function initApp() {
         });
     }
 
+    // Kacsintós PDF letöltés
     const pdfBtn = document.querySelector('.pdf-dl-btn');
-    const pdfOverlay = document.getElementById('pdfOverlay');
     if(pdfBtn && pdfOverlay) {
         pdfBtn.addEventListener('click', function(e) {
             e.preventDefault(); 
@@ -1427,13 +1439,7 @@ function initApp() {
         });
     }
 
-    document.querySelectorAll('.gastro-logo, .sponsor-logo').forEach(logo => {
-        logo.addEventListener('touchstart', function() {
-            this.classList.add('active-touch');
-            setTimeout(() => this.classList.remove('active-touch'), 1500);
-        });
-    });
-
+    // Csillagok állapotának visszaállítása
     document.querySelectorAll('.event-card').forEach(card => {
         if(card.id && localStorage.getItem('fav_' + card.id)) {
             const star = card.querySelector('.star-btn');
@@ -1441,6 +1447,7 @@ function initApp() {
         }
     });
 
+    // Checkin URL feldolgozása
     const urlParams = new URLSearchParams(window.location.search);
     const checkinVenueId = urlParams.get('checkin');
     if(checkinVenueId && venueNames[checkinVenueId]) {
@@ -1457,6 +1464,7 @@ function initApp() {
         }, 1000);
     }
 
+    // Offline / Online állapot figyelése
     function updateOnlineStatus() {
         if (!navigator.onLine) { document.body.classList.add('is-offline'); } 
         else { document.body.classList.remove('is-offline'); }
@@ -1465,10 +1473,10 @@ function initApp() {
     window.addEventListener('offline', updateOnlineStatus);
     updateOnlineStatus();
 
+    // Alap inicializálás
     restoreCheckinUI();
     initPostFestivalMode();
     checkLiveEvents();
-    setInterval(checkLiveEvents, 60000);
     
     window.addEventListener('scroll', () => {
         const jumpBtn = document.getElementById('jumpBtn');
@@ -1477,6 +1485,7 @@ function initApp() {
             else jumpBtn.classList.remove('show');
         }
     });
+}
 
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.addEventListener('controllerchange', () => {
