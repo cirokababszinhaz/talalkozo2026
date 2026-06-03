@@ -3,6 +3,13 @@ import { getDatabase, ref, push, set, remove, onValue } from "https://www.gstati
 import { getStorage, ref as sRef, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 // ==========================================
+// ⚙️ GLOBÁLIS TELEPÍTÉSI ÉS ALAPVÁLTOZÓK (Legfelülre hozva a biztonságért)
+// ==========================================
+let deferredPrompt;
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+// ==========================================
 // ⚙️ FESZTIVÁL KONFIGURÁCIÓ
 // ==========================================
 const FESTIVAL_CONFIG = {
@@ -43,7 +50,6 @@ let currentGbTotal = 0;
 let resizedImageDataUrl = null;
 let helpResizedImageDataUrl = null;
 
-// CSOPORTOS ELŐADÁSOK LEKÉPEZÉSE ÉRTESÍTÉSEKHEZ
 const SHOW_GROUPS = {
     'show-tragedia-hetfo-d': ['show-tragedia-hetfo-d', 'show-tragedia-hetfo-e'],
     'show-tragedia-hetfo-e': ['show-tragedia-hetfo-d', 'show-tragedia-hetfo-e'],
@@ -804,7 +810,7 @@ function generateQuote() {
         "A negyedik kávé már nem élénkít. Az egy segélykiáltás.",
         "A díszlet addig könnyű, amíg fel nem kell vinni a harmadikra lift nélkül.",
         "A Találkozó-barátságok intenzitása vetekszik a turnébusz légkondijának kiszámíthatatlanságával.",
-        "Az igazi szakmai elismerés: archaeological term: amikor valaki kölcsönad egy gaffer szalagot.",
+        "Az igazi szakmai elismerés: amikor valaki kölcsönad egy gaffer szalagot.",
         "Mindenki kísérletezik. Van, aki nyilvánosan.",
         "A legnagyobb hazugság a színházban: 'öt perc és kész vagyunk.'",
         "A Találkozó végére minden telefontöltő közkinccsé válik.",
@@ -1190,21 +1196,9 @@ function doSearch() {
     }
 }
 
-// APP TELEPÍTÉS LOGIKÁJA
-let deferredPrompt;
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    if(!isStandalone) {
-        const btn = document.getElementById('installAppBtn');
-        if(btn) btn.style.display = 'inline-flex';
-    }
-});
-
+// ==========================================
 // 🛠 DOM BETÖLTÉSE UTÁNI FŐ FÜGGVÉNY
+// ==========================================
 function initApp() {
     const pdfOverlay = document.getElementById('pdfOverlay');
 
@@ -1212,8 +1206,8 @@ function initApp() {
         navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW hiba', err));
     }
 
-    if (isIOS && !isStandalone) { 
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    // Mobil eszközökön mindig megmutatjuk a telepítés gombot, ha nem standalone módban fut az app
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     if (isMobile && !isStandalone) {
         const btn = document.getElementById('installAppBtn');
         if(btn) btn.style.display = 'inline-flex';
@@ -1340,94 +1334,6 @@ function initApp() {
         btn.addEventListener('click', () => showDay(index, btn));
     });
 
-    document.querySelectorAll('.card-header').forEach(header => {
-        header.addEventListener('click', function(e) {
-            if(!e.target.closest('.star-btn') && !e.target.closest('.mini-pulse-alert')) { 
-                const card = this.closest('.event-card');
-                if (card && !card.classList.contains('open')) { 
-                    trackEvent('show_expanded', { show_id: card.id });
-                }
-                toggleCard(this); 
-            }
-        });
-    });
-
-    const mainContent = document.getElementById('mainContent');
-    if(mainContent) {
-        mainContent.addEventListener('click', (e) => {
-            const routeBtn = e.target.closest('.route-btn');
-            if (routeBtn) {
-                const venueTitleEl = routeBtn.closest('.gastro-venue-item, .map-venue-flex')?.querySelector('.venue-item-title');
-                const venueName = venueTitleEl ? venueTitleEl.innerText.trim() : "Ismeretlen";
-                trackEvent('navigation_requested', { venue_name: venueName });
-            }
-
-            const fbBtn = e.target.closest('.fb-event-btn');
-            if (fbBtn) {
-                const url = fbBtn.getAttribute('href');
-                if (!url || url === '#' || url === '') {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    showToast("Ehhez a programhoz jelenleg nincs Facebook esemény!");
-                    return; 
-                }
-
-                const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-                if (isStandaloneMode || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    window.open(url, '_system'); 
-                }
-                return; 
-            }
-
-            if(e.target.matches('.badge-venue')) {
-                filterVenue(e.target, e);
-            } else if(e.target.matches('.badge-public')) {
-                e.stopPropagation();
-                toggleTypeFilter('public');
-            } else if (e.target.matches('.mini-pulse-alert')) {
-                e.stopPropagation();
-                openAlertsModal(e.target.closest('.event-card').id);
-            } else if (e.target.matches('.star-btn')) {
-                e.stopPropagation();
-                const card = e.target.closest('.event-card');
-                if (localStorage.getItem('fav_' + card.id)) {
-                    localStorage.removeItem('fav_' + card.id);
-                    e.target.classList.remove('active');
-                } else {
-                    localStorage.setItem('fav_' + card.id, 'true');
-                    e.target.classList.add('active');
-                    trackEvent('added_to_favorites', { show_id: card.id });
-                }
-                if (isFavoritesMode) doSearch();
-            }
-        });
-    }
-
-    const myCheckinStatus = document.getElementById('myCheckinStatus');
-    if(myCheckinStatus) {
-        myCheckinStatus.addEventListener('click', (e) => {
-            if(e.target.matches('.checkin-action-modify')) { openCheckin(); } 
-            else if (e.target.matches('.checkin-action-revoke')) { revokeCheckin(e); }
-            else if (e.target.closest('.jump-to-map')) { document.getElementById('infoBoxBottom').scrollIntoView({behavior: 'smooth'}); }
-        });
-    }
-
-    const pdfBtn = document.querySelector('.pdf-dl-btn');
-    if(pdfBtn && pdfOverlay) {
-        pdfBtn.addEventListener('click', function(e) {
-            e.preventDefault(); 
-            trackEvent('pdf_downloaded');
-            const targetUrl = this.href;
-            pdfOverlay.classList.add('show');
-            setTimeout(() => {
-                pdfOverlay.classList.remove('show');
-                window.location.href = targetUrl;
-            }, 1800);
-        });
-    }
-
     document.querySelectorAll('.event-card').forEach(card => {
         if(card.id && localStorage.getItem('fav_' + card.id)) {
             const star = card.querySelector('.star-btn');
@@ -1470,7 +1376,8 @@ function initApp() {
             else jumpBtn.classList.remove('show');
         }
     });
-// PWA Automatikus Újratöltés új verzió észlelésekor
+
+    // PWA Automatikus Újratöltés új verzió észlelésekor
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.addEventListener('controllerchange', () => {
             window.location.reload();
@@ -1478,6 +1385,7 @@ function initApp() {
     }
 }
 
+// BIZTOSÍTJUK A BETÖLTÉST
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initApp);
 } else {
