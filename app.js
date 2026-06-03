@@ -7,7 +7,7 @@ import { getStorage, ref as sRef, uploadString, getDownloadURL } from "https://w
 // ==========================================
 const FESTIVAL_CONFIG = {
     year: 2026,
-    month: 5, // A JS-ben a hónapok 0-tól indulnak (5 = Június)
+    month: 5,
     startDay: 13,
     endDay: 18,
     postFestivalDate: new Date('2026-06-19T00:00:00+02:00').getTime(),
@@ -32,8 +32,8 @@ const storage = getStorage(app);
 // 🛠️ GLOBÁLIS ÁLLAPOTOK & LEKÉPEZÉSEK
 // ==========================================
 let globalAlerts = [];
-let globalAdHocEvents = []; // Ad hoc rendkívüli programok
-let globalUpdates = [];     // Egyesített Update lista
+let globalAdHocEvents = [];
+let globalUpdates = [];
 let activeTabBeforeSearch = 0;
 let currentTypeFilter = null;
 let isFavoritesMode = false;
@@ -139,7 +139,6 @@ onValue(ref(db, "adHocEvents"), (snap) => {
     rebuildUpdatesFeed();
 });
 
-// EGYESÍTETT UPDATE IDŐVONAL REKONSTRUKCIÓ
 function rebuildUpdatesFeed() {
     const formattedAlerts = globalAlerts.map(a => ({
         ...a,
@@ -241,7 +240,7 @@ function closeAlertsModal() {
 }
 
 // ==========================================
-// 📖 VIRTUALIS EMLÉKKÖNYV
+// 📖 VIRTUÁLIS EMLÉKKÖNYV
 // ==========================================
 const gbRef = ref(db, "guestbook");
   
@@ -805,7 +804,7 @@ function generateQuote() {
         "A negyedik kávé már nem élénkít. Az egy segélykiáltás.",
         "A díszlet addig könnyű, amíg fel nem kell vinni a harmadikra lift nélkül.",
         "A Találkozó-barátságok intenzitása vetekszik a turnébusz légkondijának kiszámíthatatlanságával.",
-        "Az igazi szakmai elismerés: amikor valaki kölcsönad egy gaffer szalagot.",
+        "Az igazi szakmai elismerés: archaeological term: amikor valaki kölcsönad egy gaffer szalagot.",
         "Mindenki kísérletezik. Van, aki nyilvánosan.",
         "A legnagyobb hazugság a színházban: 'öt perc és kész vagyunk.'",
         "A Találkozó végére minden telefontöltő közkinccsé válik.",
@@ -847,16 +846,20 @@ function toggleTypeFilter(type) {
         if(sg) sg.style.display = 'none';
     }
 
-    if (currentTypeFilter === type) { currentTypeFilter = null; } 
-    else { currentTypeFilter = type; }
-
-    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-    if (currentTypeFilter) { 
-        const targetBtn = document.querySelector(`.filter-btn[data-filter="${currentTypeFilter}"]`);
-        if(targetBtn) targetBtn.classList.add('active'); 
+    if (currentTypeFilter === type) { 
+        currentTypeFilter = null; 
+    } else { 
+        currentTypeFilter = type; 
     }
 
-    // ÚJ: Ha az update sávot választják, nullázzuk a számlálót
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        if (currentTypeFilter && btn.getAttribute('data-filter') === currentTypeFilter) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
     if (currentTypeFilter === 'update') {
         localStorage.setItem('lastSeenUpdateCount', globalUpdates.length.toString());
         const updateBadge = document.getElementById('updateBadge');
@@ -956,13 +959,13 @@ function doSearch() {
     }
 
     if(['eso', 'vihar', 'idojaras'].includes(query)) {
-        showToast("A program vízálló, de esernyőt azért hozz magaddal! ☔");
+        showToast("A bábok nem áznak el, de esernyőt azért hozz magaddal! ☔");
         searchInput.value = "";
         doSearch();
         return;
     }
 
-    if(['sor','bor','froccs','kave','bufe','palinka','chips','szotyi'].includes(query)) {
+    if(['sor','bor','froccs','kave','bufe'].includes(query)) {
         if(tabsWrap) tabsWrap.style.display = 'none';
         if(scrollHint) scrollHint.style.display = 'none';
         document.querySelectorAll('.day-panel').forEach(p => p.style.display = 'none');
@@ -984,7 +987,7 @@ function doSearch() {
         if(sBc) sBc.style.display = 'none';
     }
 
-    if(['ehes','leves','teszta','szendvics','etterem','kaja', 'pizza', 'hamburger','etel'].includes(query)) {
+    if(['ehes','leves','teszta','szendvics','etterem','kaja', 'pizza', 'hamburger'].includes(query)) {
         if(tabsWrap) tabsWrap.style.display = 'none';
         if(scrollHint) scrollHint.style.display = 'none';
         document.querySelectorAll('.day-panel').forEach(p => p.style.display = 'none');
@@ -1010,9 +1013,6 @@ function doSearch() {
 
     if (isGastroMode) return;
 
-    // ==========================================
-    // ⚡ SZŰRÉS: UPDATE NÉZET (RENDKÍVÜLI IDŐVONAL)
-    // ==========================================
     if (currentTypeFilter === 'update') {
         if(tabsWrap) tabsWrap.style.display = 'none';
         if(scrollHint) scrollHint.style.display = 'none';
@@ -1092,7 +1092,6 @@ function doSearch() {
         if (updateFeedPanel) updateFeedPanel.style.display = 'none';
     }
 
-    // NORMÁL ALAPHELYZET (NINCS UPDATE)
     if (query === "" && !isFavoritesMode && !currentTypeFilter) {
         if(tabsWrap) tabsWrap.style.display = 'flex';
         if (window.innerWidth <= 650 && scrollHint) scrollHint.style.display = 'block';
@@ -1150,7 +1149,6 @@ function doSearch() {
                 if(currentTypeFilter === 'public') { 
                     isMatchType = card.querySelector('.badge-public') !== null; 
                 } else if(currentTypeFilter === 'type-social') {
-                    // Kizárólag a kiállítás kártyáját hagyjuk meg, ha ez a szűrő aktív
                     isMatchType = (card.id === 'show-kiallitas');
                 } else { 
                     isMatchType = card.classList.contains(currentTypeFilter); 
@@ -1160,7 +1158,6 @@ function doSearch() {
             if(isMatchSearch && isMatchFav && isMatchType) {
                 card.style.display = 'block';
                 
-                // KIÁLLÍTÁS SZŰRŐ - AUTOMATIKUS KINYITÁS
                 if(currentTypeFilter === 'type-social' && card.id === 'show-kiallitas') {
                     card.classList.add('open');
                 }
@@ -1207,17 +1204,14 @@ window.addEventListener('beforeinstallprompt', (e) => {
     }
 });
 
-// 🛠 DOM BETÖLTÉSE UTÁNI FŐ FÜGGVÉNY (Javított, biztonságos verzió)
+// 🛠 DOM BETÖLTÉSE UTÁNI FŐ FÜGGVÉNY
 function initApp() {
-    // Globális elemek hatókörön belüli elérése
     const pdfOverlay = document.getElementById('pdfOverlay');
 
-    // Service Worker regisztráció
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW hiba', err));
     }
 
-    // Telepítés gomb iPhone fallback
     if (isIOS && !isStandalone) { 
         const btn = document.getElementById('installAppBtn');
         if(btn) btn.style.display = 'inline-flex'; 
@@ -1267,7 +1261,6 @@ function initApp() {
     const quoteCloseBtn = document.getElementById('quoteCloseBtn');
     if(quoteCloseBtn) quoteCloseBtn.addEventListener('click', () => { document.getElementById('quoteModal').classList.remove('visible'); });
     
-    // Gyorslinkek
     const favFilterBtn = document.getElementById('favFilterBtn');
     if(favFilterBtn) favFilterBtn.addEventListener('click', toggleFavoritesView);
     
@@ -1295,7 +1288,6 @@ function initApp() {
     const helpPhotoInput = document.getElementById('helpPhotoInput');
     if(helpPhotoInput) helpPhotoInput.addEventListener('change', handleHelpPhotoSelect);
 
-    // További éttermek megnyitása kacsintós átmenettel
     const btnOtherRestaurants = document.getElementById('btnOtherRestaurants');
     if (btnOtherRestaurants && pdfOverlay) {
         btnOtherRestaurants.addEventListener('click', function(e) {
@@ -1310,7 +1302,6 @@ function initApp() {
         });
     }
 
-    // Megosztás Gomb (Web Share API)
     const btnShare = document.getElementById('btnShare');
     if(btnShare) {
         btnShare.addEventListener('click', async () => {
@@ -1332,7 +1323,6 @@ function initApp() {
         });
     }
 
-    // Szűrők regisztrálása biztonságos lefutással (dupla kattintás ellen)
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.onclick = null;
         btn.addEventListener('click', (e) => {
@@ -1342,12 +1332,10 @@ function initApp() {
         });
     });
 
-    // Fülek (Tabs)
     document.querySelectorAll('.tab-btn').forEach((btn, index) => {
         btn.addEventListener('click', () => showDay(index, btn));
     });
 
-    // Kártya lenyitás
     document.querySelectorAll('.card-header').forEach(header => {
         header.addEventListener('click', function(e) {
             if(!e.target.closest('.star-btn') && !e.target.closest('.mini-pulse-alert')) { 
@@ -1360,7 +1348,6 @@ function initApp() {
         });
     });
 
-    // Delegált eseménykezelők 
     const mainContent = document.getElementById('mainContent');
     if(mainContent) {
         mainContent.addEventListener('click', (e) => {
@@ -1414,7 +1401,6 @@ function initApp() {
         });
     }
 
-    // Delegált esemény a módosítás/visszavonás/térképhez ugrás gombokra
     const myCheckinStatus = document.getElementById('myCheckinStatus');
     if(myCheckinStatus) {
         myCheckinStatus.addEventListener('click', (e) => {
@@ -1424,7 +1410,6 @@ function initApp() {
         });
     }
 
-    // Kacsintós PDF letöltés
     const pdfBtn = document.querySelector('.pdf-dl-btn');
     if(pdfBtn && pdfOverlay) {
         pdfBtn.addEventListener('click', function(e) {
@@ -1439,7 +1424,6 @@ function initApp() {
         });
     }
 
-    // Csillagok állapotának visszaállítása
     document.querySelectorAll('.event-card').forEach(card => {
         if(card.id && localStorage.getItem('fav_' + card.id)) {
             const star = card.querySelector('.star-btn');
@@ -1447,7 +1431,6 @@ function initApp() {
         }
     });
 
-    // Checkin URL feldolgozása
     const urlParams = new URLSearchParams(window.location.search);
     const checkinVenueId = urlParams.get('checkin');
     if(checkinVenueId && venueNames[checkinVenueId]) {
@@ -1464,7 +1447,6 @@ function initApp() {
         }, 1000);
     }
 
-    // Offline / Online állapot figyelése
     function updateOnlineStatus() {
         if (!navigator.onLine) { document.body.classList.add('is-offline'); } 
         else { document.body.classList.remove('is-offline'); }
@@ -1473,7 +1455,6 @@ function initApp() {
     window.addEventListener('offline', updateOnlineStatus);
     updateOnlineStatus();
 
-    // Alap inicializálás
     restoreCheckinUI();
     initPostFestivalMode();
     checkLiveEvents();
@@ -1485,24 +1466,6 @@ function initApp() {
             else jumpBtn.classList.remove('show');
         }
     });
-}
-
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-            window.location.reload();
-        });
-    }
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                trackEvent('sponsors_viewed');
-                observer.disconnect(); 
-            }
-        });
-    });
-    const sponsorBox = document.getElementById('sponsorsBox');
-    if (sponsorBox) observer.observe(sponsorBox);
 }
 
 if (document.readyState === 'loading') {
