@@ -385,6 +385,27 @@
     });
   }
 
+window.publishBlog = async function() {
+    const title = document.getElementById("blogTitle").value.trim();
+    const desc = document.getElementById("blogDesc").value.trim();
+    const loc = document.getElementById("blogLocation").value.trim();
+    if(!title || !desc) return alert("Cím és leírás kötelező!");
+
+    const newRef = push(ref(db, "blogPosts"));
+    await set(newRef, {
+        title: title,
+        desc: desc,
+        location: loc,
+        timeRaw: Date.now(),
+        dateStr: getBudapestTimeStr()
+    });
+    alert("Közzétéve az Update-ben!");
+    document.getElementById("blogTitle").value = "";
+    document.getElementById("blogDesc").value = "";
+    document.getElementById("blogLocation").value = "";
+};
+
+
   // --- ÉRTESÍTÉS KÖZZÉTÉTELE FOTÓVAL ---
   window.publishAlert = async function() {
     const text = document.getElementById("alertText").value.trim();

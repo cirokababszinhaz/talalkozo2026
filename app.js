@@ -1498,3 +1498,100 @@ function handleHelpPhotoSelect(event) {
         }
     }
 }
+
+let globalBlogPosts = [];
+// Blog (Ad-hoc) posztok figyelése
+onValue(ref(db, "blogPosts"), (snap) => {
+    globalBlogPosts = snap.exists() ? Object.values(snap.val()) : [];
+    refreshUpdateBadge();
+});
+
+function refreshUpdateBadge() {
+    const total = globalAlerts.length + globalBlogPosts.length;
+    let seen = parseInt(localStorage.getItem('lastSeenUpdateCount') || '0');
+    let unread = total - seen;
+    const badge = document.getElementById('updateBadge');
+    if(badge) {
+        badge.innerText = unread;
+        badge.style.display = unread > 0 ? 'block' : 'none';
+    }
+}
+
+// A JAVÍTOTT doSearch függvény:
+function doSearch() {
+    const searchInput = document.getElementById('searchInput');
+    const query = searchInput.value.toLowerCase().trim();
+    const updateContainer = document.getElementById('updateFeedContainer');
+    const dayPanels = document.querySelectorAll('.day-panel');
+    const tabsWrap = document.getElementById('tabsWrap');
+
+    // Alaphelyzetbe állítás
+    updateContainer.style.display = 'none';
+    dayPanels.forEach(p => p.style.display = 'none');
+    tabsWrap.style.display = 'flex';
+
+    // 1. UPDATE MÓD
+    if (currentTypeFilter === 'type-update') {
+        tabsWrap.style.display = 'none';
+        updateContainer.style.display = 'block';
+        renderUpdateFeed();
+        // Számláló nullázása
+        localStorage.setItem('lastSeenUpdateCount', (globalAlerts.length + globalBlogPosts.length).toString());
+        document.getElementById('updateBadge').style.display = 'none';
+        return;
+    }
+
+    // 2. KIÁLLÍTÁS MÓD
+    if (currentTypeFilter === 'kiallitas') {
+        tabsWrap.style.display = 'none';
+        const card = document.getElementById('show-kiallitas');
+        if(card) {
+            card.closest('.day-panel').style.display = 'block';
+            card.style.display = 'block';
+            card.classList.add('open');
+            card.scrollIntoView({ behavior: 'smooth' });
+        }
+        return;
+    }
+
+    // 3. NORMÁL KERESÉS (az eredeti logikád visszatöltve)
+    // ... itt a kódod többi része, ami a napokat és kártyákat szűri ...
+}
+
+function renderUpdateFeed() {
+    const container = document.getElementById('updateFeedContainer');
+    container.innerHTML = '<h3 class="search-day-title" style="display:block;">Friss hírek és változások</h3>';
+    
+    // Értesítések (Piros fejléccel)
+    globalAlerts.forEach(a => {
+        container.innerHTML += `
+            <div class="event-card type-update open type-update-card">
+                <div class="card-header"><div class="event-title">🔔 Értesítés: ${a.timestamp}</div></div>
+                <div class="card-details-inner" style="padding-top:0;"><div class="details-text"><strong>${escapeHTML(a.message)}</strong></div></div>
+            </div>`;
+    });
+
+    // Blog posztok (🆕 jellel)
+    globalBlogPosts.sort((a,b) => b.timeRaw - a.timeRaw).forEach(p => {
+        container.innerHTML += `
+            <div class="event-card type-show open" style="border-left-color: var(--gold);">
+                <div class="card-header">
+                    <div class="event-title">🆕 ${escapeHTML(p.title)}</div>
+                    <div class="event-company">${escapeHTML(p.location)} | ${p.dateStr}</div>
+                </div>
+                <div class="card-details-inner" style="padding-top:0;"><div class="details-text">${escapeHTML(p.desc)}</div></div>
+            </div>`;
+    });
+}
+
+// PDF megnyitás kacsintással
+const otherRestBtn = document.getElementById('btnOtherRestaurants');
+if(otherRestBtn) {
+    otherRestBtn.addEventListener('click', () => {
+        document.getElementById('pdfOverlay').classList.add('show');
+        setTimeout(() => {
+            document.getElementById('pdfOverlay').classList.remove('show');
+            window.location.href = "https://drive.google.com/your-pdf-link"; // IDE TEDD A LINKET
+        }, 1800);
+    });
+}
