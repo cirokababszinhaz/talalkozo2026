@@ -1206,9 +1206,8 @@ function initApp() {
         navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW hiba', err));
     }
 
-    // Mobil eszközökön mindig megmutatjuk a telepítés gombot, ha nem standalone módban fut az app
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    if (isMobile && !isStandalone) {
+    // Mindig megmutatjuk a telepítés gombot, ha nem standalone (telepített) módban fut az app
+    if (!isStandalone) {
         const btn = document.getElementById('installAppBtn');
         if(btn) btn.style.display = 'inline-flex';
     }
