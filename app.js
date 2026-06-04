@@ -3,13 +3,6 @@ import { getDatabase, ref, push, set, remove, onValue } from "https://www.gstati
 import { getStorage, ref as sRef, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 // ==========================================
-// ⚙️ GLOBÁLIS TELEPÍTÉSI ÉS ALAPVÁLTOZÓK (Biztonságos betöltési sorrend)
-// ==========================================
-let deferredPrompt;
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-
-// ==========================================
 // ⚙️ FESZTIVÁL KONFIGURÁCIÓ
 // ==========================================
 const FESTIVAL_CONFIG = {
@@ -50,6 +43,7 @@ let currentGbTotal = 0;
 let resizedImageDataUrl = null;
 let helpResizedImageDataUrl = null;
 
+// CSOPORTOS ELŐADÁSOK LEKÉPEZÉSE ÉRTESÍTÉSEKHEZ
 const SHOW_GROUPS = {
     'show-tragedia-hetfo-d': ['show-tragedia-hetfo-d', 'show-tragedia-hetfo-e'],
     'show-tragedia-hetfo-e': ['show-tragedia-hetfo-d', 'show-tragedia-hetfo-e'],
@@ -403,7 +397,7 @@ async function submitGuestbook() {
         if (resizedImageDataUrl) {
             try {
                 const photoRef = sRef(storage, 'guestbook/' + Date.now() + '.jpg');
-                await uploadString(photoRef, resizedImageDataUrl, 'data_url', { contentType: 'image/jpeg' });
+                await uploadString(photoRef, resizedImageDataUrl, 'data_url');
                 photoUrl = await getDownloadURL(photoRef);
             } catch (imgError) {
                 console.error("Képfeltöltési hiba:", imgError);
@@ -517,6 +511,130 @@ function restoreCheckinUI() {
         }
     }
 }
+
+function openCheckin() { 
+    const modal = document.getElementById('checkinModal');
+    if(modal) modal.classList.add('visible'); 
+}
+
+function submitCheckin() {
+    const nameEl = document.getElementById('checkinNameInput');
+    const venueEl = document.getElementById('ciVenue');
+    if(!nameEl || !venueEl) return;
+
+    const nameInput = nameEl.value.trim();
+    if(nameInput.length < 2) { showToast('Légyszi adj meg egy nevet!'); return; }
+    
+    const venueId = venueEl.value;
+
+    const oldVenue = localStorage.getItem('myCheckinVenue');
+    const oldId = localStorage.getItem('myCheckinId');
+    if (oldVenue && oldId) { remove(ref(db, `checkins/${oldVenue}/${oldId}`)); }
+    
+    const submitBtn = document.getElementById('ciSubmitBtn');
+    if(submitBtn) submitBtn.innerText = "Töltés...";
+    
+    const newRef = push(ref(db, 'checkins/' + venueId));
+    
+    set(newRef, { name: nameInput, timeRaw: Date.now() })
+        .then(() => {
+            localStorage.setItem('myCheckinName', nameInput);
+            localStorage.setItem('myCheckinVenue', venueId);
+            localStorage.setItem('myCheckinId', newRef.key);
+            localStorage.setItem('myCheckinTime', Date.now().toString()); 
+
+            const modal = document.getElementById('checkinModal');
+            if(modal) modal.classList.remove('visible');
+            
+            if(submitBtn) submitBtn.innerText = "Fellövöm a térképre!";
+            
+            trackEvent('check_in_used', { venue: venueId }); 
+            showToast("Sikeres becsekkolás!");
+            updateCheckinUI(venueId);
+        })
+        .catch((err) => {
+            if(submitBtn) submitBtn.innerText = "Fellövöm a térképre!";
+            showToast("Hiba a mentésnél: " + err.message);
+        });
+}
+
+function revokeCheckin(e) {
+    if(e) e.stopPropagation();
+    const venueId = localStorage.getItem('myCheckinVenue');
+    const checkinId = localStorage.getItem('myCheckinId');
+    
+    if(venueId && checkinId) {
+        remove(ref(db, `checkins/${venueId}/${checkinId}`)).then(() => {
+            localStorage.removeItem('myCheckinName');
+            localStorage.removeItem('myCheckinVenue');
+            localStorage.removeItem('myCheckinId');
+            localStorage.removeItem('myCheckinTime');
+            
+            const nameEl = document.getElementById('checkinNameInput');
+            if(nameEl) nameEl.value = ""; 
+            
+            showToast("Becsekkolás visszavonva!");
+            updateCheckinUI(null);
+        }).catch((err) => showToast("Nem sikerült törölni: " + err.message));
+    }
+}
+
+onValue(checkinRef, (snap) => {
+    Object.keys(venueNames).forEach(id => {
+        const container = document.getElementById('checkins-' + id);
+        if(container) container.innerHTML = '';
+    });
+
+    const ciBadge = document.getElementById('ciBadge');
+
+    if(!snap.exists()) {
+        if(ciBadge) ciBadge.style.display = 'none';
+        return;
+    }
+    
+    const data = snap.val();
+    const now = Date.now();
+    const TWO_HOURS = 2 * 60 * 60 * 1000;
+    
+    let totalActiveCheckins = 0;
+
+    for (let venueId in data) {
+        const venueContainer = document.getElementById('checkins-' + venueId);
+        let hasCheckin = false;
+        const checkins = data[venueId];
+        
+        Object.keys(checkins).forEach(key => {
+            const checkinData = checkins[key];
+            if (now - checkinData.timeRaw < TWO_HOURS) {
+                totalActiveCheckins++;
+                
+                if(venueContainer) {
+                    if(!hasCheckin) {
+                        if (venueId === 'bufe') {
+                            venueContainer.innerHTML = '<div style="font-size:10px; color:var(--muted); margin-bottom:5px; font-weight:600; width: 100%;">Frissítő beszerzés kávézóban/étteremben:</div>';
+                        } else {
+                            venueContainer.innerHTML = '<div style="font-size:10px; color:var(--muted); margin-bottom:5px; font-weight:600; width: 100%;">Akik itt vannak:</div>';
+                        }
+                        hasCheckin = true;
+                    }
+                    const span = document.createElement('span');
+                    span.className = 'checkin-bubble';
+                    span.innerText = escapeHTML(checkinData.name);
+                    venueContainer.appendChild(span);
+                }
+            }
+        });
+    }
+
+    if(ciBadge) {
+        if (totalActiveCheckins > 0) {
+            ciBadge.innerText = totalActiveCheckins;
+            ciBadge.style.display = 'block';
+        } else {
+            ciBadge.style.display = 'none';
+        }
+    }
+});
 
 // ==========================================
 // 🚀 INICIALIZÁLÁS ÉS BÖNGÉSZŐ LOGIKA
@@ -645,6 +763,7 @@ function generateQuote() {
         "A legjobb jelenetek néha a színpadon kívül történnek. Például a harmadik fröccs után.",
         "A báb súlya nem kilóban mérhető. Hanem a vastapsokban.",
         "Ha minden működik, az gyanús. Valami biztos kimaradt.",
+        "A közönség nem lát mindent. Szerencsére!",
         "A bábok nem fáradnak el. De te igen, szóval igyál még egy kávét.",
         "Egy jó Találkozón nem csak előadásokat gyűjtesz, hanem történeteket is.",
         "A báb akkor él, amikor elfelejted, hogy te mozgatod.",
@@ -661,24 +780,31 @@ function generateQuote() {
         "Nem az a kérdés, hogy működik-e. Hanem hogy elhisszük-e, hogy működik.",
         "Ha valamit háromszor kell megmagyarázni, az már biztosan szándékos.",
         "A próbán még keresed a megoldást. A Találkozón már magyarázod.",
+        "Ez nem hiba, hanem stiláris döntés. Csak még nem döntöttük el.",
         "A dramaturg akkor nyugodt, ha mindenki más ideges.",
         "A minimalizmus ott kezdődik, ahol elfogyott a költségvetés.",
+        "Ha nem érted, az valószínűleg mély.",
         "A báb akkor működik jól, ha nem esik szét. Minden más már esztétika.",
         "A színész mindent megold. Ha nem, akkor azt is megoldja.",
         "A technika mindig akkor romlik el, amikor végre működne.",
         "Ez egy tudatos csend. Csak kicsit hosszabb lett.",
         "Ha improvizáció, akkor szabad. Ha nem működik, akkor kísérlet.",
+        "Ezt majd a fény megoldja. Spoiler: A fény nem oldja meg.",
         "A próbafolyamat vége: amikor már nincs több idő új ötletekre.",
+        "A kompromisszum az a hely, ahol mindenki egy kicsit elégedetlen.",
         "Ha mindenki érti, akkor valamit biztosan túlegyszerűsítettünk.",
         "A produkció kész van. Csak még dolgozunk rajta.",
         "A bemutató után mindenki fáradt. Kivéve azt, akinek még bontania kell.",
+        "A Találkozó harmadik napján már mindenki tegez mindenkit. Néha saját magát is.",
         "Az előadás hossza relatív. A pakolásé nem.",
         "A legjobb beszélgetés ott kezdődik, ahol elfogyott a hivatalos program.",
         "Minden Találkozón van egy ember, aki tudja, hol van a hosszabbító. Ő a valódi főszereplő.",
+        "A kávézó-záróra után születnek a legnagyobb esztétikai felismerések.",
         "A technikai rider egy kívánságlista. A valóság pedig performansz.",
         "A negyedik kávé már nem élénkít. Az egy segélykiáltás.",
         "A díszlet addig könnyű, amíg fel nem kell vinni a harmadikra lift nélkül.",
         "A Találkozó-barátságok intenzitása vetekszik a turnébusz légkondijának kiszámíthatatlanságával.",
+        "Az igazi szakmai elismerés: archaeological term: amikor valaki kölcsönad egy gaffer szalagot.",
         "Mindenki kísérletezik. Van, aki nyilvánosan.",
         "A legnagyobb hazugság a színházban: 'öt perc és kész vagyunk.'",
         "A Találkozó végére minden telefontöltő közkinccsé válik.",
@@ -687,6 +813,8 @@ function generateQuote() {
         "Az éjszakai szakmázás reggelre rendszerint filozófiává nemesedik.",
         "A színház varázslat. A Találkozó túlélőtúra.",
         "A legnagyobb szakmai bizalom: amikor valaki rád bízza a saját bábját.",
+        "Minden Találkozó végén elhangzik: 'legközelebb kevesebbet vállalunk.'",
+        "A művészet örök. A catering viszont elfogy.",
         "Az alternatív megoldás általában azt jelenti, hogy eltört valami."
     ];
     const q = quotes[Math.floor(Math.random() * quotes.length)];
@@ -926,11 +1054,11 @@ function doSearch() {
                     } else if (item.isAdHoc) {
                         let imgHtml = item.photoUrl ? `<img src="${item.photoUrl}" style="width:100%; border-radius:4px; margin-top:10px; margin-bottom:10px;">` : '';
                         html += `
-                          <div class="event-card type-show open" style="border-left-color: var(--gold-light); background: rgba(196,145,58,0.06); margin-bottom:15px; width:100%;">
+                          <div class="event-card type-show open" style="border-left-color: var(--gold-light); margin-bottom:15px; width:100%;">
                             <div class="card-header" style="cursor: default; padding-bottom:5px;">
                               <div class="card-header-row">
                                 <div>
-                                  <div class="event-title" style="color: var(--gold);">${escapeHTML(item.title)}</div>
+                                  <div class="event-title" style="color: var(--teal-dark);">${escapeHTML(item.title)}</div>
                                   <div class="event-company">${escapeHTML(item.company)}</div>
                                 </div>
                               </div>
@@ -1062,9 +1190,21 @@ function doSearch() {
     }
 }
 
-// ==========================================
+// APP TELEPÍTÉS LOGIKÁJA
+let deferredPrompt;
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if(!isStandalone) {
+        const btn = document.getElementById('installAppBtn');
+        if(btn) btn.style.display = 'inline-flex';
+    }
+});
+
 // 🛠 DOM BETÖLTÉSE UTÁNI FŐ FÜGGVÉNY
-// ==========================================
 function initApp() {
     const pdfOverlay = document.getElementById('pdfOverlay');
 
@@ -1072,10 +1212,9 @@ function initApp() {
         navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW hiba', err));
     }
 
-    // Mindig megmutatjuk a telepítés gombot, ha nem standalone (telepített) módban fut az app
-    if (!isStandalone) {
+    if (isIOS && !isStandalone) { 
         const btn = document.getElementById('installAppBtn');
-        if(btn) btn.style.display = 'inline-flex';
+        if(btn) btn.style.display = 'inline-flex'; 
     }
 
     const installBtn = document.getElementById('installAppBtn');
@@ -1088,8 +1227,6 @@ function initApp() {
                 deferredPrompt = null;
             } else if (isIOS) {
                 showToast("Apple iOS: Lent a böngészőben bökj a [Megosztás ⬆] ikonra, majd a [Főképernyőhöz adás ➕] gombra!");
-            } else {
-                showToast("Android: Bökj a böngésző jobb felső sarkában a 3 pontra, majd a [Telepítés] vagy [Főképernyőhöz adás] lehetőségre!");
             }
         });
     }
@@ -1186,7 +1323,6 @@ function initApp() {
         });
     }
 
-    // Szűrők regisztrálása
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.onclick = null;
         btn.addEventListener('click', (e) => {
@@ -1196,9 +1332,20 @@ function initApp() {
         });
     });
 
-    // Fülek (Tabs)
     document.querySelectorAll('.tab-btn').forEach((btn, index) => {
         btn.addEventListener('click', () => showDay(index, btn));
+    });
+
+    document.querySelectorAll('.card-header').forEach(header => {
+        header.addEventListener('click', function(e) {
+            if(!e.target.closest('.star-btn') && !e.target.closest('.mini-pulse-alert')) { 
+                const card = this.closest('.event-card');
+                if (card && !card.classList.contains('open')) { 
+                    trackEvent('show_expanded', { show_id: card.id });
+                }
+                toggleCard(this); 
+            }
+        });
     });
 
     const mainContent = document.getElementById('mainContent');
@@ -1319,8 +1466,7 @@ function initApp() {
             else jumpBtn.classList.remove('show');
         }
     });
-
-    // PWA Automatikus Újratöltés új verzió észlelésekor
+// PWA Automatikus Újratöltés új verzió észlelésekor
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.addEventListener('controllerchange', () => {
             window.location.reload();
@@ -1328,7 +1474,6 @@ function initApp() {
     }
 }
 
-// BIZTOSÍTJUK A BETÖLTÉST
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initApp);
 } else {
