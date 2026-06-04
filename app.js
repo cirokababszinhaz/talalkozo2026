@@ -3,7 +3,7 @@ import { getDatabase, ref, push, set, remove, onValue } from "https://www.gstati
 import { getStorage, ref as sRef, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 // ==========================================
-// ⚙️ GLOBÁLIS TELEPÍTÉSI ÉS ALAPVÁLTOZÓK
+// ⚙️ GLOBÁLIS TELEPÍTÉSI ÉS ALAPVÁLTOZÓK (Biztonságos betöltési sorrend)
 // ==========================================
 let deferredPrompt;
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -1177,7 +1177,7 @@ function initApp() {
                     });
                     trackEvent('app_shared'); 
                 } catch (err) {
-                    console.log('Megosztás meg szakítva', err);
+                    console.log('Megosztás megszakítva', err);
                 }
             } else {
                 navigator.clipboard.writeText(window.location.href);
@@ -1186,6 +1186,7 @@ function initApp() {
         });
     }
 
+    // Szűrők regisztrálása
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.onclick = null;
         btn.addEventListener('click', (e) => {
@@ -1195,6 +1196,7 @@ function initApp() {
         });
     });
 
+    // Fülek (Tabs)
     document.querySelectorAll('.tab-btn').forEach((btn, index) => {
         btn.addEventListener('click', () => showDay(index, btn));
     });
