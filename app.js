@@ -3,7 +3,7 @@ import { getDatabase, ref, push, set, remove, onValue } from "https://www.gstati
 import { getStorage, ref as sRef, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 // ==========================================
-// ⚙️ GLOBÁLIS TELEPÍTÉSI ÉS ALAPVÁLTOZÓK (Legfelülre hozva a biztonságért)
+// ⚙️ GLOBÁLIS TELEPÍTÉSI ÉS ALAPVÁLTOZÓK
 // ==========================================
 let deferredPrompt;
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -677,7 +677,7 @@ function generateQuote() {
         "Minden Találkozón van egy ember, aki tudja, hol van a hosszabbító. Ő a valódi főszereplő.",
         "A technikai rider egy kívánságlista. A valóság pedig performansz.",
         "A negyedik kávé már nem élénkít. Az egy segélykiáltás.",
-        "A díszlet addig könnyű, amíg fel nem kell vini a harmadikra lift nélkül.",
+        "A díszlet addig könnyű, amíg fel nem kell vinni a harmadikra lift nélkül.",
         "A Találkozó-barátságok intenzitása vetekszik a turnébusz légkondijának kiszámíthatatlanságával.",
         "Mindenki kísérletezik. Van, aki nyilvánosan.",
         "A legnagyobb hazugság a színházban: 'öt perc és kész vagyunk.'",
