@@ -645,7 +645,6 @@ function generateQuote() {
         "A legjobb jelenetek néha a színpadon kívül történnek. Például a harmadik fröccs után.",
         "A báb súlya nem kilóban mérhető. Hanem a vastapsokban.",
         "Ha minden működik, az gyanús. Valami biztos kimaradt.",
-        "A közönség nem lát mindent. Szerencsére!",
         "A bábok nem fáradnak el. De te igen, szóval igyál még egy kávét.",
         "Egy jó Találkozón nem csak előadásokat gyűjtesz, hanem történeteket is.",
         "A báb akkor él, amikor elfelejted, hogy te mozgatod.",
@@ -678,7 +677,7 @@ function generateQuote() {
         "Minden Találkozón van egy ember, aki tudja, hol van a hosszabbító. Ő a valódi főszereplő.",
         "A technikai rider egy kívánságlista. A valóság pedig performansz.",
         "A negyedik kávé már nem élénkít. Az egy segélykiáltás.",
-        "A díszlet addig könnyű, amíg fel nem kell vinni a harmadikra lift nélkül.",
+        "A díszlet addig könnyű, amíg fel nem kell vini a harmadikra lift nélkül.",
         "A Találkozó-barátságok intenzitása vetekszik a turnébusz légkondijának kiszámíthatatlanságával.",
         "Mindenki kísérletezik. Van, aki nyilvánosan.",
         "A legnagyobb hazugság a színházban: 'öt perc és kész vagyunk.'",
@@ -1178,7 +1177,7 @@ function initApp() {
                     });
                     trackEvent('app_shared'); 
                 } catch (err) {
-                    console.log('Megosztás megszakítva', err);
+                    console.log('Megosztás meg szakítva', err);
                 }
             } else {
                 navigator.clipboard.writeText(window.location.href);
