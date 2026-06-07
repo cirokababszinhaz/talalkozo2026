@@ -251,8 +251,8 @@
   const auth = getAuth(app);
   const storage = getStorage(app);
   
-  // Új változó a szerkesztés nyomon követéséhez:
-  window.editingAdhocId = null;
+  // Szuperbiztonságos helyi modulváltozó a szerkesztéshez:
+  let editingAdhocId = null;
   
   onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -494,7 +494,7 @@
       return;
     }
     
-    window.editingAdhocId = id;
+    editingAdhocId = id; // Beállítjuk a helyi modulváltozót
     
     document.getElementById("adhocTitle").value = item.title || "";
     document.getElementById("adhocCompany").value = item.company || "";
@@ -559,17 +559,18 @@
         timeStr: timeStr,
         venue: venue,
         description: description,
-        timeRaw: Date.now() // Újrafrissítjük az időt, hogy előre ugorjon a blogfolyamban
+        timeRaw: Date.now() // Újrafrissítjük az időt a blog sorrendhez
       };
 
+      // Ha új kép lett feltöltve, hozzáadjuk az adatokhoz
       if (photoUrl) {
         postData.photoUrl = photoUrl;
       }
 
-      if (window.editingAdhocId) {
-        // MÓDOSÍTÁS mentése
-        postData.updated = true; // Frissítési jelző beállítása
-        await update(ref(db, "adHocEvents/" + window.editingAdhocId), postData);
+      if (editingAdhocId) {
+        // MÓDOSÍTÁS mentése (felülírás)
+        postData.updated = true; 
+        await update(ref(db, "adHocEvents/" + editingAdhocId), postData);
         showFeedback(fb, "✓ Ad hoc program sikeresen frissítve!", "ok");
       } else {
         // ÚJ PROGRAM közzététele
@@ -599,7 +600,7 @@
         pBtn.innerText = '📸 FOTÓ CSATOLÁSA (Opcionális)';
       }
       window.adhocResizedImage = null;
-      window.editingAdhocId = null; // Szerkesztési állapot törlése
+      editingAdhocId = null; // Szerkesztési állapot törlése a modulváltozóból!
 
       btn.innerText = "⚡ Program közzététele";
       btn.style.background = "var(--red)";
