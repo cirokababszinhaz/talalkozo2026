@@ -1,5 +1,5 @@
 // FIGYELEM: Átírtuk v21-re az új funkciók és elrendezés miatt!
-const CACHE_NAME = 'talalkozo-cache-v36';
+const CACHE_NAME = 'talalkozo-cache-v37';
 
 // Ide be kell írni minden fájlt, amit offline is látni akarunk
 const ASSETS_TO_CACHE = [
@@ -28,6 +28,7 @@ const ASSETS_TO_CACHE = [
   './szem-alap.png',
   './pupilla.png',
   './kurzor.png'
+'./fb-megosztas.jpg'
 ];
 
 

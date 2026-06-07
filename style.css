@@ -568,3 +568,11 @@ footer a { color: var(--gold-light); text-decoration: none; }
   color: #ffffff !important;
   border-color: var(--teal-dark) !important;
 }
+
+/* Emlékkönyv lájk gomb stílusok */
+.gb-like-btn {
+  transition: transform 0.2s;
+}
+.gb-like-btn:hover {
+  transform: scale(1.15);
+}
