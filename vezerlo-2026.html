@@ -452,11 +452,18 @@
       });
     });
 
+    // Globális gyorsítótár a hibátlan szerkesztésért
+    window.adhocCache = {};
+
     onValue(ref(db, "adHocEvents"), (snap) => {
       const container = document.getElementById("activeAdhocContainer");
       container.innerHTML = "";
       if (!snap.exists()) { container.innerHTML = "<p style='font-size:12px;color:var(--muted)'>Nincs aktív ad hoc program.</p>"; return; }
+      
+      // Elmentjük az adatokat a belső memóriába
       const data = snap.val();
+      window.adhocCache = data;
+
       const adhocArray = Object.keys(data).map(key => ({ id: key, ...data[key] })).sort((a,b) => b.timeRaw - a.timeRaw);
       adhocArray.forEach(item => {
         let imgHtml = item.photoUrl ? `<img src="${item.photoUrl}" class="gb-photo" style="margin-bottom:8px;">` : '';
@@ -470,8 +477,8 @@
               <div class="alert-text">${escapeHTML(item.description)}</div>
             </div>
             <div style="display:flex; flex-direction:column; gap:6px;">
-              <!-- Szerkesztés gomb -->
-              <button class="resolve-btn" style="background:var(--teal); margin:0;" onclick="window.startEditAdhoc('${item.id}', ${escapeHTML(JSON.stringify(item))})">Módosítás</button>
+              <!-- Csak az ID-t adjuk át a biztonságos betöltéshez -->
+              <button class="resolve-btn" style="background:var(--teal); margin:0;" onclick="window.startEditAdhoc('${item.id}')">Módosítás</button>
               <button class="del-btn" style="margin:0;" onclick="window.deleteAdhoc('${item.id}')">Törlés</button>
             </div>
           </div>`;
@@ -479,8 +486,14 @@
     });
   }
 
-// Szerkesztési adatok betöltése az űrlapba
-  window.startEditAdhoc = function(id, item) {
+// Szerkesztési adatok betöltése a belső gyorsítótárból
+  window.startEditAdhoc = function(id) {
+    const item = window.adhocCache[id];
+    if(!item) {
+      alert("Hiba: A program adatai nem találhatóak a memóriában!");
+      return;
+    }
+    
     window.editingAdhocId = id;
     
     document.getElementById("adhocTitle").value = item.title || "";

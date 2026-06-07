@@ -560,7 +560,14 @@ footer a { color: var(--gold-light); text-decoration: none; }
   font-weight: 600;
 }
 
+/* További éttermek gomb tökéletes központosítása és méretezése */
 #btnOtherRestaurants {
+  display: inline-flex;
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+  font-size: 11px; /* Kisebb betűméret */
+  padding: 10px 16px;
   transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 }
 #btnOtherRestaurants:hover {
@@ -568,6 +575,7 @@ footer a { color: var(--gold-light); text-decoration: none; }
   color: #ffffff !important;
   border-color: var(--teal-dark) !important;
 }
+
 
 /* Emlékkönyv lájk gomb stílusok */
 .gb-like-btn {
