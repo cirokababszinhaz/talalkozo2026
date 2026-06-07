@@ -1,5 +1,5 @@
 // FIGYELEM: Átírtuk v21-re az új funkciók és elrendezés miatt!
-const CACHE_NAME = 'talalkozo-cache-v38';
+const CACHE_NAME = 'talalkozo-cache-v39';
 
 // Ide be kell írni minden fájlt, amit offline is látni akarunk
 const ASSETS_TO_CACHE = [
