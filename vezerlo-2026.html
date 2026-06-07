@@ -207,7 +207,7 @@
   </label>
   <div id="adhocPhotoPreview" style="font-size:10px; color:var(--green); text-align:center; margin-bottom:15px; font-weight:700; display:none;">✓ Fotó előkészítve!</div>
 
-  <button class="btn btn-primary" id="publishAdhocBtn" onclick="window.publishAdhoc()">⚡ Program közzététele</button>
+  <button type="button" class="btn btn-primary" id="publishAdhocBtn" onclick="window.publishAdhoc()">⚡ Program közzététele</button>
   <div class="feedback" id="adhocFeedback"></div>
 
   <div class="divider"></div>
@@ -486,7 +486,10 @@
     });
   }
 
-// Szerkesztési adatok betöltése a belső gyorsítótárból
+// Globális szerkesztési változó definiálása a biztonságos átvitelért
+  window.currentEditingAdhocId = null;
+
+  // Szerkesztési adatok betöltése a belső gyorsítótárból kép-előnézettel
   window.startEditAdhoc = function(id) {
     const item = window.adhocCache[id];
     if(!item) {
@@ -494,15 +497,32 @@
       return;
     }
     
+    // Globális és DOM azonosítók egyidejű beállítása
+    window.currentEditingAdhocId = id;
+    
     document.getElementById("adhocTitle").value = item.title || "";
     document.getElementById("adhocCompany").value = item.company || "";
     document.getElementById("adhocTimeStr").value = item.timeStr || "";
     document.getElementById("adhocVenue").value = item.venue || "";
     document.getElementById("adhocDescription").value = item.description || "";
     
+    const preview = document.getElementById('adhocPhotoPreview');
+    const pBtn = document.getElementById('adhocPhotoBtn');
+    
+    // Jelenlegi kép előnézetének kirajzolása a formban szerkesztéskor
+    if (preview && item.photoUrl) {
+      preview.style.display = 'block';
+      preview.innerHTML = `✓ Jelenlegi fotó:<br><img src="${item.photoUrl}" style="max-width:120px; border-radius:4px; margin-top:5px; border:1px solid var(--border);">`;
+      if(pBtn) {
+        pBtn.innerText = '📸 ÚJ FOTÓ FELTÖLTÉSE (Csere)';
+      }
+    } else {
+      if(preview) preview.style.display = 'none';
+      if(pBtn) pBtn.innerText = '📸 FOTÓ CSATOLÁSA (Opcionális)';
+    }
+
     const btn = document.getElementById("publishAdhocBtn");
     if(btn) {
-      // Elmentjük az ID-t közvetlenül a gomb attribútumába!
       btn.setAttribute("data-editing-id", id);
       btn.innerText = "✓ Frissítés mentése";
       btn.style.background = "var(--green)";
@@ -538,8 +558,9 @@
       return; 
     }
 
-    // Kiolvassuk a szerkesztendő ID-t a gomb attribútumából
+    // Kiolvassuk a szerkesztendő ID-t az attribútumból és a globális változóból is
     const editingId = btn ? btn.getAttribute("data-editing-id") : null;
+    const finalEditingId = editingId || window.currentEditingAdhocId;
     
     btn.disabled = true;
     btn.innerText = "Feldolgozás...";
@@ -565,14 +586,15 @@
         timeRaw: Date.now()
       };
 
+      // Csak akkor írjuk felül a kép linkjét, ha új kép lett kiválasztva
       if (photoUrl) {
         postData.photoUrl = photoUrl;
       }
 
-      if (editingId) {
-        // MÓDOSÍTÁS mentése (felülírja az eredeti node-ot)
+      if (finalEditingId) {
+        // MÓDOSÍTÁS mentése (Adatbázis node felülírása)
         postData.updated = true; 
-        await update(ref(db, "adHocEvents/" + editingId), postData);
+        await update(ref(db, "adHocEvents/" + finalEditingId), postData);
         showFeedback(fb, "✓ Ad hoc program sikeresen frissítve!", "ok");
       } else {
         // ÚJ PROGRAM közzététele
@@ -593,7 +615,10 @@
       if(fileInput) fileInput.value = "";
       
       const preview = document.getElementById('adhocPhotoPreview');
-      if(preview) preview.style.display = 'none';
+      if(preview) {
+        preview.style.display = 'none';
+        preview.innerHTML = "";
+      }
       
       const pBtn = document.getElementById('adhocPhotoBtn');
       if(pBtn) {
@@ -603,9 +628,10 @@
       }
       
       window.adhocResizedImage = null;
+      window.currentEditingAdhocId = null; // Szerkesztési ID törlése
       
       if(btn) {
-        btn.removeAttribute("data-editing-id"); // Töröljük a szerkesztési ID-t!
+        btn.removeAttribute("data-editing-id");
         btn.innerText = "⚡ Program közzététele";
         btn.style.background = "var(--red)";
       }
