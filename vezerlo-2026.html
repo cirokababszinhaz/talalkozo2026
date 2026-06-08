@@ -207,6 +207,7 @@
   </label>
   <div id="adhocPhotoPreview" style="font-size:10px; color:var(--green); text-align:center; margin-bottom:15px; font-weight:700; display:none;">✓ Fotó előkészítve!</div>
 
+  <!-- type="button" hozzáadása a biztonságos DOM szerkesztéshez és a lapújratöltés ellen -->
   <button type="button" class="btn btn-primary" id="publishAdhocBtn" onclick="window.publishAdhoc()">⚡ Program közzététele</button>
   <div class="feedback" id="adhocFeedback"></div>
 
@@ -250,9 +251,6 @@
   const db  = getDatabase(app);
   const auth = getAuth(app);
   const storage = getStorage(app);
-  
-  // Szuperbiztonságos helyi modulváltozó a szerkesztéshez:
-  let editingAdhocId = null;
   
   onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -486,7 +484,7 @@
     });
   }
 
-// Globális szerkesztési változó definiálása a biztonságos átvitelért
+  // Globális szerkesztési változó definiálása a biztonságos átvitelért
   window.currentEditingAdhocId = null;
 
   // Szerkesztési adatok betöltése a belső gyorsítótárból kép-előnézettel
@@ -532,7 +530,7 @@
     document.getElementById("adhocTitle").scrollIntoView({ behavior: "smooth" });
   };
 
-// PUBLISH OR UPDATE AD HOC
+  // PUBLISH OR UPDATE AD HOC
   window.publishAdhoc = async function() {
     const titleEl = document.getElementById("adhocTitle");
     const companyEl = document.getElementById("adhocCompany");
@@ -642,6 +640,7 @@
       btn.disabled = false;
     }
   };
+
   // PUBLISH ALERT
   window.publishAlert = async function() {
     const text = document.getElementById("alertText").value.trim();
