@@ -1468,6 +1468,10 @@ function initApp() {
     initPostFestivalMode();
     checkLiveEvents();
     
+    restoreCheckinUI();
+    initPostFestivalMode();
+    checkLiveEvents();
+    
     window.addEventListener('scroll', () => {
         const jumpBtn = document.getElementById('jumpBtn');
         if(jumpBtn) {
@@ -1475,6 +1479,23 @@ function initApp() {
             else jumpBtn.classList.remove('show');
         }
     });
+
+    // ÚJ: Valós idejű élő jelenlét-követés és napi naplózás
+    try {
+        const uuid = getDeviceUUID();
+        const todayStr = new Date().toISOString().split('T')[0];
+        
+        // 1. Napi egyedi látogató bejegyzése
+        const dailyRef = ref(db, `analytics/dailyActiveUsers/${todayStr}/${uuid}`);
+        set(dailyRef, Date.now());
+
+        // 2. Valós idejű jelenlét (onDisconnect törléssel)
+        const presenceRef = ref(db, `presence/${uuid}`);
+        set(presenceRef, Date.now());
+        onDisconnect(presenceRef).remove(); // Ha bezárja a lapot, a Firebase törli
+    } catch (analyticsError) {
+        console.error("Statisztikai hiba:", analyticsError);
+    }
 
     // ÚJ: Delegált kattintásfigyelő a vendégkönyv lájkolásához
     document.body.addEventListener('click', (e) => {
@@ -1495,22 +1516,6 @@ function initApp() {
         }
     });
 
-// ÚJ: Valós idejű élő jelenlét-követés és napi naplózás
-    try {
-        const uuid = getDeviceUUID();
-        const todayStr = new Date().toISOString().split('T')[0];
-        
-        // 1. Napi egyedi látogató bejegyzése
-        const dailyRef = ref(db, `analytics/dailyActiveUsers/${todayStr}/${uuid}`);
-        set(dailyRef, Date.now());
-
-        // 2. Valós idejű jelenlét (onDisconnect törléssel)
-        const presenceRef = ref(db, `presence/${uuid}`);
-        set(presenceRef, Date.now());
-        onDisconnect(presenceRef).remove(); // Ha bezárja a lapot, a Firebase törli
-    } catch (analyticsError) {
-        console.error("Statisztikai hiba:", analyticsError);
-    }
 
     // PWA Automatikus Újratöltés új verzió észlelésekor
     if ('serviceWorker' in navigator) {
