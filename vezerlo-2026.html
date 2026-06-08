@@ -660,7 +660,7 @@
       let photoUrl = "";
       if (window.alertResizedImage) {
          const photoRef = sRef(storage, 'alerts/' + Date.now() + '.jpg');
-         await uploadString(photoRef, window.adhocResizedImage, 'data_url', { contentType: 'image/jpeg' });
+         await uploadString(photoRef, window.alertResizedImage, 'data_url', { contentType: 'image/jpeg' }); // <-- Így a helyes!
          photoUrl = await getDownloadURL(photoRef);
       }
 
