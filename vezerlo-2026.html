@@ -242,7 +242,7 @@
     authDomain: "ciroka-18b93.firebaseapp.com",
     databaseURL: "https://ciroka-18b93-default-rtdb.europe-west1.firebasedatabase.app",
     projectId: "ciroka-18b93",
-    storageBucket: "ciroka-18b93.storageBucket",
+    storageBucket: "ciroka-18b93.firebasestorage.app",
     messagingSenderId: "149700522771",
     appId: "1:149700522771:web:75596da42e3f116aa3a0e6"
   };
@@ -251,6 +251,9 @@
   const db  = getDatabase(app);
   const auth = getAuth(app);
   const storage = getStorage(app);
+  
+  // Szuperbiztonságos helyi modulváltozó a szerkesztéshez:
+  let editingAdhocId = null;
   
   onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -657,7 +660,7 @@
       let photoUrl = "";
       if (window.alertResizedImage) {
          const photoRef = sRef(storage, 'alerts/' + Date.now() + '.jpg');
-         await uploadString(photoRef, window.alertResizedImage, 'data_url', { contentType: 'image/jpeg' });
+         await uploadString(photoRef, window.adhocResizedImage, 'data_url', { contentType: 'image/jpeg' });
          photoUrl = await getDownloadURL(photoRef);
       }
 
