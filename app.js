@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, push, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, push, set, remove, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import { getStorage, ref as sRef, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 // ==========================================
@@ -1494,6 +1494,23 @@ function initApp() {
             }
         }
     });
+
+// ÚJ: Valós idejű élő jelenlét-követés és napi naplózás
+    try {
+        const uuid = getDeviceUUID();
+        const todayStr = new Date().toISOString().split('T')[0];
+        
+        // 1. Napi egyedi látogató bejegyzése
+        const dailyRef = ref(db, `analytics/dailyActiveUsers/${todayStr}/${uuid}`);
+        set(dailyRef, Date.now());
+
+        // 2. Valós idejű jelenlét (onDisconnect törléssel)
+        const presenceRef = ref(db, `presence/${uuid}`);
+        set(presenceRef, Date.now());
+        onDisconnect(presenceRef).remove(); // Ha bezárja a lapot, a Firebase törli
+    } catch (analyticsError) {
+        console.error("Statisztikai hiba:", analyticsError);
+    }
 
     // PWA Automatikus Újratöltés új verzió észlelésekor
     if ('serviceWorker' in navigator) {

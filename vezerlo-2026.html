@@ -118,6 +118,9 @@
 </div>
 
 <div id="adminPanel">
+  <!-- ÚJ: Élő látogatottsági statisztikák doboza -->
+  <div id="analyticsStats"></div>
+
   <h2>Értesítések kezelése</h2>
   <div class="subtitle">Havária és módosítások</div>
 
@@ -372,6 +375,56 @@
   };
 
   function initAdmin() {
+    // ÚJ: Valós idejű élő jelenlét és napi látogatottság figyelője
+    onValue(ref(db, "analytics/dailyActiveUsers"), (dailySnap) => {
+      onValue(ref(db, "presence"), (presenceSnap) => {
+        const todayStr = new Date().toISOString().split('T')[0];
+        
+        // 1. Napi látogatók számolása
+        const dailyData = dailySnap.val() || {};
+        const todayUsers = dailyData[todayStr] ? Object.keys(dailyData[todayStr]).length : 0;
+        
+        const yesterday = new Date(Date.now() - 86400000);
+        const yesterdayStr = yesterday.toISOString().split('T')[0];
+        const yesterdayUsers = dailyData[yesterdayStr] ? Object.keys(dailyData[yesterdayStr]).length : 0;
+
+        // 2. Élő jelenlét számolása (WebSocket kapcsolatok alapján)
+        const presenceData = presenceSnap.val() || {};
+        const liveUsers = Object.keys(presenceData).length;
+
+        const statsContainer = document.getElementById("analyticsStats");
+        if (statsContainer) {
+            statsContainer.innerHTML = `
+              <div class="alert-item" style="border-left-color: var(--teal); background: rgba(26,92,88,0.04); margin-bottom: 24px; display: block; width: 100%;">
+                <div style="width: 100%;">
+                  <div class="alert-meta" style="color: var(--teal); font-weight: 800; letter-spacing: 1.5px;">📈 LIVE LÁTOGATOTTSÁGI ADATOK</div>
+                  <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-top: 15px;">
+                    
+                    <div style="flex: 1; min-width: 140px;">
+                      <div style="font-size: 11px; color: var(--muted); text-transform: uppercase; font-weight: 700;">Jelenleg online (Élő):</div>
+                      <div style="font-size: 26px; font-weight: 800; color: var(--teal);">
+                        <span style="animation: blink 1.5s infinite; color: var(--red); margin-right: 6px;">●</span>${liveUsers} fő
+                      </div>
+                    </div>
+                    
+                    <div style="flex: 1; min-width: 140px;">
+                      <div style="font-size: 11px; color: var(--muted); text-transform: uppercase; font-weight: 700;">Mai egyedi eszközök:</div>
+                      <div style="font-size: 26px; font-weight: 800; color: var(--gold-light);">${todayUsers} db</div>
+                    </div>
+                    
+                    <div style="flex: 1; min-width: 140px;">
+                      <div style="font-size: 11px; color: var(--muted); text-transform: uppercase; font-weight: 700;">Tegnapi látogatók:</div>
+                      <div style="font-size: 26px; font-weight: 800; color: var(--muted);">${yesterdayUsers} db</div>
+                    </div>
+                    
+                  </div>
+                </div>
+              </div>
+            `;
+        }
+      });
+    });
+
     onValue(ref(db, "alertsList"), (snap) => {
       const container = document.getElementById("activeAlertsContainer");
       container.innerHTML = "";
