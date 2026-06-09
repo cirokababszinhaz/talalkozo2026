@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, push, set, remove, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, push, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import { getStorage, ref as sRef, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 // ==========================================
@@ -42,20 +42,6 @@ let isPhotoWide = false;
 let currentGbTotal = 0;
 let resizedImageDataUrl = null;
 let helpResizedImageDataUrl = null;
-// Intelligens térkép globális változói és a helyszínek koordinátái
-let leafletMap = null;
-let leafletMarkers = {};
-let activeCheckinsData = {};
-
-const venueCoords = {
-  'ciroka': [46.905861, 19.689237],
-  'agora': [46.906108, 19.687887],
-  'kelemen': [46.908866, 19.694339],
-  'ruszt': [46.905600, 19.688300],
-  'ifjusagi': [46.908781, 19.690731],
-  'tmh': [46.908866, 19.694339]
-};
-
 
 // CSOPORTOS ELŐADÁSOK LEKÉPEZÉSE ÉRTESÍTÉSEKHEZ
 const SHOW_GROUPS = {
@@ -487,31 +473,6 @@ const venueNames = {
   'tmh': 'Tudomány és Művészetek Háza (Technika Háza)', 
   'bufe': '☕ Kávézóban / Étteremben' 
 };
-
-// Térképmárkerek élő adatszinkronizációja (Popup tartalom összeállítása)
-function updateLeafletMarkers() {
-    if (!leafletMap) return;
-    
-    Object.keys(leafletMarkers).forEach(vId => {
-        const marker = leafletMarkers[vId];
-        const namesList = activeCheckinsData[vId] || [];
-        const count = namesList.length;
-        
-        let popupContent = `<div style="font-family:'Montserrat',sans-serif; text-align:center;">
-            <strong style="color:var(--teal); font-size:12px;">${venueNames[vId]}</strong><br>`;
-            
-        if (count > 0) {
-            popupContent += `<span style="background:var(--gold-light); color:#000; font-size:10px; font-weight:700; padding:2px 6px; border-radius:10px; display:inline-block; margin-top:5px;">👀 Kik vannak itt? (${count} fő)</span>
-            <div style="font-size:11px; margin-top:5px; max-height:80px; overflow-y:auto; color:var(--text); font-weight:600;">
-              ${namesList.join(', ')}
-            </div>`;
-        } else {
-            popupContent += `<span style="font-size:10px; color:var(--muted); display:inline-block; margin-top:5px;">Még senki sincs itt.</span>`;
-        }
-        popupContent += `</div>`;
-        marker.setPopupContent(popupContent);
-    });
-}
 
 function updateCheckinUI(venueId) {
     const myStatus = document.getElementById('myCheckinStatus');
@@ -1507,157 +1468,6 @@ function initApp() {
     initPostFestivalMode();
     checkLiveEvents();
     
-    restoreCheckinUI();
-    initPostFestivalMode();
-    checkLiveEvents();
-    
-// INTERAKTÍV LEAFLET.JS TÉRKÉP INICIALIZÁLÁSA
-    try {
-        leafletMap = L.map('liveMap', { zoomControl: false }).setView([46.9075, 19.691], 15);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap'
-        }).addTo(leafletMap);
-        
-        L.control.zoom({ position: 'bottomright' }).addTo(leafletMap);
-
-        // Markerek legenerálása és elhelyezése
-        Object.keys(venueCoords).forEach(vId => {
-            const marker = L.marker(venueCoords[vId]).addTo(leafletMap);
-            marker.bindPopup(`<strong>${venueNames[vId]}</strong>`);
-            leafletMarkers[vId] = marker;
-        });
-    } catch (mapError) {
-        console.error("Térkép betöltési hiba:", mapError);
-    }
-D) Élő check-in adatok összekötése a térképpel
-Utolsó lépésként keresd meg az onValue(checkinRef, (snap) => { ... }) blokkot (körülbelül a 260-as sor környékén):
-code
-JavaScript
-onValue(checkinRef, (snap) => {
-    Object.keys(venueNames).forEach(id => {
-        const container = document.getElementById('checkins-' + id);
-        if(container) container.innerHTML = '';
-    });
-
-    const ciBadge = document.getElementById('ciBadge');
-
-    if(!snap.exists()) {
-        if(ciBadge) ciBadge.style.display = 'none';
-        return;
-    }
-    
-    const data = snap.val();
-    const now = Date.now();
-    const TWO_HOURS = 2 * 60 * 60 * 1000;
-    
-    let totalActiveCheckins = 0;
-
-    for (let venueId in data) {
-        const venueContainer = document.getElementById('checkins-' + venueId);
-        let hasCheckin = false;
-        const checkins = data[venueId];
-        
-        Object.keys(checkins).forEach(key => {
-            const checkinData = checkins[key];
-            if (now - checkinData.timeRaw < TWO_HOURS) {
-                totalActiveCheckins++;
-                
-                if(venueContainer) {
-                    if(!hasCheckin) {
-                        if (venueId === 'bufe') {
-                            venueContainer.innerHTML = '<div style="font-size:10px; color:var(--muted); margin-bottom:5px; font-weight:600; width: 100%;">Frissítő beszerzés kávézóban/étteremben:</div>';
-                        } else {
-                            venueContainer.innerHTML = '<div style="font-size:10px; color:var(--muted); margin-bottom:5px; font-weight:600; width: 100%;">Akik itt vannak:</div>';
-                        }
-                        hasCheckin = true;
-                    }
-                    const span = document.createElement('span');
-                    span.className = 'checkin-bubble';
-                    span.innerText = escapeHTML(checkinData.name);
-                    venueContainer.appendChild(span);
-                }
-            }
-        });
-    }
-
-    if(ciBadge) {
-        if (totalActiveCheckins > 0) {
-            ciBadge.innerText = totalActiveCheckins;
-            ciBadge.style.display = 'block';
-        } else {
-            ciBadge.style.display = 'none';
-        }
-    }
-});
-Cseréld le ezt a teljes onValue(checkinRef, ...) blokkot erre az okosított, a neveket és létszámot a térképnek is átadó verzióra [5]:
-code
-JavaScript
-onValue(checkinRef, (snap) => {
-    Object.keys(venueNames).forEach(id => {
-        const container = document.getElementById('checkins-' + id);
-        if(container) container.innerHTML = '';
-        activeCheckinsData[id] = []; // Nullázzuk az élő adatokat a térképhez
-    });
-
-    const ciBadge = document.getElementById('ciBadge');
-
-    if(!snap.exists()) {
-        if(ciBadge) ciBadge.style.display = 'none';
-        updateLeafletMarkers(); // Frissítjük a térképet (üresre)
-        return;
-    }
-    
-    const data = snap.val();
-    const now = Date.now();
-    const TWO_HOURS = 2 * 60 * 60 * 1000;
-    
-    let totalActiveCheckins = 0;
-
-    for (let venueId in data) {
-        const venueContainer = document.getElementById('checkins-' + venueId);
-        let hasCheckin = false;
-        const checkins = data[venueId];
-        
-        Object.keys(checkins).forEach(key => {
-            const checkinData = checkins[key];
-            if (now - checkinData.timeRaw < TWO_HOURS) {
-                totalActiveCheckins++;
-                
-                // Hozzáadjuk a neveket az élő térképi adatokhoz:
-                if (activeCheckinsData[venueId]) {
-                    activeCheckinsData[venueId].push(escapeHTML(checkinData.name));
-                }
-                
-                if(venueContainer) {
-                    if(!hasCheckin) {
-                        if (venueId === 'bufe') {
-                            venueContainer.innerHTML = '<div style="font-size:10px; color:var(--muted); margin-bottom:5px; font-weight:600; width: 100%;">Frissítő beszerzés kávézóban/étteremben:</div>';
-                        } else {
-                            venueContainer.innerHTML = '<div style="font-size:10px; color:var(--muted); margin-bottom:5px; font-weight:600; width: 100%;">Akik itt vannak:</div>';
-                        }
-                        hasCheckin = true;
-                    }
-                    const span = document.createElement('span');
-                    span.className = 'checkin-bubble';
-                    span.innerText = escapeHTML(checkinData.name);
-                    venueContainer.appendChild(span);
-                }
-            }
-        });
-    }
-
-    if(ciBadge) {
-        if (totalActiveCheckins > 0) {
-            ciBadge.innerText = totalActiveCheckins;
-            ciBadge.style.display = 'block';
-        } else {
-            ciBadge.style.display = 'none';
-        }
-    }
-    
-    updateLeafletMarkers(); // Frissítjük a térképet az új létszámokkal és nevekkel [5]
-});
-
     window.addEventListener('scroll', () => {
         const jumpBtn = document.getElementById('jumpBtn');
         if(jumpBtn) {
@@ -1665,23 +1475,6 @@ onValue(checkinRef, (snap) => {
             else jumpBtn.classList.remove('show');
         }
     });
-
-    // ÚJ: Valós idejű élő jelenlét-követés és napi naplózás
-    try {
-        const uuid = getDeviceUUID();
-        const todayStr = new Date().toISOString().split('T')[0];
-        
-        // 1. Napi egyedi látogató bejegyzése
-        const dailyRef = ref(db, `analytics/dailyActiveUsers/${todayStr}/${uuid}`);
-        set(dailyRef, Date.now());
-
-        // 2. Valós idejű jelenlét (onDisconnect törléssel)
-        const presenceRef = ref(db, `presence/${uuid}`);
-        set(presenceRef, Date.now());
-        onDisconnect(presenceRef).remove(); // Ha bezárja a lapot, a Firebase törli
-    } catch (analyticsError) {
-        console.error("Statisztikai hiba:", analyticsError);
-    }
 
     // ÚJ: Delegált kattintásfigyelő a vendégkönyv lájkolásához
     document.body.addEventListener('click', (e) => {
@@ -1701,7 +1494,6 @@ onValue(checkinRef, (snap) => {
             }
         }
     });
-
 
     // PWA Automatikus Újratöltés új verzió észlelésekor
     if ('serviceWorker' in navigator) {
