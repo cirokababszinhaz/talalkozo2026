@@ -42,6 +42,19 @@ let isPhotoWide = false;
 let currentGbTotal = 0;
 let resizedImageDataUrl = null;
 let helpResizedImageDataUrl = null;
+// Intelligens térkép globális változói és a helyszínek koordinátái
+let leafletMap = null;
+let leafletMarkers = {};
+let activeCheckinsData = {};
+
+const venueCoords = {
+  'ciroka': [46.905861, 19.689237],
+  'agora': [46.906108, 19.687887],
+  'kelemen': [46.908866, 19.694339],
+  'ruszt': [46.905600, 19.688300],
+  'ifjusagi': [46.908781, 19.690731],
+  'tmh': [46.908866, 19.694339]
+};
 
 // CSOPORTOS ELŐADÁSOK LEKÉPEZÉSE ÉRTESÍTÉSEKHEZ
 const SHOW_GROUPS = {
@@ -474,6 +487,31 @@ const venueNames = {
   'bufe': '☕ Kávézóban / Étteremben' 
 };
 
+
+// Térképmárkerek élő adatszinkronizációja (Popup tartalom összeállítása)
+function updateLeafletMarkers() {
+    if (!leafletMap) return;
+    
+    Object.keys(leafletMarkers).forEach(vId => {
+        const marker = leafletMarkers[vId];
+        const namesList = activeCheckinsData[vId] || [];
+        const count = namesList.length;
+        
+        let popupContent = `<div style="font-family:'Montserrat',sans-serif; text-align:center;">
+            <strong style="color:var(--teal); font-size:12px;">${venueNames[vId]}</strong><br>`;
+            
+        if (count > 0) {
+            popupContent += `<span style="background:var(--gold-light); color:#000; font-size:10px; font-weight:700; padding:2px 6px; border-radius:10px; display:inline-block; margin-top:5px;">👀 Kik vannak itt? (${count} fő)</span>
+            <div style="font-size:11px; margin-top:5px; max-height:80px; overflow-y:auto; color:var(--text); font-weight:600;">
+              ${namesList.join(', ')}
+            </div>`;
+        } else {
+            popupContent += `<span style="font-size:10px; color:var(--muted); display:inline-block; margin-top:5px;">Még senki sincs itt.</span>`;
+        }
+        popupContent += `</div>`;
+        marker.setPopupContent(popupContent);
+    });
+}
 function updateCheckinUI(venueId) {
     const myStatus = document.getElementById('myCheckinStatus');
     const checkinBtn = document.getElementById('btnCheckin'); 
@@ -598,12 +636,14 @@ onValue(checkinRef, (snap) => {
     Object.keys(venueNames).forEach(id => {
         const container = document.getElementById('checkins-' + id);
         if(container) container.innerHTML = '';
+        activeCheckinsData[id] = []; // Nullázzuk az élő adatokat a térképhez
     });
 
     const ciBadge = document.getElementById('ciBadge');
 
     if(!snap.exists()) {
         if(ciBadge) ciBadge.style.display = 'none';
+        updateLeafletMarkers(); // Frissítjük a térképet (üresre)
         return;
     }
     
@@ -622,6 +662,11 @@ onValue(checkinRef, (snap) => {
             const checkinData = checkins[key];
             if (now - checkinData.timeRaw < TWO_HOURS) {
                 totalActiveCheckins++;
+                
+                // Hozzáadjuk a neveket az élő térképi adatokhoz:
+                if (activeCheckinsData[venueId]) {
+                    activeCheckinsData[venueId].push(escapeHTML(checkinData.name));
+                }
                 
                 if(venueContainer) {
                     if(!hasCheckin) {
@@ -649,6 +694,8 @@ onValue(checkinRef, (snap) => {
             ciBadge.style.display = 'none';
         }
     }
+    
+    updateLeafletMarkers(); // Frissítjük a térképet az új létszámokkal és nevekkel [5]
 });
 
 // ==========================================
@@ -1463,14 +1510,34 @@ function initApp() {
     window.addEventListener('online', updateOnlineStatus);
     window.addEventListener('offline', updateOnlineStatus);
     updateOnlineStatus();
-
-    restoreCheckinUI();
-    initPostFestivalMode();
-    checkLiveEvents();
     
     restoreCheckinUI();
     initPostFestivalMode();
     checkLiveEvents();
+// INTERAKTÍV LEAFLET.JS TÉRKÉP INICIALIZÁLÁSA
+    try {
+        leafletMap = L.map('liveMap', { zoomControl: false }).setView([46.9075, 19.691], 15);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(leafletMap);
+        
+        L.control.zoom({ position: 'bottomright' }).addTo(leafletMap);
+
+        // Markerek legenerálása és elhelyezése
+        Object.keys(venueCoords).forEach(vId => {
+            const marker = L.marker(venueCoords[vId]).addTo(leafletMap);
+            marker.bindPopup(`<strong>${venueNames[vId]}</strong>`);
+            leafletMarkers[vId] = marker;
+        });
+
+        // Kényszerített méretszámítás, hogy elkerüljük a fehér ürességet
+        setTimeout(() => {
+            if (leafletMap) leafletMap.invalidateSize();
+        }, 300);
+
+    } catch (mapError) {
+        console.error("Térkép betöltési hiba:", mapError);
+    }
     
     window.addEventListener('scroll', () => {
         const jumpBtn = document.getElementById('jumpBtn');

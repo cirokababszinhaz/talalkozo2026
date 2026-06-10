@@ -20,6 +20,9 @@
 <title>Magyarországi Bábszínházak 17. Találkozója</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<!-- INTERAKTÍV LEAFLET.JS TÉRKÉP KÖNYVTÁR -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <!-- GOOGLE ANALYTICS (GA4) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-BSSY6FZ7TK"></script>
@@ -1646,11 +1649,60 @@
     </div>
   </div>
   
-  <div class="slot-time">20:30 – 22:30</div>
-  <div class="event-card type-forum" data-start="2026-06-17T20:30:00+02:00" data-end="2026-06-17T22:30:00+02:00">
-    <div class="card-header"><div class="event-title">💬 Szakmai megbeszélés</div></div>
+  <div class="slot-time">20:30 – 21:15</div>
+  <div class="event-card type-show" id="show-paravan" data-start="2026-06-17T20:30:00+02:00" data-end="2026-06-17T21:15:00+02:00">
+    <div class="card-header">
+      <div class="card-header-row">
+        <div>
+          <div class="event-title">Paraván (2025)<span class="live-badge">MOST ZAJLIK</span></div>
+          <div class="event-company">Filmvetítés és beszélgetés Halász Glória rendezővel</div>
+        </div>
+        <div class="header-actions">
+          <div class="star-container"><span class="star-btn">☆</span></div>
+          <div class="mini-pulse-alert">!</div>
+          <div class="expand-icon"><svg width="14" height="14"><use href="#chevron-down"/></svg></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-details"><div class="card-details-inner">
+      <div class="details-section">
+        <div class="details-label">Filminfó</div>
+        <div class="details-text">
+          Két bábművész, egy idős férfi és egy fiatal lány titokzatos földalatti helyre érkezik különös csomagjaikkal, hogy fényt vigyenek a sötétségbe. Amint bemutatják megfakult bábfiguráik előadását, kiderül, vajon a remény elvesztése után a történetek és a fantázia képes-e legyőzni félelmeinket és akár magát a valóságot is.<br><br>
+          <em>A rövidfilm hossza 12 perc.</em>
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Alkotók</div>
+        <div class="details-text">
+          Rendező: Halász Glória<br>
+          Forgatókönyvíró: Halász Glória, László Balogh<br>
+          Zene: Farkas Bence <br><br>
+          Szereplők: Podlovics Laura, Kovács Géza, Erdős Borcsa, Égető Fanni, Haik Viktória, Horváth Györgyi, Balog Ákos
+        </div>
+      </div>
+      <div class="details-section">
+        <div class="details-label">Időpontok</div>
+        <div class="details-text">
+          Filmvetítés: 20:30 – 20:42<br>
+          Beszélgetés a rendezővel: 20:45 – 21:15
+        </div>
+      </div>
+    </div></div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ifjúsági Otthon Moziterem</span></div>
+    </div>
   </div>
-</div>
+
+  <div class="slot-time">21:30 – 23:30</div>
+  <div class="event-card type-forum" data-start="2026-06-17T21:30:00+02:00" data-end="2026-06-17T23:30:00+02:00">
+    <div class="card-header">
+      <div class="event-title">💬 Szakmai megbeszélés</div>
+    </div>
+    <div class="event-footer">
+      <div class="event-meta"><span class="badge badge-venue">Ifjúsági Otthon Tükörterem</span></div>
+    </div>
+  </div>
 
 <!-- CSÜTÖRTÖK – jún. 18. -->
 <div class="day-panel" id="day-5">
@@ -2027,7 +2079,7 @@
       </div>
     </div>
     
-    <iframe src="https://maps.google.com/maps?q=6000%20Kecskem%C3%A9t%20Budai%20utca%2015&t=&z=15&ie=UTF8&iwloc=&output=embed" class="map-iframe" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    <div id="liveMap" style="height: 350px; border-radius: 4px; margin-top: 25px; border: 1px solid var(--border); z-index: 10;"></div>
     <div class="offline-map-msg">Térkép betöltéséhez internetkapcsolat szükséges! 🦖</div>
   </div>
 </div>
