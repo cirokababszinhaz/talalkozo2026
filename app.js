@@ -989,7 +989,16 @@ function buildSearchIndex() {
         });
     });
 }
-const dayPanels = document.querySelectorAll('.day-panel');
+
+// ITT INDÍTJUK ÚJRA A KERESŐ FÜGGVÉNYT:
+function doSearch() {
+    const searchInput = document.getElementById('searchInput');
+    if(!searchInput) return;
+    
+    let queryRaw = searchInput.value.toLowerCase().trim();
+    const query = queryRaw.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); 
+
+    const dayPanels = document.querySelectorAll('.day-panel');
     const tabsWrap = document.getElementById('tabsWrap');
     const scrollHint = document.getElementById('scrollHint');
     const updateFeedPanel = document.getElementById('updateFeedPanel');
