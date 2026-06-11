@@ -17,7 +17,24 @@
     --teal: #4db6ac; --teal-dark: #004d40; 
     --gold: #ffca28; --gold-light: #ffe082;
   }
-  .event-card { background: var(--card); }
+  /* Kártyák alapállapotú átmenetének engedélyezése */
+.event-card {
+  background: var(--card); 
+  border: 1px solid var(--border); 
+  border-left: 5px solid var(--border); 
+  border-radius: 4px; 
+  margin-bottom: 10px; 
+  overflow: hidden; 
+  position: relative;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+              box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+              border-color 0.25s ease;
+}
+/* Finom kiemelkedés, ha a kurzor a kártya fölé ér */
+.event-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(26,92,88,0.08);
+}
   .search-input-box input { background: var(--surface); color: var(--text); }
   .map-container, .info-box-bottom { background: var(--surface); }
   .alert-card { background: rgba(192,57,43,0.15); border-color: rgba(192,57,43,0.4); }
@@ -151,8 +168,21 @@ h1 em {
 /* TARTALOM ÉS KÁRTYÁK */
 .content { padding: 32px 16px 40px; max-width: 680px; margin: 0 auto; position: relative; }
 .day-panel { display: none; }
-.day-panel.active { display: block; animation: fadein .25s ease; }
-@keyframes fadein { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+.day-panel.active { 
+  display: block; 
+  animation: fluidFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1); /* iOS-szerű easing curve */
+}
+
+@keyframes fluidFadeIn { 
+  from { 
+    opacity: 0; 
+    transform: translateY(10px) scale(0.98); /* Alulról emelkedik fel és enyhén tágul */
+  } 
+  to { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  } 
+}
 
 .search-day-title { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--teal); border-bottom: 2px solid var(--gold-light); padding-bottom: 5px; margin: 30px 0 15px; display: none; }
 .no-results-msg { text-align:center; padding: 50px 20px; font-family:'Playfair Display', serif; font-size:26px; color:var(--teal); font-style:italic; display:none; line-height: 1.4; }
@@ -196,8 +226,24 @@ h1 em {
 .fb-event-btn, .route-btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; background: rgba(26,92,88,0.07); border: 1px solid rgba(26,92,88,0.3); border-radius: 3px; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; color: var(--teal-dark); transition: .2s; white-space: nowrap; flex-shrink: 0; text-decoration: none;}
 .fb-event-btn:hover, .route-btn:hover { background: var(--teal); color: #fff; text-decoration: none;margin-left: auto;}
 
-.card-details { max-height: 0; overflow: hidden; transition: max-height .4s ease; background: rgba(26,92,88,0.03); }
-.event-card.open .card-details { max-height: 4000px; border-top: 1px solid var(--border); }
+/* Szuperfolyékony, modern kártya-lenyílási effekt */
+.card-details { 
+  max-height: 0; 
+  overflow: hidden; 
+  background: rgba(26,92,88,0.03); 
+  opacity: 0;
+  transform: scaleY(0.96); /* Enyhe függőleges zsugorítás zárva */
+  transform-origin: top;
+  transition: max-height 0.45s cubic-bezier(0.16, 1, 0.3, 1), 
+              opacity 0.35s ease-out, 
+              transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.event-card.open .card-details { 
+  max-height: 1200px; /* Reálisabb értékre csökkentve az egyenletesebb tempóért */
+  opacity: 1;
+  transform: scaleY(1); /* Teljes méretre nyúlás nyitáskor */
+  border-top: 1px solid var(--border); 
+}
 .card-details-inner { padding: 18px 20px; }
 .details-section { margin-bottom: 16px; }
 .details-section:last-child { margin-bottom: 0; }

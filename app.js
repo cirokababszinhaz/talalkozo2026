@@ -42,6 +42,7 @@ let isPhotoWide = false;
 let currentGbTotal = 0;
 let resizedImageDataUrl = null;
 let helpResizedImageDataUrl = null;
+let searchIndex = []; // ÚJ: Fuzzy search indexelő adatbázis
 // Intelligens térkép globális változói és a helyszínek koordinátái
 let leafletMap = null;
 let leafletMarkers = {};
@@ -342,42 +343,41 @@ function openGuestbook() {
     if(badge) badge.style.display = 'none';
 }
 
-function handlePhotoSelect(event) {
+async function handlePhotoSelect(event) {
     const file = event.target.files[0];
     if (!file) return;
-    if (!file.type.startsWith('image/')) {
-        showToast("Kérlek, csak képet válassz ki!");
-        return;
-    }
 
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = function(e) {
-        const img = new Image();
-        img.src = e.target.result;
+    const btn = document.getElementById('gbPhotoBtn');
+    const preview = document.getElementById('gbPhotoPreview');
+    if (btn) btn.innerText = "Kép tömörítése...";
+
+    const options = {
+        maxSizeMB: 0.8,            // Maximális fájlméret (800 KB)
+        maxWidthOrHeight: 800,     // Maximális felbontás
+        useWebWorker: true,
+        fileType: 'image/jpeg'
+    };
+
+    try {
+        const compressedFile = await imageCompression(file, options);
         
-        img.onload = function() {
-            const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 800; const MAX_HEIGHT = 800;
-            let width = img.width; let height = img.height;
-            isPhotoWide = width > height;
-            if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
-            else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
-            canvas.width = width; canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-            resizedImageDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+        const reader = new FileReader();
+        reader.readAsDataURL(compressedFile);
+        reader.onloadend = function() {
+            resizedImageDataUrl = reader.result;
+            isPhotoWide = true; // Alapértelmezett tájolás beállítása
             
-            const btn = document.getElementById('gbPhotoBtn');
-            const preview = document.getElementById('gbPhotoPreview');
-            if(btn && preview) {
+            if (btn && preview) {
                 preview.style.display = 'block';
                 btn.style.borderColor = 'var(--green)';
                 btn.style.color = 'var(--green)';
-                btn.innerText = '✓ FOTÓ CSATOLVA';
+                btn.innerText = '✓ FOTÓ TÖMÖRÍTVE ÉS CSATOLVA';
             }
-        }
-        img.onerror = function() { showToast("Nem sikerült feldolgozni a képet. Próbálj meg egy másikat!"); }
+        };
+    } catch (error) {
+        console.error("Képtömörítési hiba:", error);
+        showToast("Nem sikerült a kép tömörítése, kérlek próbáld újra!");
+        if (btn) btn.innerText = '📸 FOTÓ KIVÁLASZTÁSA (Opcionális)';
     }
 }
 
@@ -974,17 +974,39 @@ function showDay(index, btn) {
     setTimeout(scrollToCurrent, 300); 
 }
 
-function doSearch() {
-    const searchInput = document.getElementById('searchInput');
-    if(!searchInput) return;
-    
-    let queryRaw = searchInput.value.toLowerCase().trim();
-    const query = queryRaw.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); 
-    
-    const dayPanels = document.querySelectorAll('.day-panel');
+// Kereső index építése az intelligens Fuse.js kereséshez (Elem-referencia alapú)
+function buildSearchIndex() {
+    searchIndex = [];
+    document.querySelectorAll('.event-card').forEach(card => {
+        const titleEl = card.querySelector('.event-title');
+        const companyEl = card.querySelector('.event-company');
+        const descEl = card.querySelector('.details-text');
+        searchIndex.push({
+            title: titleEl ? titleEl.innerText : '',
+            company: companyEl ? companyEl.innerText : '',
+            description: descEl ? descEl.innerText : '',
+            element: card // Közvetlen HTML elem elmentése
+        });
+    });
+}
+const dayPanels = document.querySelectorAll('.day-panel');
     const tabsWrap = document.getElementById('tabsWrap');
     const scrollHint = document.getElementById('scrollHint');
     const updateFeedPanel = document.getElementById('updateFeedPanel');
+
+    // ÚJ: Elírás-tűrő Fuzzy Search előkészítése a Fuse.js segítségével (Elem-alapú szűrés)
+    let matchedElements = [];
+    let isFuzzySearchActive = false;
+    
+    if (query !== "") {
+        isFuzzySearchActive = true;
+        const fuse = new Fuse(searchIndex, {
+            keys: ['title', 'company', 'description'],
+            threshold: 0.4 // Elírás-tűrés mértéke (minél nagyobb, annál megengedőbb)
+        });
+        const results = fuse.search(query);
+        matchedElements = results.map(r => r.item.element); // Közvetlenül a HTML elemeket gyűjtjük ki
+    }
 
     if(query === "laszlo") {
         const vitez = document.getElementById('vitezLaszlo');
@@ -1194,10 +1216,8 @@ function doSearch() {
         panel.querySelectorAll('.slot-time').forEach(time => time.style.display = 'none');
 
         cards.forEach(card => {
-            const textOriginal = card.innerText.toLowerCase();
-            const text = textOriginal.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); 
-            
-            const isMatchSearch = query === "" || text.includes(query);
+            // Élő elem-referencia egyezés ellenőrzése a gyorsítótárból:
+            const isMatchSearch = !isFuzzySearchActive || matchedElements.includes(card);
             const isMatchFav = !isFavoritesMode || localStorage.getItem('fav_' + card.id) === 'true';
             
             let isMatchType = true;
@@ -1538,6 +1558,7 @@ function initApp() {
     } catch (mapError) {
         console.error("Térkép betöltési hiba:", mapError);
     }
+    buildSearchIndex(); // ÚJ: Keresőmotor adatbázisának felépítése betöltéskor
     
     window.addEventListener('scroll', () => {
         const jumpBtn = document.getElementById('jumpBtn');
@@ -1683,41 +1704,39 @@ async function submitHelpRequest() {
     }
 }
 
-function handleHelpPhotoSelect(event) {
+async function handleHelpPhotoSelect(event) {
     const file = event.target.files[0];
     if (!file) return;
-    if (!file.type.startsWith('image/')) {
-        showToast("Kérlek, csak képet válassz ki!");
-        return;
-    }
 
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = function(e) {
-        const img = new Image();
-        img.src = e.target.result;
+    const btn = document.getElementById('helpPhotoBtn');
+    const preview = document.getElementById('helpPhotoPreview');
+    if (btn) btn.innerText = "Kép tömörítése...";
+
+    const options = {
+        maxSizeMB: 0.8,            // Maximális fájlméret (800 KB)
+        maxWidthOrHeight: 800,     // Maximális felbontás
+        useWebWorker: true,
+        fileType: 'image/jpeg'
+    };
+
+    try {
+        const compressedFile = await imageCompression(file, options);
         
-        img.onload = function() {
-            const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 800; const MAX_HEIGHT = 800;
-            let width = img.width; let height = img.height;
+        const reader = new FileReader();
+        reader.readAsDataURL(compressedFile);
+        reader.onloadend = function() {
+            helpResizedImageDataUrl = reader.result;
             
-            if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
-            else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
-            canvas.width = width; canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-            
-            helpResizedImageDataUrl = canvas.toDataURL('image/jpeg', 0.7);
-            
-            const btn = document.getElementById('helpPhotoBtn');
-            const preview = document.getElementById('helpPhotoPreview');
-            if(btn && preview) {
+            if (btn && preview) {
                 preview.style.display = 'block';
                 btn.style.borderColor = 'var(--green)';
                 btn.style.color = 'var(--green)';
-                btn.innerText = '✓ FOTÓ CSATOLVA';
+                btn.innerText = '✓ FOTÓ TÖMÖRÍTVE ÉS CSATOLVA';
             }
-        }
+        };
+    } catch (error) {
+        console.error("Képtömörítési hiba:", error);
+        showToast("Nem sikerült a kép tömörítése, kérlek próbáld újra!");
+        if (btn) btn.innerText = '📸 FOTÓ CSATOLÁSA (Opcionális)';
     }
 }
