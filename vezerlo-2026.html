@@ -261,6 +261,17 @@
   const auth = getAuth(app);
   const storage = getStorage(app);
   
+  // ÚJ: Helyszínek neveinek szótára a becsekkolások kiírásához (Így elkerüljük a ReferenceErrort)
+  const venueNames = { 
+    'ciroka': 'Ciróka Bábszínház', 
+    'agora': 'Hírös Agóra', 
+    'kelemen': 'Kelemen L. Kamaraszínház', 
+    'ruszt': 'Ruszt J. Stúdió', 
+    'ifjusagi': 'Ifjúsági Otthon', 
+    'tmh': 'Tudomány és Művészetek Háza (Technika Háza)', 
+    'bufe': '☕ Kávézóban / Étteremben' 
+  };
+  
   // Szuperbiztonságos helyi modulváltozó a szerkesztéshez:
   let editingAdhocId = null;
   
