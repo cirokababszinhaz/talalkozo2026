@@ -335,6 +335,7 @@ onValue(gbRef, (snap) => {
 });
 
 function openGuestbook() {
+    trackEvent('guestbook_opened'); // <-- MÉRÉS HOZZÁADÁSA [2]
     const guestbookModal = document.getElementById('guestbookModal');
     if(guestbookModal) guestbookModal.classList.add('visible');
     
@@ -913,10 +914,11 @@ function toggleTypeFilter(type) {
     });
 
     if (currentTypeFilter === 'update') {
-        localStorage.setItem('lastSeenUpdateCount', globalUpdates.length.toString());
-        const updateBadge = document.getElementById('updateBadge');
-        if (updateBadge) updateBadge.style.display = 'none';
-    }
+            trackEvent('update_clicked'); // <-- MÉRÉS BEILLESZTÉSE [2]
+            localStorage.setItem('lastSeenUpdateCount', globalUpdates.length.toString());
+            const updateBadge = document.getElementById('updateBadge');
+            if (updateBadge) updateBadge.style.display = 'none';
+        }
 
     doSearch();
     const wrap = document.getElementById('searchWrap');
@@ -1308,7 +1310,10 @@ function initApp() {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
                 const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') { installBtn.style.display = 'none'; }
+                if (outcome === 'accepted') { 
+                    installBtn.style.display = 'none'; 
+                    trackEvent('pwa_installed'); // <-- MÉRÉS HOZZÁADÁSA [2]
+                }
                 deferredPrompt = null;
             } else if (isIOS) {
                 showToast("Apple iOS: Lent a böngészőben bökj a [Megosztás ⬆] ikonra, majd a [Főképernyőhöz adás ➕] gombra!");
@@ -1362,7 +1367,10 @@ function initApp() {
     if(btnCheckin) btnCheckin.addEventListener('click', openCheckin);
 
     const btnHelp = document.getElementById('btnHelp');
-    if(btnHelp) btnHelp.addEventListener('click', () => { document.getElementById('helpModal').classList.add('visible'); });
+    if(btnHelp) btnHelp.addEventListener('click', () => { 
+        document.getElementById('helpModal').classList.add('visible'); 
+        trackEvent('help_opened'); // <-- MÉRÉS HOZZÁADÁSA [2]
+    });
 
     const helpCloseBtn = document.getElementById('helpCloseBtn');
     if(helpCloseBtn) helpCloseBtn.addEventListener('click', () => { document.getElementById('helpModal').classList.remove('visible'); });
@@ -1446,6 +1454,7 @@ function initApp() {
             const fbBtn = e.target.closest('.fb-event-btn');
             if (fbBtn) {
                 const url = fbBtn.getAttribute('href');
+                trackEvent('fb_event_button_clicked', { url: url }); // <-- MÉRÉS HOZZÁADÁSA (Eseménygombok)
                 if (!url || url === '#' || url === '') {
                     e.preventDefault();
                     e.stopPropagation();
@@ -1538,7 +1547,21 @@ function initApp() {
     }
     window.addEventListener('online', updateOnlineStatus);
     window.addEventListener('offline', updateOnlineStatus);
-    updateOnlineStatus();
+    
+// ÚJ: Facebook oldal megnyitásának mérése a Google Analytics-be
+    const heroFbBtn = document.querySelector('.hero-buttons a[href*="facebook.com"]');
+    if (heroFbBtn) {
+        heroFbBtn.addEventListener('click', () => trackEvent('fb_page_clicked')); // [2]
+    }
+
+// ÚJ: Podcast elérésének mérése a Google Analytics-be
+    document.body.addEventListener('click', (e) => {
+        if (e.target.closest('a[href*="spotify.com"]')) {
+            trackEvent('podcast_clicked'); // [2]
+        }
+    });
+
+updateOnlineStatus();
     
     restoreCheckinUI();
     initPostFestivalMode();
