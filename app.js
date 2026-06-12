@@ -976,18 +976,21 @@ function showDay(index, btn) {
     setTimeout(scrollToCurrent, 300); 
 }
 
-// Kereső index építése az intelligens Fuse.js kereséshez (Elem-referencia alapú)
+// Kereső index építése az intelligens Fuse.js kereséshez (Helyszínekkel kiegészítve)
 function buildSearchIndex() {
     searchIndex = [];
     document.querySelectorAll('.event-card').forEach(card => {
         const titleEl = card.querySelector('.event-title');
         const companyEl = card.querySelector('.event-company');
         const descEl = card.querySelector('.details-text');
+        const venueEl = card.querySelector('.badge-venue'); // <-- ÚJ: Helyszín lekérése
+        
         searchIndex.push({
             title: titleEl ? titleEl.innerText : '',
             company: companyEl ? companyEl.innerText : '',
             description: descEl ? descEl.innerText : '',
-            element: card // Közvetlen HTML elem elmentése
+            venue: venueEl ? venueEl.innerText : '', // <-- ÚJ: Helyszín elmentése az indexbe
+            element: card
         });
     });
 }
@@ -1012,12 +1015,13 @@ function doSearch() {
     if (query !== "") {
         isFuzzySearchActive = true;
         const fuse = new Fuse(searchIndex, {
-            keys: ['title', 'company', 'description'],
-            threshold: 0.4 // Elírás-tűrés mértéke (minél nagyobb, annál megengedőbb)
+            keys: ['title', 'company', 'description', 'venue'], // <-- ÚJ: 'venue' hozzáadása a keresési kulcsokhoz!
+            threshold: 0.4 // Elírás-tűrés mértéke
         });
         const results = fuse.search(query);
-        matchedElements = results.map(r => r.item.element); // Közvetlenül a HTML elemeket gyűjtjük ki
+        matchedElements = results.map(r => r.item.element);
     }
+
 
     if(query === "laszlo") {
         const vitez = document.getElementById('vitezLaszlo');
