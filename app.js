@@ -1008,18 +1008,37 @@ function doSearch() {
     const scrollHint = document.getElementById('scrollHint');
     const updateFeedPanel = document.getElementById('updateFeedPanel');
 
-    // ÚJ: Elírás-tűrő Fuzzy Search előkészítése a Fuse.js segítségével (Elem-alapú szűrés)
+    // ÚJ: Hibrid Keresőmotor (Szigorú szűrés helyszín-kattintáskor, elírás-tűrés gépeléskor)
     let matchedElements = [];
     let isFuzzySearchActive = false;
     
     if (query !== "") {
         isFuzzySearchActive = true;
-        const fuse = new Fuse(searchIndex, {
-            keys: ['title', 'company', 'description', 'venue'], // <-- ÚJ: 'venue' hozzáadása a keresési kulcsokhoz!
-            threshold: 0.4 // Elírás-tűrés mértéke
+        const cleanQuery = query.toLowerCase();
+        
+        // Ellenőrizzük, hogy a keresett szó pontosan megegyezik-e valamelyik naptári helyszínünkkel
+        const isExactVenueMatch = searchIndex.some(item => {
+            const cleanVenue = item.venue.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            return cleanVenue === cleanQuery;
         });
-        const results = fuse.search(query);
-        matchedElements = results.map(r => r.item.element);
+
+        if (isExactVenueMatch) {
+            // SZIGORÚ PONTOS EGYEZÉS: Ha helyszínre szűrünk, kikapcsoljuk az elírástűrőt (így a kisterem nem keveredik a nagyteremmel)
+            matchedElements = searchIndex
+                .filter(item => {
+                    const cleanVenue = item.venue.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                    return cleanVenue.includes(cleanQuery);
+                })
+                .map(item => item.element);
+        } else {
+            // RUGALMAS ELÍRÁS-TŰRŐ KERESÉS: Ha szabad szöveget gépel be (pl. előadás címét), elírástűrő marad
+            const fuse = new Fuse(searchIndex, {
+                keys: ['title', 'company', 'description', 'venue'],
+                threshold: 0.4
+            });
+            const results = fuse.search(query);
+            matchedElements = results.map(r => r.item.element);
+        }
     }
 
 
