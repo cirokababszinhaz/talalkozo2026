@@ -239,7 +239,7 @@ h1 em {
               transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .event-card.open .card-details { 
-  max-height: 1200px; /* Reálisabb értékre csökkentve az egyenletesebb tempóért */
+  max-height: 3000px; /* Megemelt magasság, hogy mobil kijelzőn se vágja le a hosszú szövegeket */
   opacity: 1;
   transform: scaleY(1); /* Teljes méretre nyúlás nyitáskor */
   border-top: 1px solid var(--border); 

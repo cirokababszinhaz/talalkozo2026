@@ -51,8 +51,8 @@ let activeCheckinsData = {};
 const venueCoords = {
   'ciroka': [46.912454749101805, 19.69227991800378],
   'agora': [46.90691982829047, 19.689439359379236],
-  'kelemen': [46.91008590143044, 19.698391398254213],
-  'ruszt': [46.90502489430952, 19.69343989108516],
+  'kelemen': [46.910048035200205, 19.698355849690063], // Frissítve!
+  'ruszt': [46.90504507869425, 19.693452882271973],    // Frissítve!
   'ifjusagi': [46.90872378284025, 19.69067528204133],
   'tmh': [46.90891213412473, 19.69432815487931]
 };
@@ -1474,24 +1474,19 @@ function initApp() {
                 trackEvent('navigation_requested', { venue_name: venueName });
             }
 
+            // Facebook gombok megnyitása (Javított, natív böngészőre bízott verzió)
             const fbBtn = e.target.closest('.fb-event-btn');
             if (fbBtn) {
                 const url = fbBtn.getAttribute('href');
-                trackEvent('fb_event_button_clicked', { url: url }); // <-- MÉRÉS HOZZÁADÁSA (Eseménygombok)
                 if (!url || url === '#' || url === '') {
                     e.preventDefault();
                     e.stopPropagation();
                     showToast("Ehhez a programhoz jelenleg nincs Facebook esemény!");
                     return; 
                 }
-
-                const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-                if (isStandaloneMode || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    window.open(url, '_system'); 
-                }
-                return; 
+                
+                // Regisztráljuk a statisztikát, de engedjük, hogy a böngésző nyissa meg a linket natívan
+                trackEvent('fb_event_button_clicked', { url: url });
             }
 
             if(e.target.matches('.badge-venue')) {
