@@ -426,7 +426,7 @@ async function submitGuestbook() {
         if (resizedImageDataUrl) {
             try {
                 const photoRef = sRef(storage, 'guestbook/' + Date.now() + '.jpg');
-                await uploadString(photoRef, resizedImageDataUrl, 'data_url');
+                await uploadString(photoRef, resizedImageDataUrl, 'data_url', { contentType: 'image/jpeg' });
                 photoUrl = await getDownloadURL(photoRef);
             } catch (imgError) {
                 console.error("Képfeltöltési hiba:", imgError);
@@ -1709,7 +1709,7 @@ async function submitHelpRequest() {
         if (helpResizedImageDataUrl) {
             try {
                 const photoRef = sRef(storage, 'questions/' + Date.now() + '.jpg');
-                await uploadString(photoRef, helpResizedImageDataUrl, 'data_url');
+                await uploadString(photoRef, helpResizedImageDataUrl, 'data_url', { contentType: 'image/jpeg' });
                 photoUrl = await getDownloadURL(photoRef);
             } catch (imgError) {
                 console.error("Képfeltöltési hiba:", imgError);
