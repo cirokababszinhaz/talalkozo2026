@@ -1185,7 +1185,7 @@ function doSearch() {
                               </div>
                               <div class="details-section" style="margin-bottom:10px;">
                                 <div class="details-label">Leírás</div>
-                                <div class="details-text" style="font-size:13px;">${escapeHTML(item.description)}</div>
+                                <div class="details-text" style="font-size:13px; white-space: pre-wrap;">${escapeHTML(item.description)}</div>
                               </div>
                               ${imgHtml}
                             </div>

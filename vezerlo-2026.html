@@ -599,7 +599,7 @@
             <div style="flex:1;">
               <div class="alert-meta">${item.timestamp} | Cím: ${escapeHTML(item.title)}${updateText}</div>
               ${imgHtml}
-              <div class="alert-text">${escapeHTML(item.description)}</div>
+              <div class="alert-text" style="white-space: pre-wrap;">${escapeHTML(item.description)}</div>
             </div>
             <div style="display:flex; flex-direction:column; gap:6px;">
               <!-- Csak az ID-t adjuk át a biztonságos betöltéshez -->
