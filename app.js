@@ -704,31 +704,9 @@ onValue(checkinRef, (snap) => {
 // ==========================================
 
 function initPostFestivalMode() {
-    if (Date.now() > FESTIVAL_CONFIG.postFestivalDate) {
-        const ey = document.getElementById('heroEyebrow');
-        if(ey) ey.innerText = "Magyarországi Bábszínházak 17. Találkozója";
-        
-        const ht = document.getElementById('heroTitle');
-        if(ht) ht.innerHTML = "Köszönjük, hogy<br><em>velünk voltatok!</em>";
-        
-        ['searchWrap', 'legendBar', 'tabsWrap', 'scrollHint', 'mainContent', 'topAlertBar', 'heroButtons', 'infoBoxBottom'].forEach(id => {
-            const el = document.getElementById(id);
-            if(el) el.style.display = 'none';
-        });
-        
-        const pf = document.getElementById('postFestivalView');
-        if(pf) pf.style.display = 'block';
-    } else {
-        const budapestTime = new Date(new Date().toLocaleString("en-US", {timeZone: FESTIVAL_CONFIG.timeZone}));
-        if (budapestTime.getFullYear() === FESTIVAL_CONFIG.year && budapestTime.getMonth() === FESTIVAL_CONFIG.month && budapestTime.getDate() >= FESTIVAL_CONFIG.startDay && budapestTime.getDate() <= FESTIVAL_CONFIG.endDay) {
-            const dIndex = budapestTime.getDate() - FESTIVAL_CONFIG.startDay;
-            const btns = document.querySelectorAll('.tab-btn');
-            if(btns[dIndex]) showDay(dIndex, btns[dIndex]);
-        } else {
-            const btns = document.querySelectorAll('.tab-btn');
-            if(btns[0]) showDay(0, btns[0]);
-        }
-    }
+    // ARCHIVÁLÁS: A fesztivál utáni elrejtő funkció kikapcsolva, mindig az eredeti felület jelenik meg
+    const btns = document.querySelectorAll('.tab-btn');
+    if(btns[0]) showDay(0, btns[0]);
 }
 
 function checkLiveEvents() {
